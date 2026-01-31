@@ -46,6 +46,21 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private bool _hasLEAF;
 
+    [ObservableProperty]
+    private bool _isScanningPIV;
+
+    [ObservableProperty]
+    private bool _isScanningDESFire;
+
+    [ObservableProperty]
+    private bool _isScanningISO14443;
+
+    [ObservableProperty]
+    private bool _isScanningPKOC;
+
+    [ObservableProperty]
+    private bool _isScanningLEAF;
+
     public MainViewModel(
         ISmartCardService smartCardService,
         CardDetectionService detectionService)
@@ -107,8 +122,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
             IsScanning = true;
             StatusMessage = "Scanning card...";
             CurrentResult = null;
+            ClearScanningStates();
 
-            var result = await _detectionService.DetectAsync(SelectedReader, _scanCts.Token);
+            var progress = new Progress<CardTechnology>(OnDetectionProgress);
+            var result = await _detectionService.DetectAsync(SelectedReader, progress, _scanCts.Token);
             CurrentResult = result;
 
             if (result.Technologies == CardTechnology.Unknown)
@@ -132,7 +149,43 @@ public partial class MainViewModel : ObservableObject, IDisposable
         finally
         {
             IsScanning = false;
+            ClearScanningStates();
         }
+    }
+
+    private void OnDetectionProgress(CardTechnology technology)
+    {
+        RunOnUiThread(() =>
+        {
+            ClearScanningStates();
+            switch (technology)
+            {
+                case CardTechnology.PIV:
+                    IsScanningPIV = true;
+                    break;
+                case CardTechnology.DESFire:
+                    IsScanningDESFire = true;
+                    break;
+                case CardTechnology.ISO14443:
+                    IsScanningISO14443 = true;
+                    break;
+                case CardTechnology.PKOC:
+                    IsScanningPKOC = true;
+                    break;
+                case CardTechnology.LEAF:
+                    IsScanningLEAF = true;
+                    break;
+            }
+        });
+    }
+
+    private void ClearScanningStates()
+    {
+        IsScanningPIV = false;
+        IsScanningDESFire = false;
+        IsScanningISO14443 = false;
+        IsScanningPKOC = false;
+        IsScanningLEAF = false;
     }
 
     [RelayCommand]

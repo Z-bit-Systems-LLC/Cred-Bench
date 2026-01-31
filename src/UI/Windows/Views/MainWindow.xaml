@@ -20,6 +20,122 @@
     <ui:FluentWindow.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BoolToVisibility" />
         <converters:TechnologyToColorConverter x:Key="TechToColor" />
+
+        <!-- Scanning glow animation storyboard -->
+        <Storyboard x:Key="ScanningGlowAnimation" RepeatBehavior="Forever">
+            <DoubleAnimation
+                Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)"
+                From="0.4"
+                To="1.0"
+                Duration="0:0:0.35"
+                AutoReverse="True" />
+            <DoubleAnimation
+                Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.BlurRadius)"
+                From="15"
+                To="30"
+                Duration="0:0:0.35"
+                AutoReverse="True" />
+            <DoubleAnimation
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                From="1.0"
+                To="1.08"
+                Duration="0:0:0.35"
+                AutoReverse="True" />
+            <DoubleAnimation
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                From="1.0"
+                To="1.08"
+                Duration="0:0:0.35"
+                AutoReverse="True" />
+        </Storyboard>
+
+        <!-- Base style for technology badges -->
+        <Style x:Key="TechBadgeBaseStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="12,6" />
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect
+                        Color="#3B82F6"
+                        ShadowDepth="0"
+                        BlurRadius="15"
+                        Opacity="0" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Individual technology badge styles -->
+        <Style x:Key="PIVBadgeStyle" TargetType="Border" BasedOn="{StaticResource TechBadgeBaseStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsScanningPIV}" Value="True">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard x:Name="GlowStoryboard" Storyboard="{StaticResource ScanningGlowAnimation}" />
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <StopStoryboard BeginStoryboardName="GlowStoryboard" />
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="DESFireBadgeStyle" TargetType="Border" BasedOn="{StaticResource TechBadgeBaseStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsScanningDESFire}" Value="True">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard x:Name="GlowStoryboard" Storyboard="{StaticResource ScanningGlowAnimation}" />
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <StopStoryboard BeginStoryboardName="GlowStoryboard" />
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ISO14443BadgeStyle" TargetType="Border" BasedOn="{StaticResource TechBadgeBaseStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsScanningISO14443}" Value="True">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard x:Name="GlowStoryboard" Storyboard="{StaticResource ScanningGlowAnimation}" />
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <StopStoryboard BeginStoryboardName="GlowStoryboard" />
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="PKOCBadgeStyle" TargetType="Border" BasedOn="{StaticResource TechBadgeBaseStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsScanningPKOC}" Value="True">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard x:Name="GlowStoryboard" Storyboard="{StaticResource ScanningGlowAnimation}" />
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <StopStoryboard BeginStoryboardName="GlowStoryboard" />
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="LEAFBadgeStyle" TargetType="Border" BasedOn="{StaticResource TechBadgeBaseStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsScanningLEAF}" Value="True">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard x:Name="GlowStoryboard" Storyboard="{StaticResource ScanningGlowAnimation}" />
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <StopStoryboard BeginStoryboardName="GlowStoryboard" />
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </ui:FluentWindow.Resources>
 
     <Grid>
@@ -198,38 +314,28 @@
                                     Margin="0,0,0,12" />
                                 <WrapPanel>
                                     <Border
-                                        Background="{Binding HasPIV, Converter={StaticResource TechToColor}}"
-                                        CornerRadius="4"
-                                        Padding="12,6"
-                                        Margin="0,0,8,8">
+                                        Style="{StaticResource PIVBadgeStyle}"
+                                        Background="{Binding HasPIV, Converter={StaticResource TechToColor}}">
                                         <TextBlock Text="PIV" Foreground="White" FontWeight="Medium" />
                                     </Border>
                                     <Border
-                                        Background="{Binding HasDESFire, Converter={StaticResource TechToColor}}"
-                                        CornerRadius="4"
-                                        Padding="12,6"
-                                        Margin="0,0,8,8">
+                                        Style="{StaticResource DESFireBadgeStyle}"
+                                        Background="{Binding HasDESFire, Converter={StaticResource TechToColor}}">
                                         <TextBlock Text="DESFire" Foreground="White" FontWeight="Medium" />
                                     </Border>
                                     <Border
-                                        Background="{Binding HasISO14443, Converter={StaticResource TechToColor}}"
-                                        CornerRadius="4"
-                                        Padding="12,6"
-                                        Margin="0,0,8,8">
+                                        Style="{StaticResource ISO14443BadgeStyle}"
+                                        Background="{Binding HasISO14443, Converter={StaticResource TechToColor}}">
                                         <TextBlock Text="ISO14443" Foreground="White" FontWeight="Medium" />
                                     </Border>
                                     <Border
-                                        Background="{Binding HasPKOC, Converter={StaticResource TechToColor}}"
-                                        CornerRadius="4"
-                                        Padding="12,6"
-                                        Margin="0,0,8,8">
+                                        Style="{StaticResource PKOCBadgeStyle}"
+                                        Background="{Binding HasPKOC, Converter={StaticResource TechToColor}}">
                                         <TextBlock Text="PKOC" Foreground="White" FontWeight="Medium" />
                                     </Border>
                                     <Border
-                                        Background="{Binding HasLEAF, Converter={StaticResource TechToColor}}"
-                                        CornerRadius="4"
-                                        Padding="12,6"
-                                        Margin="0,0,8,8">
+                                        Style="{StaticResource LEAFBadgeStyle}"
+                                        Background="{Binding HasLEAF, Converter={StaticResource TechToColor}}">
                                         <TextBlock Text="LEAF" Foreground="White" FontWeight="Medium" />
                                     </Border>
                                 </WrapPanel>

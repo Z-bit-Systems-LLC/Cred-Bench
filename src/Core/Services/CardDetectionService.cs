@@ -19,6 +19,12 @@ public class CardDetectionService
     public async Task<DetectionResult> DetectAsync(
         string readerName,
         CancellationToken cancellationToken = default)
+        => await DetectAsync(readerName, null, cancellationToken);
+
+    public async Task<DetectionResult> DetectAsync(
+        string readerName,
+        IProgress<CardTechnology>? progress,
+        CancellationToken cancellationToken = default)
     {
         // Run all PC/SC operations on a background thread to avoid blocking UI
         return await Task.Run(() =>
@@ -43,6 +49,9 @@ public class CardDetectionService
                     {
                         cancellationToken.ThrowIfCancellationRequested();
 
+                        // Report which technology is currently being scanned
+                        progress?.Report(detector.Technology);
+
                         var (detected, detectorDetails) = detector.Detect(connection);
 
                         if (detected)
@@ -64,6 +73,9 @@ public class CardDetectionService
                         // Individual detector failures should not stop other detections
                     }
                 }
+
+                // Report completion (Unknown means done scanning)
+                progress?.Report(CardTechnology.Unknown);
             }
 
             return new DetectionResult
