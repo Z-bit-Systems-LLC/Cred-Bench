@@ -56,6 +56,13 @@ public class WindowsReaderMonitorService : IReaderMonitorService
         _deviceMonitor = null;
     }
 
+    public void Restart()
+    {
+        Stop();
+        Start();
+        _smartCardService.RaiseReadersChanged();
+    }
+
     private void OnCardInserted(object? sender, CardStatusEventArgs e)
     {
         var atr = e.Atr != null ? BitConverter.ToString(e.Atr).Replace("-", " ") : null;

@@ -173,13 +173,18 @@
                                 MinWidth="250" />
                         </StackPanel>
 
-                        <ui:Button
-                            Grid.Column="1"
-                            Icon="{ui:SymbolIcon ArrowSync24}"
-                            Command="{Binding RefreshReadersCommand}"
-                            ToolTip="Refresh readers"
-                            VerticalAlignment="Bottom"
-                            Margin="12,0,0,0" />
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom">
+                            <ui:Button
+                                Icon="{ui:SymbolIcon ArrowSync24}"
+                                Command="{Binding RefreshReadersCommand}"
+                                ToolTip="Refresh readers"
+                                Margin="12,0,0,0" />
+                            <ui:Button
+                                Icon="{ui:SymbolIcon ArrowReset24}"
+                                Command="{Binding ResetReaderCommand}"
+                                ToolTip="Reset reader (use when reader stops responding)"
+                                Margin="4,0,0,0" />
+                        </StackPanel>
                     </Grid>
                 </ui:Card>
 

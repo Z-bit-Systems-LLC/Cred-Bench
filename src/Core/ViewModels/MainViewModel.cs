@@ -9,6 +9,7 @@ namespace CredBench.Core.ViewModels;
 public partial class MainViewModel : ObservableObject, IDisposable
 {
     private readonly ISmartCardService _smartCardService;
+    private readonly IReaderMonitorService _readerMonitorService;
     private readonly CardDetectionService _detectionService;
     private readonly SynchronizationContext? _syncContext;
     private CancellationTokenSource? _scanCts;
@@ -63,9 +64,11 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     public MainViewModel(
         ISmartCardService smartCardService,
+        IReaderMonitorService readerMonitorService,
         CardDetectionService detectionService)
     {
         _smartCardService = smartCardService;
+        _readerMonitorService = readerMonitorService;
         _detectionService = detectionService;
         _syncContext = SynchronizationContext.Current;
 
@@ -195,6 +198,19 @@ public partial class MainViewModel : ObservableObject, IDisposable
         StatusMessage = "Ready";
     }
 
+    [RelayCommand]
+    private void ResetReader()
+    {
+        _scanCts?.Cancel();
+        CurrentResult = null;
+        StatusMessage = "Resetting reader...";
+
+        _readerMonitorService.Restart();
+
+        RefreshReaders();
+        StatusMessage = "Reader reset complete";
+    }
+
     private void OnCardInserted(object? sender, ReaderEventArgs e)
     {
         if (e.ReaderName == SelectedReader)
@@ -214,7 +230,6 @@ public partial class MainViewModel : ObservableObject, IDisposable
             RunOnUiThread(() =>
             {
                 _scanCts?.Cancel();
-                CurrentResult = null;
                 StatusMessage = "Card removed";
             });
         }
