@@ -76,17 +76,49 @@ dotnet publish src/UI/Windows/Windows.csproj -c Release -r win-x64 --self-contai
 
 ## Adding New Card Technologies
 
-1. Create detector class in `Core/Services/CardDetectors/`
-2. Implement `ICardDetector` interface
-3. Register in DI container (`App.xaml.cs`)
-4. Add to `CardTechnology` enum if needed
-5. Update UI to display new technology badge
+1. Add to `CardTechnology` enum if needed
+2. Create detail model in `Core/Models/TechnologyDetails/`
+3. Create detector class in `Core/Services/CardDetectors/`
+4. Implement `ICardDetector` interface
+5. Register detector in DI container (`App.xaml.cs`)
+6. Create detail UserControl in `Windows/Views/CardDetails/`
+7. Add DataTemplate in `MainWindow.xaml` Resources
+8. Add TabItem with visibility binding in `MainWindow.xaml`
+
+## UI Card Detail Tabs
+
+Each card technology has a dedicated UserControl for displaying its details. The tabs use implicit DataTemplates to automatically select the correct control based on the bound detail model type.
+
+**Detail Controls** (`Windows/Views/CardDetails/`):
+- `GeneralDetailsControl` - ATR, UID, CSN, card type summary
+- `PivDetailsControl` - PIV status, CHUID
+- `DesfireDetailsControl` - Card type, version, storage size
+- `Iso14443DetailsControl` - UID, CSN, manufacturer, UID length
+- `PkocDetailsControl` - Protocol version
+- `LeafDetailsControl` - Application type, detected AIDs
+
+**Detail Models** (`Core/Models/TechnologyDetails/`):
+- `GeneralCardDetails`
+- `PIVDetails`
+- `DESFireDetails`
+- `ISO14443Details`
+- `PKOCDetails`
+- `LEAFDetails`
+
+DataTemplates in `MainWindow.xaml` map each model type to its control:
+```xml
+<DataTemplate DataType="{x:Type models:PIVDetails}">
+    <cardDetails:PivDetailsControl />
+</DataTemplate>
+```
 
 ## File Organization
 
 - Models in `Core/Models/`
+- Technology detail models in `Core/Models/TechnologyDetails/`
 - Interfaces in `Core/Services/`
 - Implementations in `Core/Services/` or `Windows/Services/`
 - Card detectors in `Core/Services/CardDetectors/`
 - XAML views in `Windows/Views/`
+- Card detail controls in `Windows/Views/CardDetails/`
 - Converters in `Windows/Converters/`

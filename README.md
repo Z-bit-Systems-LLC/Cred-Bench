@@ -1,22 +1,25 @@
 # Cred-Bench
 
-A Windows application to identify smart card types (DESFire, iClass, PKOC, PIV) presented to USB PC/SC readers.
+A Windows diagnostic tool for identifying smart card technologies and examining the credential data.
 
 ## Features
 
-- **Multi-technology detection**: Identifies PIV, DESFire, iClass, and PKOC credentials
+- **Card type identification**: Automatically detects PIV, DESFire, ISO14443, PKOC, and LEAF credentials
+- **Credential data display**: Shows the actual data transmitted by the card (UID, CSN, ATR, version info, etc.)
+- **Technology-specific details**: Dedicated views for each card type showing relevant fields
 - **Real-time monitoring**: Automatically detects card insertion and removal
 - **Reader hot-plug support**: Handles USB reader connection/disconnection
 - **Modern UI**: Fluent Design WPF interface using WPF-UI
 
 ## Supported Card Technologies
 
-| Technology | Detection Method |
-|------------|------------------|
-| PIV | SELECT AID command |
-| DESFire | GetVersion command |
-| iClass | ATR pattern matching + proprietary commands |
-| PKOC | NDEF application with PKOC signature |
+| Technology | Detection Method | Data Displayed |
+|------------|------------------|----------------|
+| PIV | SELECT AID command | Status, CHUID |
+| DESFire | GetVersion command | Card type, version, storage size |
+| ISO14443 | UID retrieval | UID, CSN, manufacturer, UID length |
+| PKOC | NDEF application with PKOC signature | Protocol version |
+| LEAF | AID detection | Application type, detected AIDs |
 
 ## Requirements
 
