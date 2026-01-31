@@ -1,0 +1,51 @@
+<UserControl
+    x:Class="CredBench.Windows.Views.CardDetails.DesfireDetailsControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:CredBench.Core.Models.TechnologyDetails;assembly=Core"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance models:DESFireDetails}">
+
+    <StackPanel Margin="12">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="90" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0"
+                Text="Card Type:"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,8" />
+            <TextBlock Grid.Row="0" Grid.Column="1"
+                Text="{Binding CardType, FallbackValue='DESFire'}"
+                FontWeight="Medium"
+                Margin="0,0,0,8" />
+
+            <TextBlock Grid.Row="1" Grid.Column="0"
+                Text="Version:"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,8" />
+            <TextBlock Grid.Row="1" Grid.Column="1"
+                Text="{Binding HardwareVersion, FallbackValue='N/A'}"
+                FontFamily="Consolas"
+                Margin="0,0,0,8" />
+
+            <TextBlock Grid.Row="2" Grid.Column="0"
+                Text="Storage:"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,4" />
+            <TextBlock Grid.Row="2" Grid.Column="1"
+                Text="{Binding StorageSize, FallbackValue='N/A'}"
+                FontFamily="Consolas"
+                Margin="0,0,0,4" />
+        </Grid>
+    </StackPanel>
+</UserControl>

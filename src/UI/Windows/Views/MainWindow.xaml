@@ -7,6 +7,8 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:converters="clr-namespace:CredBench.Windows.Converters"
     xmlns:viewmodels="clr-namespace:CredBench.Core.ViewModels;assembly=Core"
+    xmlns:models="clr-namespace:CredBench.Core.Models.TechnologyDetails;assembly=Core"
+    xmlns:cardDetails="clr-namespace:CredBench.Windows.Views.CardDetails"
     mc:Ignorable="d"
     Title="Cred Bench"
     Width="800"
@@ -186,6 +188,31 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+
+        <!-- DataTemplates for card detail types -->
+        <DataTemplate DataType="{x:Type models:GeneralCardDetails}">
+            <cardDetails:GeneralDetailsControl />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type models:PIVDetails}">
+            <cardDetails:PivDetailsControl />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type models:DESFireDetails}">
+            <cardDetails:DesfireDetailsControl />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type models:ISO14443Details}">
+            <cardDetails:Iso14443DetailsControl />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type models:PKOCDetails}">
+            <cardDetails:PkocDetailsControl />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type models:LEAFDetails}">
+            <cardDetails:LeafDetailsControl />
+        </DataTemplate>
     </ui:FluentWindow.Resources>
 
     <Grid>
@@ -420,266 +447,37 @@
 
                                 <!-- General Tab - Always shown when card detected -->
                                 <TabItem Header="General">
-                                    <StackPanel Margin="12">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="90" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-
-                                            <TextBlock Grid.Row="0" Grid.Column="0"
-                                                Text="Card Type:"
-                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                Margin="0,0,0,8" />
-                                            <TextBlock Grid.Row="0" Grid.Column="1"
-                                                Text="{Binding CurrentResult.GeneralDetails.CardTypeSummary, FallbackValue='Unknown'}"
-                                                FontWeight="Medium"
-                                                Margin="0,0,0,8" />
-
-                                            <TextBlock Grid.Row="1" Grid.Column="0"
-                                                Text="ATR:"
-                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                Margin="0,0,0,8" />
-                                            <TextBlock Grid.Row="1" Grid.Column="1"
-                                                Text="{Binding CurrentResult.GeneralDetails.ATR, FallbackValue='N/A'}"
-                                                TextWrapping="Wrap"
-                                                FontFamily="Consolas"
-                                                FontSize="11"
-                                                Margin="0,0,0,8" />
-
-                                            <TextBlock Grid.Row="2" Grid.Column="0"
-                                                Text="UID:"
-                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                Margin="0,0,0,8" />
-                                            <TextBlock Grid.Row="2" Grid.Column="1"
-                                                Text="{Binding CurrentResult.GeneralDetails.UID, FallbackValue='N/A'}"
-                                                FontFamily="Consolas"
-                                                Margin="0,0,0,8" />
-
-                                            <TextBlock Grid.Row="3" Grid.Column="0"
-                                                Text="CSN:"
-                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                Margin="0,0,0,4" />
-                                            <TextBlock Grid.Row="3" Grid.Column="1"
-                                                Text="{Binding CurrentResult.GeneralDetails.CSN, FallbackValue='N/A'}"
-                                                FontFamily="Consolas"
-                                                Margin="0,0,0,4" />
-                                        </Grid>
-                                    </StackPanel>
+                                    <ContentControl Content="{Binding CurrentResult.GeneralDetails}" />
                                 </TabItem>
 
                                 <!-- PIV Tab - Shown only when PIV detected -->
                                 <TabItem Header="PIV"
                                     Visibility="{Binding HasPIV, Converter={StaticResource BoolToVisibility}}">
-                                    <StackPanel Margin="12">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="90" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-
-                                            <TextBlock Grid.Row="0" Grid.Column="0"
-                                                Text="Status:"
-                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                Margin="0,0,0,8" />
-                                            <TextBlock Grid.Row="0" Grid.Column="1"
-                                                Text="{Binding CurrentResult.PIVDetails.Status, FallbackValue='Detected'}"
-                                                Foreground="#22C55E"
-                                                FontWeight="Medium"
-                                                Margin="0,0,0,8" />
-
-                                            <TextBlock Grid.Row="1" Grid.Column="0"
-                                                Text="CHUID:"
-                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                Margin="0,0,0,4" />
-                                            <TextBlock Grid.Row="1" Grid.Column="1"
-                                                Text="{Binding CurrentResult.PIVDetails.CHUID, FallbackValue='Not readable (may require PIN)'}"
-                                                FontFamily="Consolas"
-                                                FontSize="10"
-                                                TextWrapping="Wrap"
-                                                Margin="0,0,0,4" />
-                                        </Grid>
-                                    </StackPanel>
+                                    <ContentControl Content="{Binding CurrentResult.PIVDetails}" />
                                 </TabItem>
 
                                 <!-- DESFire Tab - Shown only when DESFire detected -->
                                 <TabItem Header="DESFire"
                                     Visibility="{Binding HasDESFire, Converter={StaticResource BoolToVisibility}}">
-                                    <StackPanel Margin="12">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="90" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-
-                                            <TextBlock Grid.Row="0" Grid.Column="0"
-                                                Text="Card Type:"
-                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                Margin="0,0,0,8" />
-                                            <TextBlock Grid.Row="0" Grid.Column="1"
-                                                Text="{Binding CurrentResult.DESFireDetails.CardType, FallbackValue='DESFire'}"
-                                                FontWeight="Medium"
-                                                Margin="0,0,0,8" />
-
-                                            <TextBlock Grid.Row="1" Grid.Column="0"
-                                                Text="Version:"
-                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                Margin="0,0,0,8" />
-                                            <TextBlock Grid.Row="1" Grid.Column="1"
-                                                Text="{Binding CurrentResult.DESFireDetails.HardwareVersion, FallbackValue='N/A'}"
-                                                FontFamily="Consolas"
-                                                Margin="0,0,0,8" />
-
-                                            <TextBlock Grid.Row="2" Grid.Column="0"
-                                                Text="Storage:"
-                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                Margin="0,0,0,4" />
-                                            <TextBlock Grid.Row="2" Grid.Column="1"
-                                                Text="{Binding CurrentResult.DESFireDetails.StorageSize, FallbackValue='N/A'}"
-                                                FontFamily="Consolas"
-                                                Margin="0,0,0,4" />
-                                        </Grid>
-                                    </StackPanel>
+                                    <ContentControl Content="{Binding CurrentResult.DESFireDetails}" />
                                 </TabItem>
 
                                 <!-- ISO14443 Tab - Shown only when ISO14443 detected -->
                                 <TabItem Header="ISO14443"
                                     Visibility="{Binding HasISO14443, Converter={StaticResource BoolToVisibility}}">
-                                    <StackPanel Margin="12">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="90" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-
-                                            <TextBlock Grid.Row="0" Grid.Column="0"
-                                                Text="UID:"
-                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                Margin="0,0,0,8" />
-                                            <TextBlock Grid.Row="0" Grid.Column="1"
-                                                Text="{Binding CurrentResult.ISO14443Details.UID, FallbackValue='N/A'}"
-                                                FontFamily="Consolas"
-                                                Margin="0,0,0,8" />
-
-                                            <TextBlock Grid.Row="1" Grid.Column="0"
-                                                Text="CSN:"
-                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                Margin="0,0,0,8" />
-                                            <TextBlock Grid.Row="1" Grid.Column="1"
-                                                Text="{Binding CurrentResult.ISO14443Details.CSN, FallbackValue='N/A'}"
-                                                FontFamily="Consolas"
-                                                FontWeight="Medium"
-                                                Margin="0,0,0,8" />
-
-                                            <TextBlock Grid.Row="2" Grid.Column="0"
-                                                Text="Manufacturer:"
-                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                Margin="0,0,0,8" />
-                                            <TextBlock Grid.Row="2" Grid.Column="1"
-                                                Text="{Binding CurrentResult.ISO14443Details.Manufacturer, FallbackValue='Unknown'}"
-                                                Margin="0,0,0,8" />
-
-                                            <TextBlock Grid.Row="3" Grid.Column="0"
-                                                Text="UID Length:"
-                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                Margin="0,0,0,4" />
-                                            <TextBlock Grid.Row="3" Grid.Column="1"
-                                                Text="{Binding CurrentResult.ISO14443Details.UIDLength, FallbackValue='N/A'}"
-                                                Margin="0,0,0,4" />
-                                        </Grid>
-                                    </StackPanel>
+                                    <ContentControl Content="{Binding CurrentResult.ISO14443Details}" />
                                 </TabItem>
 
                                 <!-- PKOC Tab - Shown only when PKOC detected -->
                                 <TabItem Header="PKOC"
                                     Visibility="{Binding HasPKOC, Converter={StaticResource BoolToVisibility}}">
-                                    <StackPanel Margin="12">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="110" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-
-                                            <TextBlock Grid.Row="0" Grid.Column="0"
-                                                Text="Protocol Version:"
-                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                Margin="0,0,0,4" />
-                                            <TextBlock Grid.Row="0" Grid.Column="1"
-                                                Text="{Binding CurrentResult.PKOCDetails.ProtocolVersion, FallbackValue='N/A'}"
-                                                FontFamily="Consolas"
-                                                FontWeight="Medium"
-                                                Margin="0,0,0,4" />
-                                        </Grid>
-                                    </StackPanel>
+                                    <ContentControl Content="{Binding CurrentResult.PKOCDetails}" />
                                 </TabItem>
 
                                 <!-- LEAF Tab - Shown only when LEAF detected -->
                                 <TabItem Header="LEAF"
                                     Visibility="{Binding HasLEAF, Converter={StaticResource BoolToVisibility}}">
-                                    <StackPanel Margin="12">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="110" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-
-                                            <TextBlock Grid.Row="0" Grid.Column="0"
-                                                Text="Application Type:"
-                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                Margin="0,0,0,8" />
-                                            <TextBlock Grid.Row="0" Grid.Column="1"
-                                                Text="{Binding CurrentResult.LEAFDetails.ApplicationType, FallbackValue='Unknown'}"
-                                                FontWeight="Medium"
-                                                Margin="0,0,0,8" />
-
-                                            <TextBlock Grid.Row="1" Grid.Column="0"
-                                                Text="Detected AIDs:"
-                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                VerticalAlignment="Top"
-                                                Margin="0,0,0,4" />
-                                            <ItemsControl Grid.Row="1" Grid.Column="1"
-                                                ItemsSource="{Binding CurrentResult.LEAFDetails.DetectedAIDs}"
-                                                Margin="0,0,0,4">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <TextBlock
-                                                            Text="{Binding}"
-                                                            FontFamily="Consolas"
-                                                            FontSize="11"
-                                                            Margin="0,0,0,2" />
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </Grid>
-                                    </StackPanel>
+                                    <ContentControl Content="{Binding CurrentResult.LEAFDetails}" />
                                 </TabItem>
                             </TabControl>
                         </StackPanel>

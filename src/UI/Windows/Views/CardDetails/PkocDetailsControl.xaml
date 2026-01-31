@@ -1,0 +1,32 @@
+<UserControl
+    x:Class="CredBench.Windows.Views.CardDetails.PkocDetailsControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:CredBench.Core.Models.TechnologyDetails;assembly=Core"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance models:PKOCDetails}">
+
+    <StackPanel Margin="12">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="110" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0"
+                Text="Protocol Version:"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,4" />
+            <TextBlock Grid.Row="0" Grid.Column="1"
+                Text="{Binding ProtocolVersion, FallbackValue='N/A'}"
+                FontFamily="Consolas"
+                FontWeight="Medium"
+                Margin="0,0,0,4" />
+        </Grid>
+    </StackPanel>
+</UserControl>

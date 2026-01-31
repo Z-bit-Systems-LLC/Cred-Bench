@@ -1,0 +1,60 @@
+<UserControl
+    x:Class="CredBench.Windows.Views.CardDetails.Iso14443DetailsControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:CredBench.Core.Models.TechnologyDetails;assembly=Core"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance models:ISO14443Details}">
+
+    <StackPanel Margin="12">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="90" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0"
+                Text="UID:"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,8" />
+            <TextBlock Grid.Row="0" Grid.Column="1"
+                Text="{Binding UID, FallbackValue='N/A'}"
+                FontFamily="Consolas"
+                Margin="0,0,0,8" />
+
+            <TextBlock Grid.Row="1" Grid.Column="0"
+                Text="CSN:"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,8" />
+            <TextBlock Grid.Row="1" Grid.Column="1"
+                Text="{Binding CSN, FallbackValue='N/A'}"
+                FontFamily="Consolas"
+                FontWeight="Medium"
+                Margin="0,0,0,8" />
+
+            <TextBlock Grid.Row="2" Grid.Column="0"
+                Text="Manufacturer:"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,8" />
+            <TextBlock Grid.Row="2" Grid.Column="1"
+                Text="{Binding Manufacturer, FallbackValue='Unknown'}"
+                Margin="0,0,0,8" />
+
+            <TextBlock Grid.Row="3" Grid.Column="0"
+                Text="UID Length:"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,4" />
+            <TextBlock Grid.Row="3" Grid.Column="1"
+                Text="{Binding UIDLength, FallbackValue='N/A'}"
+                Margin="0,0,0,4" />
+        </Grid>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,51 @@
+<UserControl
+    x:Class="CredBench.Windows.Views.CardDetails.LeafDetailsControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:CredBench.Core.Models.TechnologyDetails;assembly=Core"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance models:LEAFDetails}">
+
+    <StackPanel Margin="12">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="110" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0"
+                Text="Application Type:"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,8" />
+            <TextBlock Grid.Row="0" Grid.Column="1"
+                Text="{Binding ApplicationType, FallbackValue='Unknown'}"
+                FontWeight="Medium"
+                Margin="0,0,0,8" />
+
+            <TextBlock Grid.Row="1" Grid.Column="0"
+                Text="Detected AIDs:"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                VerticalAlignment="Top"
+                Margin="0,0,0,4" />
+            <ItemsControl Grid.Row="1" Grid.Column="1"
+                ItemsSource="{Binding DetectedAIDs}"
+                Margin="0,0,0,4">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock
+                            Text="{Binding}"
+                            FontFamily="Consolas"
+                            FontSize="11"
+                            Margin="0,0,0,2" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+    </StackPanel>
+</UserControl>
