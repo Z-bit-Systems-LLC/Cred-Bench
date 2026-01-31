@@ -69,11 +69,11 @@ Cred-Bench/
 - **MVVM**: CommunityToolkit.Mvvm
 - **PC/SC**: PCSC-Sharp
 - **DI**: Microsoft.Extensions.Hosting
-- **Testing**: xUnit, Moq
+- **Testing**: NUnit, Moq
 
 ## License
 
-This project is licensed under the Eclipse Public License 2.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
 ## Contributing
 
@@ -87,5 +87,5 @@ This project is licensed under the Eclipse Public License 2.0 - see the [LICENSE
 
 **Z-bit Systems LLC**
 
-- Website: [z-bitsystems.com](https://z-bitsystems.com)
+- Website: [z-bitco.com](https://z-bitco.com)
 - GitHub: [@Z-bit-Systems-LLC](https://github.com/Z-bit-Systems-LLC)
