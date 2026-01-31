@@ -43,6 +43,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private bool _hasPKOC;
 
+    [ObservableProperty]
+    private bool _hasLEAF;
+
     public MainViewModel(
         ISmartCardService smartCardService,
         CardDetectionService detectionService)
@@ -64,6 +67,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         HasDESFire = value?.HasTechnology(CardTechnology.DESFire) ?? false;
         HasISO14443 = value?.HasTechnology(CardTechnology.ISO14443) ?? false;
         HasPKOC = value?.HasTechnology(CardTechnology.PKOC) ?? false;
+        HasLEAF = value?.HasTechnology(CardTechnology.LEAF) ?? false;
     }
 
     [RelayCommand]
@@ -190,6 +194,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
             yield return "ISO14443";
         if (technologies.HasFlag(CardTechnology.PKOC))
             yield return "PKOC";
+        if (technologies.HasFlag(CardTechnology.LEAF))
+            yield return "LEAF";
     }
 
     public void Dispose()

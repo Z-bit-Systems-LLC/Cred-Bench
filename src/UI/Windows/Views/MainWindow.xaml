@@ -127,6 +127,13 @@
                                 Margin="0,0,8,8">
                                 <TextBlock Text="PKOC" Foreground="White" FontWeight="Medium" />
                             </Border>
+                            <Border
+                                Background="{Binding HasLEAF, Converter={StaticResource TechToColor}}"
+                                CornerRadius="4"
+                                Padding="12,6"
+                                Margin="0,0,8,8">
+                                <TextBlock Text="LEAF" Foreground="White" FontWeight="Medium" />
+                            </Border>
                         </WrapPanel>
                     </StackPanel>
                 </ui:Card>

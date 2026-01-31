@@ -7,5 +7,6 @@ public enum CardTechnology
     PIV = 1,
     DESFire = 2,
     ISO14443 = 4,
-    PKOC = 8
+    PKOC = 8,
+    LEAF = 16
 }
