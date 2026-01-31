@@ -1,0 +1,47 @@
+steps:
+  - task: UseDotNet@2
+    displayName: 'Install .NET 10.0'
+    inputs:
+      version: '10.0.x'
+      includePreviewVersions: true
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Restore'
+    inputs:
+      command: 'restore'
+      projects: '$(solution)'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Publish Windows App'
+    inputs:
+      command: 'publish'
+      projects: 'src/UI/Windows/Windows.csproj'
+      arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/Windows --self-contained true -r win-x64'
+      publishWebProjects: false
+
+  - task: ArchiveFiles@2
+    displayName: 'Archive Windows App'
+    inputs:
+      rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/Windows'
+      includeRootFolder: false
+      archiveType: 'zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/Cred-Bench-$(Build.SourceBranchName)-win-x64.zip'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifacts'
+    inputs:
+      pathToPublish: '$(Build.ArtifactStagingDirectory)/Cred-Bench-$(Build.SourceBranchName)-win-x64.zip'
+      artifactName: 'Release'
+
+  - task: GitHubRelease@1
+    displayName: 'Create GitHub Release'
+    inputs:
+      gitHubConnection: 'GitHub'
+      repositoryName: 'Z-bit-Systems-LLC/Cred-Bench'
+      action: 'create'
+      target: '$(Build.SourceVersion)'
+      tagSource: 'gitTag'
+      assets: '$(Build.ArtifactStagingDirectory)/Cred-Bench-*.zip'
+      isDraft: false
+      isPreRelease: false
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))

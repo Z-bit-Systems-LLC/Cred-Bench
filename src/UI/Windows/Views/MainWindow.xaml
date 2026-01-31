@@ -1,0 +1,214 @@
+<ui:FluentWindow
+    x:Class="CredBench.Windows.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:converters="clr-namespace:CredBench.Windows.Converters"
+    xmlns:viewmodels="clr-namespace:CredBench.Core.ViewModels;assembly=Core"
+    mc:Ignorable="d"
+    Title="Cred-Bench"
+    Height="550"
+    Width="500"
+    MinHeight="450"
+    MinWidth="400"
+    WindowStartupLocation="CenterScreen"
+    ExtendsContentIntoTitleBar="True"
+    d:DataContext="{d:DesignInstance viewmodels:MainViewModel}">
+
+    <ui:FluentWindow.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <converters:TechnologyToColorConverter x:Key="TechToColor" />
+    </ui:FluentWindow.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Title Bar -->
+        <ui:TitleBar
+            Grid.Row="0"
+            Title="Cred-Bench"
+            ShowMaximize="True"
+            ShowMinimize="True" />
+
+        <!-- Main Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="24">
+                <!-- Reader Selection -->
+                <ui:Card Margin="0,0,0,16">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock
+                                Text="Reader"
+                                FontWeight="SemiBold"
+                                Margin="0,0,0,8" />
+                            <ComboBox
+                                ItemsSource="{Binding AvailableReaders}"
+                                SelectedItem="{Binding SelectedReader}"
+                                IsEnabled="{Binding IsScanning, Converter={StaticResource BoolToVisibility}, ConverterParameter=Invert}"
+                                MinWidth="250" />
+                        </StackPanel>
+
+                        <ui:Button
+                            Grid.Column="1"
+                            Icon="{ui:SymbolIcon ArrowSync24}"
+                            Command="{Binding RefreshReadersCommand}"
+                            ToolTip="Refresh readers"
+                            VerticalAlignment="Bottom"
+                            Margin="12,0,0,0" />
+                    </Grid>
+                </ui:Card>
+
+                <!-- Card Status Area -->
+                <ui:Card Margin="0,0,0,16">
+                    <StackPanel HorizontalAlignment="Center" Margin="24">
+                        <ui:SymbolIcon
+                            Symbol="ContactCardGeneric24"
+                            FontSize="64"
+                            Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        <TextBlock
+                            Text="Present Card to Reader"
+                            HorizontalAlignment="Center"
+                            Margin="0,16,0,0"
+                            FontSize="16"
+                            Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        <ui:Button
+                            Content="Scan Card"
+                            Icon="{ui:SymbolIcon ScanDash24}"
+                            Command="{Binding ScanCardCommand}"
+                            HorizontalAlignment="Center"
+                            Margin="0,16,0,0"
+                            Appearance="Primary" />
+                    </StackPanel>
+                </ui:Card>
+
+                <!-- Detected Technologies -->
+                <ui:Card Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock
+                            Text="Detected Technologies"
+                            FontWeight="SemiBold"
+                            Margin="0,0,0,12" />
+                        <WrapPanel>
+                            <Border
+                                Background="{Binding HasPIV, Converter={StaticResource TechToColor}}"
+                                CornerRadius="4"
+                                Padding="12,6"
+                                Margin="0,0,8,8">
+                                <TextBlock Text="PIV" Foreground="White" FontWeight="Medium" />
+                            </Border>
+                            <Border
+                                Background="{Binding HasDESFire, Converter={StaticResource TechToColor}}"
+                                CornerRadius="4"
+                                Padding="12,6"
+                                Margin="0,0,8,8">
+                                <TextBlock Text="DESFire" Foreground="White" FontWeight="Medium" />
+                            </Border>
+                            <Border
+                                Background="{Binding HasIClass, Converter={StaticResource TechToColor}}"
+                                CornerRadius="4"
+                                Padding="12,6"
+                                Margin="0,0,8,8">
+                                <TextBlock Text="iClass" Foreground="White" FontWeight="Medium" />
+                            </Border>
+                            <Border
+                                Background="{Binding HasPKOC, Converter={StaticResource TechToColor}}"
+                                CornerRadius="4"
+                                Padding="12,6"
+                                Margin="0,0,8,8">
+                                <TextBlock Text="PKOC" Foreground="White" FontWeight="Medium" />
+                            </Border>
+                        </WrapPanel>
+                    </StackPanel>
+                </ui:Card>
+
+                <!-- Card Details -->
+                <ui:Card Visibility="{Binding CurrentResult, Converter={StaticResource BoolToVisibility}}">
+                    <StackPanel>
+                        <TextBlock
+                            Text="Card Details"
+                            FontWeight="SemiBold"
+                            Margin="0,0,0,12" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Text="ATR:"
+                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                Margin="0,0,0,4" />
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Text="{Binding CurrentResult.ATR, FallbackValue='N/A'}"
+                                TextWrapping="Wrap"
+                                FontFamily="Consolas"
+                                Margin="0,0,0,4" />
+
+                            <TextBlock
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Text="UID:"
+                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                Margin="0,0,0,4" />
+                            <TextBlock
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Text="{Binding CurrentResult.UID, FallbackValue='N/A'}"
+                                FontFamily="Consolas"
+                                Margin="0,0,0,4" />
+                        </Grid>
+
+                        <!-- Technology-specific details would go here -->
+                    </StackPanel>
+                </ui:Card>
+
+                <!-- Status Bar -->
+                <Border
+                    Background="{DynamicResource ControlFillColorDefaultBrush}"
+                    CornerRadius="4"
+                    Padding="12,8"
+                    Margin="0,16,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <ui:ProgressRing
+                            Grid.Column="0"
+                            IsIndeterminate="True"
+                            Width="16"
+                            Height="16"
+                            Margin="0,0,8,0"
+                            Visibility="{Binding IsScanning, Converter={StaticResource BoolToVisibility}}" />
+
+                        <TextBlock
+                            Grid.Column="1"
+                            Text="{Binding StatusMessage}"
+                            VerticalAlignment="Center"
+                            Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</ui:FluentWindow>

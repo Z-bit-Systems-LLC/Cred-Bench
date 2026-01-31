@@ -1,0 +1,27 @@
+trigger:
+  branches:
+    include:
+    - main
+  tags:
+    include:
+    - v*
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildConfiguration: 'Release'
+
+jobs:
+  - job: build
+    displayName: 'Build and Test'
+    steps:
+      - template: build.yml
+
+  - job: package
+    displayName: 'Package'
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+    dependsOn: build
+    steps:
+      - template: package.yml
