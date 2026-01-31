@@ -8,7 +8,7 @@
     xmlns:converters="clr-namespace:CredBench.Windows.Converters"
     xmlns:viewmodels="clr-namespace:CredBench.Core.ViewModels;assembly=Core"
     mc:Ignorable="d"
-    Title="Cred-Bench"
+    Title="Cred Bench"
     Height="550"
     Width="500"
     MinHeight="450"
@@ -114,11 +114,11 @@
                                 <TextBlock Text="DESFire" Foreground="White" FontWeight="Medium" />
                             </Border>
                             <Border
-                                Background="{Binding HasIClass, Converter={StaticResource TechToColor}}"
+                                Background="{Binding HasISO14443, Converter={StaticResource TechToColor}}"
                                 CornerRadius="4"
                                 Padding="12,6"
                                 Margin="0,0,8,8">
-                                <TextBlock Text="iClass" Foreground="White" FontWeight="Medium" />
+                                <TextBlock Text="ISO14443" Foreground="White" FontWeight="Medium" />
                             </Border>
                             <Border
                                 Background="{Binding HasPKOC, Converter={StaticResource TechToColor}}"
@@ -177,7 +177,26 @@
                                 Margin="0,0,0,4" />
                         </Grid>
 
-                        <!-- Technology-specific details would go here -->
+                        <!-- Technology-specific details -->
+                        <ItemsControl
+                            ItemsSource="{Binding CurrentResult.Details}"
+                            Margin="0,8,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="0,4,0,0">
+                                        <TextBlock
+                                            Text="{Binding Key}"
+                                            FontWeight="Medium"
+                                            Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                        <TextBlock
+                                            Text="{Binding Value}"
+                                            FontFamily="Consolas"
+                                            TextWrapping="Wrap"
+                                            Margin="0,2,0,0" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </StackPanel>
                 </ui:Card>
 

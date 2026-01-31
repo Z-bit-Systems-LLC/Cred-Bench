@@ -12,6 +12,12 @@ public class DESFireDetectorTests
     private Mock<ICardConnection> _connectionMock = null!;
     private DESFireDetector _detector = null!;
 
+    // SELECT failure response
+    private static readonly byte[] SelectFailResponse = [0x6A, 0x82];
+
+    // GetVersion native wrapped command
+    private static readonly byte[] GetVersionCommand = [0x90, 0x60, 0x00, 0x00, 0x00];
+
     [SetUp]
     public void Setup()
     {
@@ -28,11 +34,14 @@ public class DESFireDetectorTests
     [Test]
     public void Detect_WithSuccessResponse_ReturnsDetected()
     {
-        // Arrange - DESFire success: 91 00
-        byte[] successResponse = [0x91, 0x00];
+        // Arrange - SELECT fails, GetVersion succeeds with 91 00
         _connectionMock
-            .Setup(x => x.Transmit(It.IsAny<byte[]>()))
-            .Returns(successResponse);
+            .Setup(x => x.Transmit(It.Is<byte[]>(cmd => cmd[0] == 0x00 && cmd[1] == 0xA4)))
+            .Returns(SelectFailResponse);
+
+        _connectionMock
+            .Setup(x => x.Transmit(It.Is<byte[]>(cmd => cmd[0] == 0x90 && cmd[1] == 0x60)))
+            .Returns<byte[]>(_ => [0x91, 0x00]);
 
         // Act
         var (detected, details) = _detector.Detect(_connectionMock.Object);
@@ -45,23 +54,29 @@ public class DESFireDetectorTests
     [Test]
     public void Detect_WithMoreFramesResponse_ReturnsDetectedWithVersionInfo()
     {
-        // Arrange - DESFire response with version info (91 AF = more frames)
+        // Arrange - SELECT fails, GetVersion returns version info
         // Version info: vendor=04 (NXP), type=01, subtype=01, major=12 (EV2), minor=00, storage=1A (8KB), protocol=05
         byte[] versionResponse = [0x04, 0x01, 0x01, 0x12, 0x00, 0x1A, 0x05, 0x91, 0xAF];
         byte[] frame2Response = [0x04, 0x01, 0x01, 0x12, 0x00, 0x1A, 0x05, 0x91, 0xAF];
         byte[] frame3Response = [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x91, 0x00];
 
-        var callCount = 0;
+        // SELECT commands fail
         _connectionMock
-            .Setup(x => x.Transmit(It.IsAny<byte[]>()))
+            .Setup(x => x.Transmit(It.Is<byte[]>(cmd => cmd[0] == 0x00 && cmd[1] == 0xA4)))
+            .Returns(SelectFailResponse);
+
+        // GetVersion commands succeed
+        var getVersionCallCount = 0;
+        _connectionMock
+            .Setup(x => x.Transmit(It.Is<byte[]>(cmd => cmd[0] == 0x90)))
             .Returns(() =>
             {
-                callCount++;
-                return callCount switch
+                getVersionCallCount++;
+                return getVersionCallCount switch
                 {
-                    1 => versionResponse,
-                    2 => frame2Response,
-                    3 => frame3Response,
+                    1 => versionResponse,  // GetVersion response
+                    2 => frame2Response,   // AdditionalFrame 1
+                    3 => frame3Response,   // AdditionalFrame 2
                     _ => [0x91, 0x00]
                 };
             });
@@ -79,11 +94,10 @@ public class DESFireDetectorTests
     [Test]
     public void Detect_WithErrorResponse_ReturnsNotDetected()
     {
-        // Arrange - Non-DESFire error response
-        byte[] errorResponse = [0x6A, 0x82];
+        // Arrange - All commands fail
         _connectionMock
             .Setup(x => x.Transmit(It.IsAny<byte[]>()))
-            .Returns(errorResponse);
+            .Returns<byte[]>(_ => [0x6A, 0x82]);
 
         // Act
         var (detected, details) = _detector.Detect(_connectionMock.Object);
@@ -94,24 +108,22 @@ public class DESFireDetectorTests
     }
 
     [Test]
-    public void Detect_SendsGetVersionCommand()
+    public void Detect_WithSelectSuccess_ReturnsDetected()
     {
-        // Arrange
-        byte[]? capturedCommand = null;
+        // Arrange - SELECT succeeds, GetVersion fails
         _connectionMock
-            .Setup(x => x.Transmit(It.IsAny<byte[]>()))
-            .Callback<byte[]>(cmd => capturedCommand = cmd)
-            .Returns([0x91, 0x00]);
+            .Setup(x => x.Transmit(It.Is<byte[]>(cmd => cmd[0] == 0x00 && cmd[1] == 0xA4)))
+            .Returns<byte[]>(_ => [0x90, 0x00]);
+
+        _connectionMock
+            .Setup(x => x.Transmit(It.Is<byte[]>(cmd => cmd[0] == 0x90)))
+            .Returns<byte[]>(_ => [0x6E, 0x00]);
 
         // Act
-        _detector.Detect(_connectionMock.Object);
+        var (detected, details) = _detector.Detect(_connectionMock.Object);
 
         // Assert
-        Assert.That(capturedCommand, Is.Not.Null);
-        Assert.That(capturedCommand![0], Is.EqualTo(0x90)); // CLA for DESFire wrapped
-        Assert.That(capturedCommand[1], Is.EqualTo(0x60)); // INS (GetVersion)
-        Assert.That(capturedCommand[2], Is.EqualTo(0x00)); // P1
-        Assert.That(capturedCommand[3], Is.EqualTo(0x00)); // P2
-        Assert.That(capturedCommand[4], Is.EqualTo(0x00)); // Le
+        Assert.That(detected, Is.True);
+        Assert.That(details, Does.Contain("DESFire"));
     }
 }

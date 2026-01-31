@@ -15,7 +15,7 @@ public class DetectionResultTests
         // Assert
         Assert.That(result.HasTechnology(CardTechnology.PIV), Is.True);
         Assert.That(result.HasTechnology(CardTechnology.DESFire), Is.False);
-        Assert.That(result.HasTechnology(CardTechnology.IClass), Is.False);
+        Assert.That(result.HasTechnology(CardTechnology.ISO14443), Is.False);
         Assert.That(result.HasTechnology(CardTechnology.PKOC), Is.False);
     }
 
@@ -31,7 +31,7 @@ public class DetectionResultTests
         // Assert
         Assert.That(result.HasTechnology(CardTechnology.PIV), Is.True);
         Assert.That(result.HasTechnology(CardTechnology.DESFire), Is.True);
-        Assert.That(result.HasTechnology(CardTechnology.IClass), Is.False);
+        Assert.That(result.HasTechnology(CardTechnology.ISO14443), Is.False);
         Assert.That(result.HasTechnology(CardTechnology.PKOC), Is.False);
     }
 
@@ -44,7 +44,7 @@ public class DetectionResultTests
         // Assert
         Assert.That(result.HasTechnology(CardTechnology.PIV), Is.False);
         Assert.That(result.HasTechnology(CardTechnology.DESFire), Is.False);
-        Assert.That(result.HasTechnology(CardTechnology.IClass), Is.False);
+        Assert.That(result.HasTechnology(CardTechnology.ISO14443), Is.False);
         Assert.That(result.HasTechnology(CardTechnology.PKOC), Is.False);
     }
 

@@ -38,7 +38,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private bool _hasDESFire;
 
     [ObservableProperty]
-    private bool _hasIClass;
+    private bool _hasISO14443;
 
     [ObservableProperty]
     private bool _hasPKOC;
@@ -62,7 +62,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     {
         HasPIV = value?.HasTechnology(CardTechnology.PIV) ?? false;
         HasDESFire = value?.HasTechnology(CardTechnology.DESFire) ?? false;
-        HasIClass = value?.HasTechnology(CardTechnology.IClass) ?? false;
+        HasISO14443 = value?.HasTechnology(CardTechnology.ISO14443) ?? false;
         HasPKOC = value?.HasTechnology(CardTechnology.PKOC) ?? false;
     }
 
@@ -186,8 +186,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
             yield return "PIV";
         if (technologies.HasFlag(CardTechnology.DESFire))
             yield return "DESFire";
-        if (technologies.HasFlag(CardTechnology.IClass))
-            yield return "iClass";
+        if (technologies.HasFlag(CardTechnology.ISO14443))
+            yield return "ISO14443";
         if (technologies.HasFlag(CardTechnology.PKOC))
             yield return "PKOC";
     }

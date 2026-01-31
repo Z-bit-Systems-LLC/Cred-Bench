@@ -104,7 +104,13 @@ internal sealed class CardConnection : ICardConnection
                 if (sw1 == 0x90 && sw2 == 0x00 && response.Length > 2)
                 {
                     var uid = response[..^2];
-                    return BitConverter.ToString(uid).Replace("-", " ");
+
+                    // Show both formats: UID (as-is) and CSN (reversed, no spaces)
+                    var uidHex = BitConverter.ToString(uid).Replace("-", " ");
+                    var reversedUid = uid.Reverse().ToArray();
+                    var csnHex = BitConverter.ToString(reversedUid).Replace("-", "");
+
+                    return $"{uidHex} (CSN: {csnHex})";
                 }
             }
 

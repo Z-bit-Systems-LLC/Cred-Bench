@@ -95,7 +95,7 @@ public class CardDetectionServiceTests
     {
         // Arrange
         var failingDetectorMock = new Mock<ICardDetector>();
-        failingDetectorMock.Setup(x => x.Technology).Returns(CardTechnology.IClass);
+        failingDetectorMock.Setup(x => x.Technology).Returns(CardTechnology.ISO14443);
         failingDetectorMock
             .Setup(x => x.Detect(It.IsAny<ICardConnection>()))
             .Throws(new InvalidOperationException("Detector error"));
@@ -115,7 +115,7 @@ public class CardDetectionServiceTests
 
         // Assert
         Assert.That(result.HasTechnology(CardTechnology.PIV), Is.True);
-        Assert.That(result.HasTechnology(CardTechnology.IClass), Is.False);
+        Assert.That(result.HasTechnology(CardTechnology.ISO14443), Is.False);
     }
 
     [Test]

@@ -26,7 +26,7 @@ public partial class App : Application
                 // Card detectors
                 services.AddSingleton<ICardDetector, PIVDetector>();
                 services.AddSingleton<ICardDetector, DESFireDetector>();
-                services.AddSingleton<ICardDetector, IClassDetector>();
+                services.AddSingleton<ICardDetector, ISO14443Detector>();
                 services.AddSingleton<ICardDetector, PKOCDetector>();
 
                 // Detection service
