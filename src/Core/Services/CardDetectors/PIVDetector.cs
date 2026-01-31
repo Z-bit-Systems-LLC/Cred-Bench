@@ -1,4 +1,5 @@
 using CredBench.Core.Models;
+using CredBench.Core.Models.TechnologyDetails;
 
 namespace CredBench.Core.Services.CardDetectors;
 
@@ -12,7 +13,16 @@ public class PIVDetector : ICardDetector
     // SELECT command: CLA=00, INS=A4, P1=04 (select by name), P2=00
     private static readonly byte[] SelectApduHeader = [0x00, 0xA4, 0x04, 0x00];
 
-    public (bool Detected, string? Details) Detect(ICardConnection connection)
+    // GET DATA for CHUID: 00 CB 3F FF 05 5C 03 5F C1 02 00
+    private static readonly byte[] GetChuidCommand =
+    [
+        0x00, 0xCB, 0x3F, 0xFF, // CLA, INS, P1, P2
+        0x05,                   // Lc
+        0x5C, 0x03, 0x5F, 0xC1, 0x02, // Tag list for CHUID
+        0x00                    // Le
+    ];
+
+    public (bool Detected, string? Details, object? TypedDetails) Detect(ICardConnection connection)
     {
         try
         {
@@ -30,24 +40,50 @@ public class PIVDetector : ICardDetector
                 var sw1 = response[^2];
                 var sw2 = response[^1];
 
-                // SW 9000 = Success
-                if (sw1 == 0x90 && sw2 == 0x00)
+                // SW 9000 = Success or SW 61xx = More data available
+                if ((sw1 == 0x90 && sw2 == 0x00) || sw1 == 0x61)
                 {
-                    return (true, "PIV application found");
-                }
+                    var details = new PIVDetails
+                    {
+                        Status = "PIV application found",
+                        CHUID = TryGetChuid(connection),
+                    };
 
-                // SW 61xx = More data available (also success)
-                if (sw1 == 0x61)
-                {
-                    return (true, "PIV application found (more data available)");
+                    return (true, "PIV application found", details);
                 }
             }
 
-            return (false, null);
+            return (false, null, null);
         }
         catch (Exception ex)
         {
-            return (false, $"PIV detection error: {ex.Message}");
+            return (false, $"PIV detection error: {ex.Message}", null);
         }
+    }
+
+    private static string? TryGetChuid(ICardConnection connection)
+    {
+        try
+        {
+            var response = connection.Transmit(GetChuidCommand);
+
+            if (response.Length >= 2)
+            {
+                var sw1 = response[^2];
+                var sw2 = response[^1];
+
+                if (sw1 == 0x90 && sw2 == 0x00 && response.Length > 2)
+                {
+                    var data = response[..^2];
+                    return BitConverter.ToString(data).Replace("-", " ");
+                }
+            }
+        }
+        catch
+        {
+            // CHUID may not be readable without authentication
+        }
+
+        return null;
     }
 }

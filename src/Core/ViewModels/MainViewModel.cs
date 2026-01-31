@@ -48,6 +48,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private bool _hasLEAF;
 
     [ObservableProperty]
+    private bool _hasResult;
+
+    [ObservableProperty]
     private bool _isScanningPIV;
 
     [ObservableProperty]
@@ -81,6 +84,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     partial void OnCurrentResultChanged(DetectionResult? value)
     {
+        HasResult = value != null;
         HasPIV = value?.HasTechnology(CardTechnology.PIV) ?? false;
         HasDESFire = value?.HasTechnology(CardTechnology.DESFire) ?? false;
         HasISO14443 = value?.HasTechnology(CardTechnology.ISO14443) ?? false;

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using CredBench.Core.Models;
+using CredBench.Core.Models.TechnologyDetails;
 
 namespace CredBench.Core.Services.CardDetectors;
 
@@ -29,7 +30,7 @@ public class DESFireDetector : ICardDetector
     private static readonly byte[] AdditionalFrameNative = [0x90, 0xAF, 0x00, 0x00, 0x00];
     private static readonly byte[] AdditionalFrameIso = [0x00, 0xAF, 0x00, 0x00, 0x00];
 
-    public (bool Detected, string? Details) Detect(ICardConnection connection)
+    public (bool Detected, string? Details, object? TypedDetails) Detect(ICardConnection connection)
     {
         Debug.WriteLine("=== DESFire Detection Started ===");
 
@@ -51,7 +52,8 @@ public class DESFireDetector : ICardDetector
 
                 // Even if GetVersion failed, SELECT succeeded so it's likely DESFire
                 Debug.WriteLine("[DESFire] SELECT succeeded - reporting as DESFire");
-                return (true, "DESFire card detected (via SELECT)");
+                var details = new DESFireDetails { CardType = "DESFire" };
+                return (true, "DESFire card detected (via SELECT)", details);
             }
         }
 
@@ -74,7 +76,7 @@ public class DESFireDetector : ICardDetector
             return versionResult;
 
         Debug.WriteLine("[DESFire] All detection strategies failed - not a DESFire card");
-        return (false, null);
+        return (false, null, null);
     }
 
     private static bool TrySelectAid(ICardConnection connection, byte[] aid)
@@ -117,7 +119,7 @@ public class DESFireDetector : ICardDetector
         }
     }
 
-    private (bool Detected, string? Details) TryGetVersion(ICardConnection connection)
+    private (bool Detected, string? Details, object? TypedDetails) TryGetVersion(ICardConnection connection)
     {
         try
         {
@@ -130,11 +132,11 @@ public class DESFireDetector : ICardDetector
         catch (Exception ex)
         {
             Debug.WriteLine($"[DESFire] GetVersion exception: {ex.Message}");
-            return (false, null);
+            return (false, null, null);
         }
     }
 
-    private (bool Detected, string? Details) TryGetVersionIso(ICardConnection connection)
+    private (bool Detected, string? Details, object? TypedDetails) TryGetVersionIso(ICardConnection connection)
     {
         try
         {
@@ -147,11 +149,11 @@ public class DESFireDetector : ICardDetector
         catch (Exception ex)
         {
             Debug.WriteLine($"[DESFire] GetVersion ISO exception: {ex.Message}");
-            return (false, null);
+            return (false, null, null);
         }
     }
 
-    private (bool Detected, string? Details) TryGetVersionRaw(ICardConnection connection)
+    private (bool Detected, string? Details, object? TypedDetails) TryGetVersionRaw(ICardConnection connection)
     {
         try
         {
@@ -164,15 +166,15 @@ public class DESFireDetector : ICardDetector
         catch (Exception ex)
         {
             Debug.WriteLine($"[DESFire] GetVersion raw exception: {ex.Message}");
-            return (false, null);
+            return (false, null, null);
         }
     }
 
-    private (bool Detected, string? Details) ParseGetVersionResponse(
+    private (bool Detected, string? Details, object? TypedDetails) ParseGetVersionResponse(
         byte[] response, ICardConnection connection, byte[] additionalFrameCmd)
     {
         if (response.Length < 2)
-            return (false, null);
+            return (false, null, null);
 
         var sw1 = response[^2];
         var sw2 = response[^1];
@@ -185,20 +187,21 @@ public class DESFireDetector : ICardDetector
             if (sw2 == 0xAF && response.Length >= 9)
             {
                 Debug.WriteLine("[DESFire] Got 91 AF (more frames)");
-                var versionInfo = ParseVersionInfo(response);
+                var (versionInfo, typedDetails) = ParseVersionInfo(response);
                 Debug.WriteLine($"[DESFire] Version: {versionInfo}");
 
                 // Get remaining frames
                 GetRemainingVersionFrames(connection, additionalFrameCmd);
 
-                return (true, versionInfo);
+                return (true, versionInfo, typedDetails);
             }
 
             // DESFire success: 91 00
             if (sw2 == 0x00)
             {
                 Debug.WriteLine("[DESFire] Got 91 00 (success)");
-                return (true, "DESFire card detected");
+                var details = new DESFireDetails { CardType = "DESFire" };
+                return (true, "DESFire card detected", details);
             }
 
             // DESFire error codes - card is DESFire but operation denied
@@ -228,17 +231,19 @@ public class DESFireDetector : ICardDetector
             };
 
             Debug.WriteLine($"[DESFire] Got 91 {sw2:X2} ({errorDetail})");
-            return (true, $"DESFire card detected ({errorDetail})");
+            var errorDetails = new DESFireDetails { CardType = "DESFire" };
+            return (true, $"DESFire card detected ({errorDetail})", errorDetails);
         }
 
         // Some cards return 90 00 with data
         if (sw1 == 0x90 && sw2 == 0x00 && response.Length > 2)
         {
             Debug.WriteLine("[DESFire] Got 90 00 with data");
-            return (true, "DESFire card detected");
+            var details = new DESFireDetails { CardType = "DESFire" };
+            return (true, "DESFire card detected", details);
         }
 
-        return (false, null);
+        return (false, null, null);
     }
 
     private static void GetRemainingVersionFrames(ICardConnection connection, byte[] additionalFrameCmd)
@@ -261,10 +266,13 @@ public class DESFireDetector : ICardDetector
         }
     }
 
-    private static string ParseVersionInfo(byte[] response)
+    private static (string Info, DESFireDetails Details) ParseVersionInfo(byte[] response)
     {
         if (response.Length < 9)
-            return "DESFire card detected";
+        {
+            var defaultDetails = new DESFireDetails { CardType = "DESFire" };
+            return ("DESFire card detected", defaultDetails);
+        }
 
         // GetVersion response frame 1 (hardware info):
         // Byte 0: Vendor ID (0x04 = NXP)
@@ -276,6 +284,7 @@ public class DESFireDetector : ICardDetector
         // Byte 6: Protocol
         // Bytes 7-8: Status (91 AF)
         var hwMajorVersion = response[3];
+        var hwMinorVersion = response[4];
         var hwStorageSize = response[5];
 
         var cardType = hwMajorVersion switch
@@ -294,10 +303,17 @@ public class DESFireDetector : ICardDetector
             0x1A => "8KB",
             0x1C => "16KB",
             0x1E => "32KB",
-            _ => "Unknown storage"
+            _ => "Unknown"
         };
 
-        return $"{cardType}, {storageKb} storage";
+        var details = new DESFireDetails
+        {
+            CardType = cardType,
+            HardwareVersion = $"{hwMajorVersion}.{hwMinorVersion}",
+            StorageSize = storageKb
+        };
+
+        return ($"{cardType}, {storageKb} storage", details);
     }
 
 }

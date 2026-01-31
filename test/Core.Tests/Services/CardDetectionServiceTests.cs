@@ -46,7 +46,7 @@ public class CardDetectionServiceTests
         detectorMock.Setup(x => x.Technology).Returns(CardTechnology.PIV);
         detectorMock
             .Setup(x => x.Detect(It.IsAny<ICardConnection>()))
-            .Returns((true, "PIV detected"));
+            .Returns((true, "PIV detected", null));
 
         var service = new CardDetectionService(_smartCardServiceMock.Object, [detectorMock.Object]);
 
@@ -68,13 +68,13 @@ public class CardDetectionServiceTests
         pivDetectorMock.Setup(x => x.Technology).Returns(CardTechnology.PIV);
         pivDetectorMock
             .Setup(x => x.Detect(It.IsAny<ICardConnection>()))
-            .Returns((true, "PIV found"));
+            .Returns((true, "PIV found", null));
 
         var desfireDetectorMock = new Mock<ICardDetector>();
         desfireDetectorMock.Setup(x => x.Technology).Returns(CardTechnology.DESFire);
         desfireDetectorMock
             .Setup(x => x.Detect(It.IsAny<ICardConnection>()))
-            .Returns((true, "DESFire EV2"));
+            .Returns((true, "DESFire EV2", null));
 
         var service = new CardDetectionService(
             _smartCardServiceMock.Object,
@@ -104,7 +104,7 @@ public class CardDetectionServiceTests
         workingDetectorMock.Setup(x => x.Technology).Returns(CardTechnology.PIV);
         workingDetectorMock
             .Setup(x => x.Detect(It.IsAny<ICardConnection>()))
-            .Returns((true, "PIV found"));
+            .Returns((true, "PIV found", null));
 
         var service = new CardDetectionService(
             _smartCardServiceMock.Object,
@@ -126,7 +126,7 @@ public class CardDetectionServiceTests
         detectorMock.Setup(x => x.Technology).Returns(CardTechnology.PIV);
         detectorMock
             .Setup(x => x.Detect(It.IsAny<ICardConnection>()))
-            .Returns((false, null));
+            .Returns((false, null, null));
 
         var service = new CardDetectionService(_smartCardServiceMock.Object, [detectorMock.Object]);
 

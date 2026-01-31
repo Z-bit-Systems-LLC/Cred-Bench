@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using CredBench.Core.Models;
+using CredBench.Core.Models.TechnologyDetails;
 
 namespace CredBench.Core.Services.CardDetectors;
 
@@ -19,9 +20,12 @@ public class LEAFDetector : ICardDetector
     private static readonly byte[] UniversalIdAid2 = [0xF5, 0x1C, 0xD9]; // F51CD9
     private static readonly byte[] EnterpriseIdAid = [0xF5, 0x1C, 0xDB]; // F51CDB
 
-    public (bool Detected, string? Details) Detect(ICardConnection connection)
+    public (bool Detected, string? Details, object? TypedDetails) Detect(ICardConnection connection)
     {
         Debug.WriteLine("=== LEAF Detection Started ===");
+
+        var detectedAids = new List<string>();
+        string? applicationType = null;
 
         // Try to select each LEAF application using ISO SELECT
         // LEAF cards use ISO 7816-4 SELECT command format, not native DESFire
@@ -30,25 +34,38 @@ public class LEAFDetector : ICardDetector
         if (TrySelectLeafApplication(connection, UniversalIdAid1, "F51CD8"))
         {
             Debug.WriteLine("[LEAF] UNIVERSAL ID (F51CD8) detected");
-            return (true, "LEAF Universal credential (UNIVERSAL ID)");
+            detectedAids.Add("F51CD8 (UNIVERSAL ID)");
+            applicationType ??= "UNIVERSAL ID";
         }
 
         // Try UNIVERSAL ID Application 2 (F51CD9)
         if (TrySelectLeafApplication(connection, UniversalIdAid2, "F51CD9"))
         {
             Debug.WriteLine("[LEAF] UNIVERSAL ID (F51CD9) detected");
-            return (true, "LEAF Universal credential (UNIVERSAL ID)");
+            detectedAids.Add("F51CD9 (UNIVERSAL ID)");
+            applicationType ??= "UNIVERSAL ID";
         }
 
         // Try ENTERPRISE ID Application (F51CDB)
         if (TrySelectLeafApplication(connection, EnterpriseIdAid, "F51CDB"))
         {
             Debug.WriteLine("[LEAF] ENTERPRISE ID (F51CDB) detected");
-            return (true, "LEAF Universal credential (ENTERPRISE ID)");
+            detectedAids.Add("F51CDB (ENTERPRISE ID)");
+            applicationType ??= "ENTERPRISE ID";
+        }
+
+        if (detectedAids.Count > 0)
+        {
+            var details = new LEAFDetails
+            {
+                ApplicationType = applicationType ?? "Unknown",
+                DetectedAIDs = detectedAids
+            };
+            return (true, $"LEAF Universal credential ({applicationType})", details);
         }
 
         Debug.WriteLine("[LEAF] No LEAF applications found");
-        return (false, null);
+        return (false, null, null);
     }
 
     private static bool TrySelectLeafApplication(ICardConnection connection, byte[] aid, string aidName)

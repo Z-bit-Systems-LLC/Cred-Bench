@@ -39,7 +39,7 @@ public class LEAFDetectorTests
             .Returns([0x90, 0x00]);
 
         // Act
-        var (detected, details) = _detector.Detect(_connectionMock.Object);
+        var (detected, details, _) = _detector.Detect(_connectionMock.Object);
 
         // Assert
         Assert.That(detected, Is.True);
@@ -58,7 +58,7 @@ public class LEAFDetectorTests
             .Returns([0x90, 0x00]);
 
         // Act
-        var (detected, details) = _detector.Detect(_connectionMock.Object);
+        var (detected, details, _) = _detector.Detect(_connectionMock.Object);
 
         // Assert
         Assert.That(detected, Is.True);
@@ -80,7 +80,7 @@ public class LEAFDetectorTests
             .Returns([0x90, 0x00]);
 
         // Act
-        var (detected, details) = _detector.Detect(_connectionMock.Object);
+        var (detected, details, _) = _detector.Detect(_connectionMock.Object);
 
         // Assert
         Assert.That(detected, Is.True);
@@ -96,7 +96,7 @@ public class LEAFDetectorTests
             .Returns([0x61, 0x20]);
 
         // Act
-        var (detected, details) = _detector.Detect(_connectionMock.Object);
+        var (detected, details, _) = _detector.Detect(_connectionMock.Object);
 
         // Assert
         Assert.That(detected, Is.True);
@@ -112,7 +112,7 @@ public class LEAFDetectorTests
             .Returns([0x6A, 0x82]);
 
         // Act
-        var (detected, details) = _detector.Detect(_connectionMock.Object);
+        var (detected, details, _) = _detector.Detect(_connectionMock.Object);
 
         // Assert
         Assert.That(detected, Is.False);
@@ -128,7 +128,7 @@ public class LEAFDetectorTests
             .Returns([0x6A, 0x82]);
 
         // Act
-        var (detected, details) = _detector.Detect(_connectionMock.Object);
+        var (detected, details, _) = _detector.Detect(_connectionMock.Object);
 
         // Assert
         Assert.That(detected, Is.False);
@@ -144,7 +144,7 @@ public class LEAFDetectorTests
             .Throws(new InvalidOperationException("Card removed"));
 
         // Act
-        var (detected, details) = _detector.Detect(_connectionMock.Object);
+        var (detected, details, _) = _detector.Detect(_connectionMock.Object);
 
         // Assert
         Assert.That(detected, Is.False);
@@ -155,26 +155,26 @@ public class LEAFDetectorTests
     public void Detect_SendsCorrectSelectCommand()
     {
         // Arrange
-        byte[]? capturedCommand = null;
+        byte[]? firstCommand = null;
         _connectionMock
             .Setup(x => x.Transmit(It.IsAny<byte[]>()))
-            .Callback<byte[]>(cmd => capturedCommand = cmd)
+            .Callback<byte[]>(cmd => firstCommand ??= cmd) // Only capture the first command
             .Returns([0x90, 0x00]);
 
         // Act
         _detector.Detect(_connectionMock.Object);
 
         // Assert - First command should be ISO SELECT for F51CD8
-        Assert.That(capturedCommand, Is.Not.Null);
-        Assert.That(capturedCommand![0], Is.EqualTo(0x00)); // CLA (ISO)
-        Assert.That(capturedCommand[1], Is.EqualTo(0xA4)); // INS (SELECT)
-        Assert.That(capturedCommand[2], Is.EqualTo(0x04)); // P1 (Select by DF name)
-        Assert.That(capturedCommand[3], Is.EqualTo(0x00)); // P2
-        Assert.That(capturedCommand[4], Is.EqualTo(0x03)); // Lc (AID length = 3)
+        Assert.That(firstCommand, Is.Not.Null);
+        Assert.That(firstCommand![0], Is.EqualTo(0x00)); // CLA (ISO)
+        Assert.That(firstCommand[1], Is.EqualTo(0xA4)); // INS (SELECT)
+        Assert.That(firstCommand[2], Is.EqualTo(0x04)); // P1 (Select by DF name)
+        Assert.That(firstCommand[3], Is.EqualTo(0x00)); // P2
+        Assert.That(firstCommand[4], Is.EqualTo(0x03)); // Lc (AID length = 3)
         // AID F51CD8 in big-endian: F5 1C D8
-        Assert.That(capturedCommand[5], Is.EqualTo(0xF5));
-        Assert.That(capturedCommand[6], Is.EqualTo(0x1C));
-        Assert.That(capturedCommand[7], Is.EqualTo(0xD8));
-        Assert.That(capturedCommand[8], Is.EqualTo(0x00)); // Le
+        Assert.That(firstCommand[5], Is.EqualTo(0xF5));
+        Assert.That(firstCommand[6], Is.EqualTo(0x1C));
+        Assert.That(firstCommand[7], Is.EqualTo(0xD8));
+        Assert.That(firstCommand[8], Is.EqualTo(0x00)); // Le
     }
 }

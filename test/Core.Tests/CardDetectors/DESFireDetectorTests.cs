@@ -44,7 +44,7 @@ public class DESFireDetectorTests
             .Returns<byte[]>(_ => [0x91, 0x00]);
 
         // Act
-        var (detected, details) = _detector.Detect(_connectionMock.Object);
+        var (detected, details, _) = _detector.Detect(_connectionMock.Object);
 
         // Assert
         Assert.That(detected, Is.True);
@@ -82,7 +82,7 @@ public class DESFireDetectorTests
             });
 
         // Act
-        var (detected, details) = _detector.Detect(_connectionMock.Object);
+        var (detected, details, _) = _detector.Detect(_connectionMock.Object);
 
         // Assert
         Assert.That(detected, Is.True);
@@ -100,7 +100,7 @@ public class DESFireDetectorTests
             .Returns<byte[]>(_ => [0x6A, 0x82]);
 
         // Act
-        var (detected, details) = _detector.Detect(_connectionMock.Object);
+        var (detected, details, _) = _detector.Detect(_connectionMock.Object);
 
         // Assert
         Assert.That(detected, Is.False);
@@ -120,7 +120,7 @@ public class DESFireDetectorTests
             .Returns<byte[]>(_ => [0x6E, 0x00]);
 
         // Act
-        var (detected, details) = _detector.Detect(_connectionMock.Object);
+        var (detected, details, _) = _detector.Detect(_connectionMock.Object);
 
         // Assert
         Assert.That(detected, Is.True);

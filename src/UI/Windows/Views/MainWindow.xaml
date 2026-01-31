@@ -20,6 +20,56 @@
     <ui:FluentWindow.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BoolToVisibility" />
         <converters:TechnologyToColorConverter x:Key="TechToColor" />
+        <converters:NullToVisibilityConverter x:Key="NullToVisibility" />
+
+        <!-- Tab header style for better visibility -->
+        <Style x:Key="DetailTabItemStyle" TargetType="TabItem">
+            <Setter Property="Padding" Value="10,3" />
+            <Setter Property="Margin" Value="0,0,2,0" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="MinWidth" Value="70" />
+            <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1,1,1,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border x:Name="TabBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="6,6,0,0"
+                            Padding="{TemplateBinding Padding}"
+                            Margin="{TemplateBinding Margin}">
+                            <ContentPresenter
+                                x:Name="ContentSite"
+                                ContentSource="Header"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="TabBorder" Property="Background" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+                                <Setter TargetName="TabBorder" Property="BorderBrush" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="False">
+                                <Setter TargetName="TabBorder" Property="Background" Value="{DynamicResource ControlFillColorSecondaryBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                    <Condition Property="IsSelected" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="TabBorder" Property="Background" Value="{DynamicResource ControlFillColorTertiaryBrush}" />
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <!-- Scanning glow animation storyboard -->
         <Storyboard x:Key="ScanningGlowAnimation" RepeatBehavior="Forever">
@@ -348,7 +398,7 @@
                         </ui:Card>
                     </StackPanel>
 
-                    <!-- Right Column: Card Details -->
+                    <!-- Right Column: Card Details with Tabs -->
                     <ui:Card Grid.Column="1" VerticalAlignment="Top">
                         <StackPanel>
                             <TextBlock
@@ -360,69 +410,278 @@
                             <TextBlock
                                 Text="No card scanned yet"
                                 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                Visibility="{Binding CurrentResult, Converter={StaticResource BoolToVisibility}, ConverterParameter=Invert}" />
+                                Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}, ConverterParameter=Invert}" />
 
-                            <!-- Card details when available -->
-                            <StackPanel Visibility="{Binding CurrentResult, Converter={StaticResource BoolToVisibility}}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="80" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
+                            <!-- Tabbed card details when available -->
+                            <TabControl
+                                Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}}"
+                                Padding="0"
+                                ItemContainerStyle="{StaticResource DetailTabItemStyle}">
 
-                                    <TextBlock
-                                        Grid.Row="0"
-                                        Grid.Column="0"
-                                        Text="ATR:"
-                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                        Margin="0,0,0,4" />
-                                    <TextBlock
-                                        Grid.Row="0"
-                                        Grid.Column="1"
-                                        Text="{Binding CurrentResult.ATR, FallbackValue='N/A'}"
-                                        TextWrapping="Wrap"
-                                        FontFamily="Consolas"
-                                        Margin="0,0,0,4" />
+                                <!-- General Tab - Always shown when card detected -->
+                                <TabItem Header="General">
+                                    <StackPanel Margin="12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="90" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
 
-                                    <TextBlock
-                                        Grid.Row="1"
-                                        Grid.Column="0"
-                                        Text="UID:"
-                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                        Margin="0,0,0,4" />
-                                    <TextBlock
-                                        Grid.Row="1"
-                                        Grid.Column="1"
-                                        Text="{Binding CurrentResult.UID, FallbackValue='N/A'}"
-                                        FontFamily="Consolas"
-                                        Margin="0,0,0,4" />
-                                </Grid>
+                                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                                Text="Card Type:"
+                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                Margin="0,0,0,8" />
+                                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                                Text="{Binding CurrentResult.GeneralDetails.CardTypeSummary, FallbackValue='Unknown'}"
+                                                FontWeight="Medium"
+                                                Margin="0,0,0,8" />
 
-                                <!-- Technology-specific details -->
-                                <ItemsControl
-                                    ItemsSource="{Binding CurrentResult.Details}"
-                                    Margin="0,8,0,0">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Margin="0,4,0,0">
-                                                <TextBlock
-                                                    Text="{Binding Key}"
-                                                    FontWeight="Medium"
-                                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                                                <TextBlock
-                                                    Text="{Binding Value}"
-                                                    FontFamily="Consolas"
-                                                    TextWrapping="Wrap"
-                                                    Margin="0,2,0,0" />
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </StackPanel>
+                                            <TextBlock Grid.Row="1" Grid.Column="0"
+                                                Text="ATR:"
+                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                Margin="0,0,0,8" />
+                                            <TextBlock Grid.Row="1" Grid.Column="1"
+                                                Text="{Binding CurrentResult.GeneralDetails.ATR, FallbackValue='N/A'}"
+                                                TextWrapping="Wrap"
+                                                FontFamily="Consolas"
+                                                FontSize="11"
+                                                Margin="0,0,0,8" />
+
+                                            <TextBlock Grid.Row="2" Grid.Column="0"
+                                                Text="UID:"
+                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                Margin="0,0,0,8" />
+                                            <TextBlock Grid.Row="2" Grid.Column="1"
+                                                Text="{Binding CurrentResult.GeneralDetails.UID, FallbackValue='N/A'}"
+                                                FontFamily="Consolas"
+                                                Margin="0,0,0,8" />
+
+                                            <TextBlock Grid.Row="3" Grid.Column="0"
+                                                Text="CSN:"
+                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                Margin="0,0,0,4" />
+                                            <TextBlock Grid.Row="3" Grid.Column="1"
+                                                Text="{Binding CurrentResult.GeneralDetails.CSN, FallbackValue='N/A'}"
+                                                FontFamily="Consolas"
+                                                Margin="0,0,0,4" />
+                                        </Grid>
+                                    </StackPanel>
+                                </TabItem>
+
+                                <!-- PIV Tab - Shown only when PIV detected -->
+                                <TabItem Header="PIV"
+                                    Visibility="{Binding HasPIV, Converter={StaticResource BoolToVisibility}}">
+                                    <StackPanel Margin="12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="90" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                                Text="Status:"
+                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                Margin="0,0,0,8" />
+                                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                                Text="{Binding CurrentResult.PIVDetails.Status, FallbackValue='Detected'}"
+                                                Foreground="#22C55E"
+                                                FontWeight="Medium"
+                                                Margin="0,0,0,8" />
+
+                                            <TextBlock Grid.Row="1" Grid.Column="0"
+                                                Text="CHUID:"
+                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                Margin="0,0,0,4" />
+                                            <TextBlock Grid.Row="1" Grid.Column="1"
+                                                Text="{Binding CurrentResult.PIVDetails.CHUID, FallbackValue='Not readable (may require PIN)'}"
+                                                FontFamily="Consolas"
+                                                FontSize="10"
+                                                TextWrapping="Wrap"
+                                                Margin="0,0,0,4" />
+                                        </Grid>
+                                    </StackPanel>
+                                </TabItem>
+
+                                <!-- DESFire Tab - Shown only when DESFire detected -->
+                                <TabItem Header="DESFire"
+                                    Visibility="{Binding HasDESFire, Converter={StaticResource BoolToVisibility}}">
+                                    <StackPanel Margin="12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="90" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                                Text="Card Type:"
+                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                Margin="0,0,0,8" />
+                                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                                Text="{Binding CurrentResult.DESFireDetails.CardType, FallbackValue='DESFire'}"
+                                                FontWeight="Medium"
+                                                Margin="0,0,0,8" />
+
+                                            <TextBlock Grid.Row="1" Grid.Column="0"
+                                                Text="Version:"
+                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                Margin="0,0,0,8" />
+                                            <TextBlock Grid.Row="1" Grid.Column="1"
+                                                Text="{Binding CurrentResult.DESFireDetails.HardwareVersion, FallbackValue='N/A'}"
+                                                FontFamily="Consolas"
+                                                Margin="0,0,0,8" />
+
+                                            <TextBlock Grid.Row="2" Grid.Column="0"
+                                                Text="Storage:"
+                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                Margin="0,0,0,4" />
+                                            <TextBlock Grid.Row="2" Grid.Column="1"
+                                                Text="{Binding CurrentResult.DESFireDetails.StorageSize, FallbackValue='N/A'}"
+                                                FontFamily="Consolas"
+                                                Margin="0,0,0,4" />
+                                        </Grid>
+                                    </StackPanel>
+                                </TabItem>
+
+                                <!-- ISO14443 Tab - Shown only when ISO14443 detected -->
+                                <TabItem Header="ISO14443"
+                                    Visibility="{Binding HasISO14443, Converter={StaticResource BoolToVisibility}}">
+                                    <StackPanel Margin="12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="90" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                                Text="UID:"
+                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                Margin="0,0,0,8" />
+                                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                                Text="{Binding CurrentResult.ISO14443Details.UID, FallbackValue='N/A'}"
+                                                FontFamily="Consolas"
+                                                Margin="0,0,0,8" />
+
+                                            <TextBlock Grid.Row="1" Grid.Column="0"
+                                                Text="CSN:"
+                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                Margin="0,0,0,8" />
+                                            <TextBlock Grid.Row="1" Grid.Column="1"
+                                                Text="{Binding CurrentResult.ISO14443Details.CSN, FallbackValue='N/A'}"
+                                                FontFamily="Consolas"
+                                                FontWeight="Medium"
+                                                Margin="0,0,0,8" />
+
+                                            <TextBlock Grid.Row="2" Grid.Column="0"
+                                                Text="Manufacturer:"
+                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                Margin="0,0,0,8" />
+                                            <TextBlock Grid.Row="2" Grid.Column="1"
+                                                Text="{Binding CurrentResult.ISO14443Details.Manufacturer, FallbackValue='Unknown'}"
+                                                Margin="0,0,0,8" />
+
+                                            <TextBlock Grid.Row="3" Grid.Column="0"
+                                                Text="UID Length:"
+                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                Margin="0,0,0,4" />
+                                            <TextBlock Grid.Row="3" Grid.Column="1"
+                                                Text="{Binding CurrentResult.ISO14443Details.UIDLength, FallbackValue='N/A'}"
+                                                Margin="0,0,0,4" />
+                                        </Grid>
+                                    </StackPanel>
+                                </TabItem>
+
+                                <!-- PKOC Tab - Shown only when PKOC detected -->
+                                <TabItem Header="PKOC"
+                                    Visibility="{Binding HasPKOC, Converter={StaticResource BoolToVisibility}}">
+                                    <StackPanel Margin="12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="110" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                                Text="Protocol Version:"
+                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                Margin="0,0,0,4" />
+                                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                                Text="{Binding CurrentResult.PKOCDetails.ProtocolVersion, FallbackValue='N/A'}"
+                                                FontFamily="Consolas"
+                                                FontWeight="Medium"
+                                                Margin="0,0,0,4" />
+                                        </Grid>
+                                    </StackPanel>
+                                </TabItem>
+
+                                <!-- LEAF Tab - Shown only when LEAF detected -->
+                                <TabItem Header="LEAF"
+                                    Visibility="{Binding HasLEAF, Converter={StaticResource BoolToVisibility}}">
+                                    <StackPanel Margin="12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="110" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                                Text="Application Type:"
+                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                Margin="0,0,0,8" />
+                                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                                Text="{Binding CurrentResult.LEAFDetails.ApplicationType, FallbackValue='Unknown'}"
+                                                FontWeight="Medium"
+                                                Margin="0,0,0,8" />
+
+                                            <TextBlock Grid.Row="1" Grid.Column="0"
+                                                Text="Detected AIDs:"
+                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                VerticalAlignment="Top"
+                                                Margin="0,0,0,4" />
+                                            <ItemsControl Grid.Row="1" Grid.Column="1"
+                                                ItemsSource="{Binding CurrentResult.LEAFDetails.DetectedAIDs}"
+                                                Margin="0,0,0,4">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock
+                                                            Text="{Binding}"
+                                                            FontFamily="Consolas"
+                                                            FontSize="11"
+                                                            Margin="0,0,0,2" />
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </Grid>
+                                    </StackPanel>
+                                </TabItem>
+                            </TabControl>
                         </StackPanel>
                     </ui:Card>
                 </Grid>

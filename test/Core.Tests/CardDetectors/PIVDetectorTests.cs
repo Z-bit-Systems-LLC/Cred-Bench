@@ -35,7 +35,7 @@ public class PIVDetectorTests
             .Returns(successResponse);
 
         // Act
-        var (detected, details) = _detector.Detect(_connectionMock.Object);
+        var (detected, details, _) = _detector.Detect(_connectionMock.Object);
 
         // Assert
         Assert.That(detected, Is.True);
@@ -52,11 +52,11 @@ public class PIVDetectorTests
             .Returns(moreDataResponse);
 
         // Act
-        var (detected, details) = _detector.Detect(_connectionMock.Object);
+        var (detected, details, _) = _detector.Detect(_connectionMock.Object);
 
         // Assert
         Assert.That(detected, Is.True);
-        Assert.That(details, Does.Contain("more data available"));
+        Assert.That(details, Does.Contain("PIV application found"));
     }
 
     [Test]
@@ -69,7 +69,7 @@ public class PIVDetectorTests
             .Returns(errorResponse);
 
         // Act
-        var (detected, details) = _detector.Detect(_connectionMock.Object);
+        var (detected, details, _) = _detector.Detect(_connectionMock.Object);
 
         // Assert
         Assert.That(detected, Is.False);
@@ -85,7 +85,7 @@ public class PIVDetectorTests
             .Throws(new InvalidOperationException("Card removed"));
 
         // Act
-        var (detected, details) = _detector.Detect(_connectionMock.Object);
+        var (detected, details, _) = _detector.Detect(_connectionMock.Object);
 
         // Assert
         Assert.That(detected, Is.False);
@@ -96,27 +96,27 @@ public class PIVDetectorTests
     public void Detect_SendsCorrectSelectCommand()
     {
         // Arrange
-        byte[]? capturedCommand = null;
+        byte[]? firstCommand = null;
         _connectionMock
             .Setup(x => x.Transmit(It.IsAny<byte[]>()))
-            .Callback<byte[]>(cmd => capturedCommand = cmd)
+            .Callback<byte[]>(cmd => firstCommand ??= cmd) // Only capture the first command
             .Returns([0x90, 0x00]);
 
         // Act
         _detector.Detect(_connectionMock.Object);
 
-        // Assert
-        Assert.That(capturedCommand, Is.Not.Null);
-        Assert.That(capturedCommand![0], Is.EqualTo(0x00)); // CLA
-        Assert.That(capturedCommand[1], Is.EqualTo(0xA4)); // INS (SELECT)
-        Assert.That(capturedCommand[2], Is.EqualTo(0x04)); // P1 (select by name)
-        Assert.That(capturedCommand[3], Is.EqualTo(0x00)); // P2
-        Assert.That(capturedCommand[4], Is.EqualTo(0x0B)); // Lc (AID length = 11)
+        // Assert - First command should be SELECT PIV AID
+        Assert.That(firstCommand, Is.Not.Null);
+        Assert.That(firstCommand![0], Is.EqualTo(0x00)); // CLA
+        Assert.That(firstCommand[1], Is.EqualTo(0xA4)); // INS (SELECT)
+        Assert.That(firstCommand[2], Is.EqualTo(0x04)); // P1 (select by name)
+        Assert.That(firstCommand[3], Is.EqualTo(0x00)); // P2
+        Assert.That(firstCommand[4], Is.EqualTo(0x0B)); // Lc (AID length = 11)
         // PIV AID: A0 00 00 03 08 00 00 10 00 01 00
-        Assert.That(capturedCommand[5], Is.EqualTo(0xA0));
-        Assert.That(capturedCommand[6], Is.EqualTo(0x00));
-        Assert.That(capturedCommand[7], Is.EqualTo(0x00));
-        Assert.That(capturedCommand[8], Is.EqualTo(0x03));
-        Assert.That(capturedCommand[9], Is.EqualTo(0x08));
+        Assert.That(firstCommand[5], Is.EqualTo(0xA0));
+        Assert.That(firstCommand[6], Is.EqualTo(0x00));
+        Assert.That(firstCommand[7], Is.EqualTo(0x00));
+        Assert.That(firstCommand[8], Is.EqualTo(0x03));
+        Assert.That(firstCommand[9], Is.EqualTo(0x08));
     }
 }

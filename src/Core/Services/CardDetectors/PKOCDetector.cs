@@ -1,4 +1,5 @@
 using CredBench.Core.Models;
+using CredBench.Core.Models.TechnologyDetails;
 
 namespace CredBench.Core.Services.CardDetectors;
 
@@ -21,7 +22,7 @@ public class PKOCDetector : ICardDetector
     // TLV tags per PSIA PKOC spec
     private const byte TagProtocolVersion = 0x5C;
 
-    public (bool Detected, string? Details) Detect(ICardConnection connection)
+    public (bool Detected, string? Details, object? TypedDetails) Detect(ICardConnection connection)
     {
         try
         {
@@ -29,7 +30,7 @@ public class PKOCDetector : ICardDetector
             var response = connection.Transmit(SelectPkocCommand);
 
             if (!IsSuccess(response))
-                return (false, null);
+                return (false, null, null);
 
             // Parse response for Protocol Version TLV
             // Expected format: 5C 02 XX XX 90 00
@@ -37,14 +38,15 @@ public class PKOCDetector : ICardDetector
 
             var protocolVersion = ParseProtocolVersion(data);
             if (protocolVersion is null)
-                return (false, null);
+                return (false, null, null);
 
             var versionString = $"{protocolVersion[0]:X2}.{protocolVersion[1]:X2}";
-            return (true, $"PKOC v{versionString}");
+            var details = new PKOCDetails { ProtocolVersion = versionString };
+            return (true, $"PKOC v{versionString}", details);
         }
         catch
         {
-            return (false, null);
+            return (false, null, null);
         }
     }
 
