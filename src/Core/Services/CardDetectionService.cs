@@ -37,6 +37,7 @@ public class CardDetectionService
             var details = new Dictionary<CardTechnology, string>();
             string? atr = null;
             string? uid = null;
+            string? protocol = null;
 
             // Typed details
             PIVDetails? pivDetails = null;
@@ -50,6 +51,7 @@ public class CardDetectionService
             {
                 atr = connection.GetATR();
                 uid = connection.GetUID();
+                protocol = connection.GetProtocol();
 
                 foreach (var detector in _detectors)
                 {
@@ -107,7 +109,7 @@ public class CardDetectionService
             }
 
             // Build general card details
-            var generalDetails = BuildGeneralDetails(atr, uid, iso14443Details, technologies);
+            var generalDetails = BuildGeneralDetails(readerName, protocol, atr, uid, iso14443Details, technologies);
 
             return new DetectionResult
             {
@@ -127,6 +129,8 @@ public class CardDetectionService
     }
 
     private static GeneralCardDetails BuildGeneralDetails(
+        string readerName,
+        string? protocol,
         string? atr,
         string? uid,
         ISO14443Details? iso14443Details,
@@ -152,6 +156,8 @@ public class CardDetectionService
 
         return new GeneralCardDetails
         {
+            ReaderName = readerName,
+            Protocol = protocol,
             ATR = atr,
             UID = uid,
             CSN = csn,

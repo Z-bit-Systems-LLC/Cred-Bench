@@ -16,5 +16,6 @@ public interface ICardConnection : IDisposable
     string ReaderName { get; }
     string? GetATR();
     string? GetUID();
+    string? GetProtocol();
     byte[] Transmit(byte[] command);
 }

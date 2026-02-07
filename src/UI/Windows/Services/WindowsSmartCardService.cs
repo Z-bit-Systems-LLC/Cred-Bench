@@ -88,6 +88,24 @@ internal sealed class CardConnection : ICardConnection
         }
     }
 
+    public string? GetProtocol()
+    {
+        try
+        {
+            return _reader.Protocol switch
+            {
+                SCardProtocol.T0 => "T=0 (Character)",
+                SCardProtocol.T1 => "T=1 (Block)",
+                SCardProtocol.Raw => "Raw",
+                _ => _reader.Protocol.ToString()
+            };
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     public string? GetUID()
     {
         try

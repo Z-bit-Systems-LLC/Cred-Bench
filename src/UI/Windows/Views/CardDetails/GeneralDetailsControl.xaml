@@ -9,55 +9,46 @@
     d:DataContext="{d:DesignInstance models:GeneralCardDetails}">
 
     <StackPanel Margin="12">
-        <Grid>
+        <Grid Margin="0,0,0,16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="90" />
+                <ColumnDefinition Width="12" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0"
-                Text="Card Type:"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,8" />
-            <TextBlock Grid.Row="0" Grid.Column="1"
-                Text="{Binding CardTypeSummary, FallbackValue='Unknown'}"
-                FontWeight="Medium"
-                Margin="0,0,0,8" />
-
-            <TextBlock Grid.Row="1" Grid.Column="0"
-                Text="ATR:"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,8" />
-            <TextBlock Grid.Row="1" Grid.Column="1"
-                Text="{Binding ATR, FallbackValue='N/A'}"
-                TextWrapping="Wrap"
-                FontFamily="Consolas"
-                FontSize="11"
-                Margin="0,0,0,8" />
-
-            <TextBlock Grid.Row="2" Grid.Column="0"
-                Text="UID:"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,8" />
-            <TextBlock Grid.Row="2" Grid.Column="1"
-                Text="{Binding UID, FallbackValue='N/A'}"
-                FontFamily="Consolas"
-                Margin="0,0,0,8" />
-
-            <TextBlock Grid.Row="3" Grid.Column="0"
-                Text="CSN:"
+                Text="Reader:"
+                TextAlignment="Right"
                 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                 Margin="0,0,0,4" />
-            <TextBlock Grid.Row="3" Grid.Column="1"
-                Text="{Binding CSN, FallbackValue='N/A'}"
+            <TextBlock Grid.Row="0" Grid.Column="2"
+                Text="{Binding ReaderName, FallbackValue='N/A'}"
+                FontWeight="Medium"
+                TextWrapping="Wrap"
+                Margin="0,0,0,4" />
+
+            <TextBlock Grid.Row="1" Grid.Column="0"
+                Text="Protocol:"
+                TextAlignment="Right"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,4" />
+            <TextBlock Grid.Row="1" Grid.Column="2"
+                Text="{Binding Protocol, FallbackValue='N/A'}"
                 FontFamily="Consolas"
                 Margin="0,0,0,4" />
         </Grid>
+
+        <TextBlock Text="ATR"
+            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+            FontSize="11"
+            Margin="0,0,0,4" />
+        <TextBox Text="{Binding ATR, Mode=OneWay, FallbackValue='N/A'}"
+            Style="{StaticResource TextBox.Copyable}"
+            FontSize="10"
+            TextWrapping="Wrap" />
     </StackPanel>
 </UserControl>

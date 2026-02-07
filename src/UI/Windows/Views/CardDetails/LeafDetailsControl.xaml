@@ -12,6 +12,7 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="110" />
+                <ColumnDefinition Width="12" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -21,19 +22,21 @@
 
             <TextBlock Grid.Row="0" Grid.Column="0"
                 Text="Application Type:"
+                TextAlignment="Right"
                 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                 Margin="0,0,0,8" />
-            <TextBlock Grid.Row="0" Grid.Column="1"
+            <TextBlock Grid.Row="0" Grid.Column="2"
                 Text="{Binding ApplicationType, FallbackValue='Unknown'}"
                 FontWeight="Medium"
                 Margin="0,0,0,8" />
 
             <TextBlock Grid.Row="1" Grid.Column="0"
                 Text="Detected AIDs:"
+                TextAlignment="Right"
                 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                 VerticalAlignment="Top"
                 Margin="0,0,0,4" />
-            <ItemsControl Grid.Row="1" Grid.Column="1"
+            <ItemsControl Grid.Row="1" Grid.Column="2"
                 ItemsSource="{Binding DetectedAIDs}"
                 Margin="0,0,0,4">
                 <ItemsControl.ItemTemplate>
