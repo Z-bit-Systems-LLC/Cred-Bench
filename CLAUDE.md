@@ -33,24 +33,18 @@ Each detector implements `ICardDetector`:
 public interface ICardDetector
 {
     CardTechnology Technology { get; }
-    Task<(bool Detected, string? Details)> DetectAsync(
-        ISmartCardService cardService,
-        string readerName,
-        CancellationToken cancellationToken = default);
+    (bool Detected, string? Details, object? TypedDetails) Detect(ICardConnection connection);
 }
 ```
 
 Detection is orchestrated by `CardDetectionService` which:
-1. Iterates through all registered detectors
-2. Catches individual detector exceptions
-3. Combines results into a single `DetectionResult`
+1. Opens a single `ICardConnection` to the reader
+2. Retrieves ATR, UID, and protocol
+3. Iterates through all registered detectors
+4. Catches individual detector exceptions
+5. Combines results into a single `DetectionResult`
 
-## APDU Commands
-
-Common APDU patterns used:
-- **SELECT by AID**: `00 A4 04 00 [Lc] [AID] 00`
-- **GET UID**: `FF CA 00 00 00` (pseudo-APDU)
-- **DESFire wrapped**: `90 [CMD] 00 00 [Le]`
+For APDU commands, TLV parsing, and credential extraction details per technology, see the [docs/](docs/) folder.
 
 ## Testing
 
@@ -87,30 +81,18 @@ dotnet publish src/UI/Windows/Windows.csproj -c Release -r win-x64 --self-contai
 
 ## UI Card Detail Tabs
 
-Each card technology has a dedicated UserControl for displaying its details. The tabs use implicit DataTemplates to automatically select the correct control based on the bound detail model type.
+Each card technology has a dedicated UserControl for displaying its details. The tabs use implicit DataTemplates in `MainWindow.xaml` to automatically select the correct control based on the bound detail model type.
 
-**Detail Controls** (`Windows/Views/CardDetails/`):
-- `GeneralDetailsControl` - ATR, UID, CSN, card type summary
-- `PivDetailsControl` - PIV status, CHUID
-- `DesfireDetailsControl` - Card type, version, storage size
-- `Iso14443DetailsControl` - UID, CSN, manufacturer, UID length
-- `PkocDetailsControl` - Protocol version
-- `LeafDetailsControl` - Application type, detected AIDs
+| Detail Control             | Detail Model         | Documentation |
+|----------------------------|----------------------|---------------|
+| `GeneralDetailsControl`    | `GeneralCardDetails` | [docs/General.md](docs/General.md) |
+| `Iso14443DetailsControl`   | `ISO14443Details`    | [docs/ISO14443.md](docs/ISO14443.md) |
+| `PivDetailsControl`        | `PIVDetails`         | [docs/PIV.md](docs/PIV.md) |
+| `PkocDetailsControl`       | `PKOCDetails`        | [docs/PKOC.md](docs/PKOC.md) |
+| `DesfireDetailsControl`    | `DESFireDetails`     | [docs/DESFire.md](docs/DESFire.md) |
+| `LeafDetailsControl`       | `LEAFDetails`        | [docs/LEAF.md](docs/LEAF.md) |
 
-**Detail Models** (`Core/Models/TechnologyDetails/`):
-- `GeneralCardDetails`
-- `PIVDetails`
-- `DESFireDetails`
-- `ISO14443Details`
-- `PKOCDetails`
-- `LEAFDetails`
-
-DataTemplates in `MainWindow.xaml` map each model type to its control:
-```xml
-<DataTemplate DataType="{x:Type models:PIVDetails}">
-    <cardDetails:PivDetailsControl />
-</DataTemplate>
-```
+Controls are in `Windows/Views/CardDetails/`, models in `Core/Models/TechnologyDetails/`.
 
 ## File Organization
 

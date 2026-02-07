@@ -13,13 +13,16 @@ A Windows diagnostic tool for identifying smart card technologies and examining 
 
 ## Supported Card Technologies
 
-| Technology | Detection Method | Data Displayed |
-|------------|------------------|----------------|
-| PIV | SELECT AID command | Status, CHUID |
-| DESFire | GetVersion command | Card type, version, storage size |
-| ISO14443 | UID retrieval | UID, CSN, manufacturer, UID length |
-| PKOC | NDEF application with PKOC signature | Protocol version |
-| LEAF | AID detection | Application type, detected AIDs |
+| Technology | Documentation |
+|------------|---------------|
+| ISO 14443  | [docs/ISO14443.md](docs/ISO14443.md) |
+| PIV        | [docs/PIV.md](docs/PIV.md) |
+| PKOC       | [docs/PKOC.md](docs/PKOC.md) |
+| DESFire    | [docs/DESFire.md](docs/DESFire.md) |
+| LEAF       | [docs/LEAF.md](docs/LEAF.md) |
+| General    | [docs/General.md](docs/General.md) |
+
+See the [docs/](docs/) folder for detailed detection and credential parsing documentation for each card technology.
 
 ## Requirements
 
