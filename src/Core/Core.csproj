@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="PCSC" Version="7.0.1" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.102" />
   </ItemGroup>
 
 </Project>
