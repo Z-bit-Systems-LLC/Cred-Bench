@@ -124,7 +124,7 @@ internal sealed class CardConnection : ICardConnection
 
     public byte[] Transmit(byte[] command)
     {
-        var receiveBuffer = new byte[256];
+        var receiveBuffer = new byte[2048];
         var bytesReceived = _reader.Transmit(command, receiveBuffer);
 
         var response = new byte[bytesReceived];

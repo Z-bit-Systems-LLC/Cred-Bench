@@ -28,14 +28,11 @@ public record ISO14443Details
         if (string.IsNullOrEmpty(hex))
             return null;
 
-        var bits = new char[hex.Length * 4 + (hex.Length / 2 - 1)];
+        var bits = new char[hex.Length * 4];
         var pos = 0;
 
         for (var i = 0; i < hex.Length; i += 2)
         {
-            if (pos > 0)
-                bits[pos++] = ' ';
-
             var value = Convert.ToByte(hex.Substring(i, 2), 16);
             for (var bit = 7; bit >= 0; bit--)
                 bits[pos++] = (value & (1 << bit)) != 0 ? '1' : '0';

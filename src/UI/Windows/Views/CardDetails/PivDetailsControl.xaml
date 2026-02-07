@@ -9,36 +9,160 @@
     d:DataContext="{d:DesignInstance models:PIVDetails}">
 
     <StackPanel Margin="12">
-        <Grid>
+        <!-- Card Info -->
+        <Grid Margin="0,0,0,16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="90" />
+                <ColumnDefinition Width="12" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0"
                 Text="Status:"
+                TextAlignment="Right"
                 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,8" />
-            <TextBlock Grid.Row="0" Grid.Column="1"
+                Margin="0,0,0,4" />
+            <TextBlock Grid.Row="0" Grid.Column="2"
                 Text="{Binding Status, FallbackValue='Detected'}"
                 Foreground="#22C55E"
                 FontWeight="Medium"
-                Margin="0,0,0,8" />
-
-            <TextBlock Grid.Row="1" Grid.Column="0"
-                Text="CHUID:"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,4" />
-            <TextBlock Grid.Row="1" Grid.Column="1"
-                Text="{Binding CHUID, FallbackValue='Not readable (may require PIN)'}"
-                FontFamily="Consolas"
-                FontSize="10"
-                TextWrapping="Wrap"
                 Margin="0,0,0,4" />
         </Grid>
+
+        <!-- FASC-N Fields -->
+        <TextBlock Text="FASC-N"
+            FontWeight="SemiBold"
+            Margin="0,0,0,8" />
+
+        <Grid Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="130" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0"
+                Text="Agency Code:"
+                TextAlignment="Right"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,6" />
+            <TextBlock Grid.Row="0" Grid.Column="2"
+                Text="{Binding AgencyCode, FallbackValue='N/A'}"
+                FontFamily="Consolas"
+                Margin="0,0,0,6" />
+
+            <TextBlock Grid.Row="1" Grid.Column="0"
+                Text="System Code:"
+                TextAlignment="Right"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,6" />
+            <TextBlock Grid.Row="1" Grid.Column="2"
+                Text="{Binding SystemCode, FallbackValue='N/A'}"
+                FontFamily="Consolas"
+                Margin="0,0,0,6" />
+
+            <TextBlock Grid.Row="2" Grid.Column="0"
+                Text="Credential #:"
+                TextAlignment="Right"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,6" />
+            <TextBlock Grid.Row="2" Grid.Column="2"
+                Text="{Binding CredentialNumber, FallbackValue='N/A'}"
+                FontFamily="Consolas"
+                Margin="0,0,0,6" />
+
+            <TextBlock Grid.Row="3" Grid.Column="0"
+                Text="Credential Series:"
+                TextAlignment="Right"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,6" />
+            <TextBlock Grid.Row="3" Grid.Column="2"
+                Text="{Binding CredentialSeries, FallbackValue='N/A'}"
+                FontFamily="Consolas"
+                Margin="0,0,0,6" />
+
+            <TextBlock Grid.Row="4" Grid.Column="0"
+                Text="ICI:"
+                TextAlignment="Right"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,6" />
+            <TextBlock Grid.Row="4" Grid.Column="2"
+                Text="{Binding IndividualCredentialIssue, FallbackValue='N/A'}"
+                FontFamily="Consolas"
+                Margin="0,0,0,6" />
+
+            <TextBlock Grid.Row="5" Grid.Column="0"
+                Text="Person Identifier:"
+                TextAlignment="Right"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,6" />
+            <TextBlock Grid.Row="5" Grid.Column="2"
+                Text="{Binding PersonIdentifier, FallbackValue='N/A'}"
+                FontFamily="Consolas"
+                Margin="0,0,0,6" />
+
+            <TextBlock Grid.Row="6" Grid.Column="0"
+                Text="Org. Category:"
+                TextAlignment="Right"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,6" />
+            <TextBlock Grid.Row="6" Grid.Column="2"
+                Text="{Binding OrganizationalCategory, FallbackValue='N/A'}"
+                FontFamily="Consolas"
+                Margin="0,0,0,6" />
+
+            <TextBlock Grid.Row="7" Grid.Column="0"
+                Text="Org. Identifier:"
+                TextAlignment="Right"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,6" />
+            <TextBlock Grid.Row="7" Grid.Column="2"
+                Text="{Binding OrganizationalIdentifier, FallbackValue='N/A'}"
+                FontFamily="Consolas"
+                Margin="0,0,0,6" />
+
+            <TextBlock Grid.Row="8" Grid.Column="0"
+                Text="POA:"
+                TextAlignment="Right"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,4" />
+            <TextBlock Grid.Row="8" Grid.Column="2"
+                Text="{Binding PersonOrgAssociation, FallbackValue='N/A'}"
+                FontFamily="Consolas"
+                Margin="0,0,0,4" />
+        </Grid>
+
+        <!-- 200-bit Wiegand -->
+        <TextBlock Text="Hex"
+            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+            FontSize="11"
+            Margin="0,0,0,4" />
+        <TextBox Text="{Binding FASCNHex, Mode=OneWay, FallbackValue='N/A'}"
+            Style="{StaticResource TextBox.Copyable}"
+            FontSize="10"
+            Margin="0,0,0,8" />
+
+        <TextBlock Text="{Binding WiegandBitsLabel, FallbackValue='Wiegand Bits'}"
+            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+            FontSize="11"
+            Margin="0,0,0,4" />
+        <TextBox Text="{Binding FASCNWiegandBits, Mode=OneWay, FallbackValue='N/A'}"
+            Style="{StaticResource TextBox.Copyable}"
+            FontSize="10"
+            TextWrapping="Wrap" />
     </StackPanel>
 </UserControl>
