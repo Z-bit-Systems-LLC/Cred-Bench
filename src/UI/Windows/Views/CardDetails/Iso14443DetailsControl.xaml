@@ -9,52 +9,66 @@
     d:DataContext="{d:DesignInstance models:ISO14443Details}">
 
     <StackPanel Margin="12">
-        <Grid>
+        <!-- Card Info -->
+        <Grid Margin="0,0,0,16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="90" />
+                <ColumnDefinition Width="12" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0"
-                Text="UID:"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,8" />
-            <TextBlock Grid.Row="0" Grid.Column="1"
-                Text="{Binding UID, FallbackValue='N/A'}"
-                FontFamily="Consolas"
-                Margin="0,0,0,8" />
-
-            <TextBlock Grid.Row="1" Grid.Column="0"
-                Text="CSN:"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,8" />
-            <TextBlock Grid.Row="1" Grid.Column="1"
-                Text="{Binding CSN, FallbackValue='N/A'}"
-                FontFamily="Consolas"
-                FontWeight="Medium"
-                Margin="0,0,0,8" />
-
-            <TextBlock Grid.Row="2" Grid.Column="0"
                 Text="Manufacturer:"
+                TextAlignment="Right"
                 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                 Margin="0,0,0,8" />
-            <TextBlock Grid.Row="2" Grid.Column="1"
+            <TextBlock Grid.Row="0" Grid.Column="2"
                 Text="{Binding Manufacturer, FallbackValue='Unknown'}"
                 Margin="0,0,0,8" />
 
-            <TextBlock Grid.Row="3" Grid.Column="0"
+            <TextBlock Grid.Row="1" Grid.Column="0"
                 Text="UID Length:"
+                TextAlignment="Right"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,8" />
+            <TextBlock Grid.Row="1" Grid.Column="2"
+                Text="{Binding UIDLength, FallbackValue='N/A'}"
+                Margin="0,0,0,8" />
+
+            <TextBlock Grid.Row="2" Grid.Column="0"
+                Text="UID:"
+                TextAlignment="Right"
                 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                 Margin="0,0,0,4" />
-            <TextBlock Grid.Row="3" Grid.Column="1"
-                Text="{Binding UIDLength, FallbackValue='N/A'}"
+            <TextBlock Grid.Row="2" Grid.Column="2"
+                Text="{Binding UIDBytes, FallbackValue='N/A'}"
+                FontFamily="Consolas"
                 Margin="0,0,0,4" />
         </Grid>
+
+        <!-- CSN Credential -->
+        <TextBlock Text="CSN"
+            FontWeight="SemiBold"
+            Margin="0,0,0,8" />
+
+        <TextBlock Text="Hex"
+            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+            FontSize="11"
+            Margin="0,0,0,4" />
+        <TextBox Text="{Binding CSN, Mode=OneWay, FallbackValue='N/A'}"
+            Style="{StaticResource TextBox.Copyable}"
+            Margin="0,0,0,8" />
+
+        <TextBlock Text="{Binding WiegandBitsLabel, FallbackValue='Wiegand Bits'}"
+            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+            FontSize="11"
+            Margin="0,0,0,4" />
+        <TextBox Text="{Binding CSNWiegandBits, Mode=OneWay, FallbackValue='N/A'}"
+            Style="{StaticResource TextBox.Copyable}" />
     </StackPanel>
 </UserControl>
