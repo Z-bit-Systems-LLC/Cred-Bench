@@ -1,5 +1,4 @@
 using CredBench.Core.ViewModels;
-using Wpf.Ui.Controls;
 
 namespace CredBench.Windows.Views;
 

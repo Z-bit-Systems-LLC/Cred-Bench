@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using CredBench.Core.Models;
 using CredBench.Core.Models.TechnologyDetails;
 
@@ -19,21 +20,20 @@ public class PKOCDetector : ICardDetector
         0x00                    // Le
     ];
 
-    // TLV tags per PSIA PKOC spec
+    // TLV tags per PSIA PKOC 1.1 spec
     private const byte TagProtocolVersion = 0x5C;
+    private const byte TagPublicKey = 0x5A;
 
     public (bool Detected, string? Details, object? TypedDetails) Detect(ICardConnection connection)
     {
         try
         {
-            // Send SELECT command with PKOC AID
+            // Step 1: SELECT PKOC applet
             var response = connection.Transmit(SelectPkocCommand);
 
             if (!IsSuccess(response))
                 return (false, null, null);
 
-            // Parse response for Protocol Version TLV
-            // Expected format: 5C 02 XX XX 90 00
             var data = response[..^2]; // Remove SW1/SW2
 
             var protocolVersion = ParseProtocolVersion(data);
@@ -41,7 +41,18 @@ public class PKOCDetector : ICardDetector
                 return (false, null, null);
 
             var versionString = $"{protocolVersion[0]:X2}.{protocolVersion[1]:X2}";
-            var details = new PKOCDetails { ProtocolVersion = versionString };
+
+            // Step 2: AUTHENTICATE to retrieve public key
+            var publicKey = TryGetPublicKey(connection, protocolVersion);
+
+            var details = new PKOCDetails
+            {
+                ProtocolVersion = versionString,
+                PublicKeyHex = publicKey != null
+                    ? BitConverter.ToString(publicKey).Replace("-", "")
+                    : null,
+            };
+
             return (true, $"PKOC v{versionString}", details);
         }
         catch
@@ -50,27 +61,88 @@ public class PKOCDetector : ICardDetector
         }
     }
 
-    private static byte[]? ParseProtocolVersion(byte[] data)
+    private static byte[]? TryGetPublicKey(ICardConnection connection, byte[] protocolVersion)
     {
-        // Parse TLV structure to find Protocol Version (tag 0x5C)
+        try
+        {
+            // Build AUTHENTICATE command per PSIA PKOC 1.1 spec:
+            // CLA=80, INS=80, P1=00, P2=01, Lc=38
+            // Data: 4C 10 [16-byte Transaction ID] 5C 02 [Protocol Version] 4D 20 [32-byte Reader ID]
+            // Le=00
+
+            var transactionId = RandomNumberGenerator.GetBytes(16);
+            var readerIdentifier = new byte[32]; // zeros for identification-only mode
+
+            var commandData = new byte[56]; // 0x38
+            var pos = 0;
+
+            // Transaction ID TLV: 4C 10 [16 bytes]
+            commandData[pos++] = 0x4C;
+            commandData[pos++] = 0x10;
+            Array.Copy(transactionId, 0, commandData, pos, 16);
+            pos += 16;
+
+            // Protocol Version TLV: 5C 02 [2 bytes]
+            commandData[pos++] = 0x5C;
+            commandData[pos++] = 0x02;
+            commandData[pos++] = protocolVersion[0];
+            commandData[pos++] = protocolVersion[1];
+
+            // Reader Identifier TLV: 4D 20 [32 bytes]
+            commandData[pos++] = 0x4D;
+            commandData[pos++] = 0x20;
+            Array.Copy(readerIdentifier, 0, commandData, pos, 32);
+
+            // Build full APDU: 80 80 00 01 38 [data] 00
+            var command = new byte[5 + commandData.Length + 1];
+            command[0] = 0x80; // CLA
+            command[1] = 0x80; // INS (AUTHENTICATE)
+            command[2] = 0x00; // P1
+            command[3] = 0x01; // P2
+            command[4] = (byte)commandData.Length; // Lc
+            Array.Copy(commandData, 0, command, 5, commandData.Length);
+            command[^1] = 0x00; // Le
+
+            var response = connection.Transmit(command);
+
+            if (!IsSuccess(response))
+                return null;
+
+            var responseData = response[..^2];
+
+            // Parse TLV for public key (tag 0x5A, length 0x41 = 65 bytes)
+            return ParseTlvValue(responseData, TagPublicKey);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private static byte[]? ParseTlvValue(byte[] data, byte targetTag)
+    {
         var index = 0;
         while (index < data.Length - 2)
         {
-            var tag = data[index];
-            var length = data[index + 1];
+            var tag = data[index++];
+            var length = data[index++];
 
-            if (index + 2 + length > data.Length)
+            if (index + length > data.Length)
                 break;
 
-            if (tag == TagProtocolVersion && length >= 2)
-            {
-                return [data[index + 2], data[index + 3]];
-            }
+            if (tag == targetTag)
+                return data[index..(index + length)];
 
-            index += 2 + length;
+            index += length;
         }
 
         return null;
+    }
+
+    private static byte[]? ParseProtocolVersion(byte[] data)
+    {
+        var result = ParseTlvValue(data, TagProtocolVersion);
+        return result is { Length: >= 2 } ? result[..2] : null;
     }
 
     private static bool IsSuccess(byte[] response)

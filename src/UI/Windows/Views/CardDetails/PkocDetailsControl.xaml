@@ -9,9 +9,11 @@
     d:DataContext="{d:DesignInstance models:PKOCDetails}">
 
     <StackPanel Margin="12">
-        <Grid>
+        <!-- Card Info -->
+        <Grid Margin="0,0,0,16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="110" />
+                <ColumnDefinition Width="12" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -20,13 +22,118 @@
 
             <TextBlock Grid.Row="0" Grid.Column="0"
                 Text="Protocol Version:"
+                TextAlignment="Right"
                 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                 Margin="0,0,0,4" />
-            <TextBlock Grid.Row="0" Grid.Column="1"
+            <TextBlock Grid.Row="0" Grid.Column="2"
                 Text="{Binding ProtocolVersion, FallbackValue='N/A'}"
                 FontFamily="Consolas"
                 FontWeight="Medium"
                 Margin="0,0,0,4" />
         </Grid>
+
+        <!-- Credential Size Selector -->
+        <TextBlock Text="Credential"
+            FontWeight="SemiBold"
+            Margin="0,0,0,8" />
+        <ComboBox x:Name="BitSizeSelector" SelectedIndex="0" Margin="0,0,0,12" Width="280" HorizontalAlignment="Left">
+            <ComboBoxItem Content="256-bit (Full X Component)" />
+            <ComboBoxItem Content="75-bit (Recommended for Legacy)" />
+            <ComboBoxItem Content="64-bit" />
+        </ComboBox>
+
+        <!-- 256-bit Credential -->
+        <StackPanel>
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SelectedIndex, ElementName=BitSizeSelector}" Value="0">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+
+            <TextBlock Text="Hex"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                FontSize="11"
+                Margin="0,0,0,4" />
+            <TextBox Text="{Binding Credential256Hex, Mode=OneWay, FallbackValue='N/A'}"
+                Style="{StaticResource TextBox.Copyable}"
+                FontSize="10"
+                Margin="0,0,0,8" />
+
+            <TextBlock Text="Wiegand Bits (256)"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                FontSize="11"
+                Margin="0,0,0,4" />
+            <TextBox Text="{Binding Credential256Bits, Mode=OneWay, FallbackValue='N/A'}"
+                Style="{StaticResource TextBox.Copyable}"
+                FontSize="10"
+                TextWrapping="Wrap" />
+        </StackPanel>
+
+        <!-- 75-bit Credential -->
+        <StackPanel>
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SelectedIndex, ElementName=BitSizeSelector}" Value="1">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+
+            <TextBlock Text="Hex"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                FontSize="11"
+                Margin="0,0,0,4" />
+            <TextBox Text="{Binding Credential75Hex, Mode=OneWay, FallbackValue='N/A'}"
+                Style="{StaticResource TextBox.Copyable}"
+                FontSize="10"
+                Margin="0,0,0,8" />
+
+            <TextBlock Text="Wiegand Bits (75)"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                FontSize="11"
+                Margin="0,0,0,4" />
+            <TextBox Text="{Binding Credential75Bits, Mode=OneWay, FallbackValue='N/A'}"
+                Style="{StaticResource TextBox.Copyable}"
+                FontSize="10" />
+        </StackPanel>
+
+        <!-- 64-bit Credential -->
+        <StackPanel>
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SelectedIndex, ElementName=BitSizeSelector}" Value="2">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+
+            <TextBlock Text="Hex"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                FontSize="11"
+                Margin="0,0,0,4" />
+            <TextBox Text="{Binding Credential64Hex, Mode=OneWay, FallbackValue='N/A'}"
+                Style="{StaticResource TextBox.Copyable}"
+                FontSize="10"
+                Margin="0,0,0,8" />
+
+            <TextBlock Text="Wiegand Bits (64)"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                FontSize="11"
+                Margin="0,0,0,4" />
+            <TextBox Text="{Binding Credential64Bits, Mode=OneWay, FallbackValue='N/A'}"
+                Style="{StaticResource TextBox.Copyable}"
+                FontSize="10" />
+        </StackPanel>
     </StackPanel>
 </UserControl>
