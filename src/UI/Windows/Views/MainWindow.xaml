@@ -22,7 +22,6 @@
     <ui:FluentWindow.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BoolToVisibility" />
         <converters:TechnologyToColorConverter x:Key="TechToColor" />
-        <converters:NullToVisibilityConverter x:Key="NullToVisibility" />
 
         <!-- Tab header style for better visibility -->
         <Style x:Key="DetailTabItemStyle" TargetType="TabItem">
