@@ -229,7 +229,7 @@
             ShowMinimize="True" />
 
         <!-- Main Content -->
-        <StackPanel Grid.Row="1" Margin="{StaticResource Spacing.Large}">
+        <StackPanel Grid.Row="1" Margin="{StaticResource Thickness.Large}">
                 <!-- Reader Selection -->
                 <ui:Card Margin="{StaticResource Margin.Section}">
                     <Grid>
@@ -275,7 +275,7 @@
                     <StackPanel Grid.Column="0" Margin="{StaticResource Margin.Control}">
                         <!-- Card Status Area -->
                         <ui:Card Margin="{StaticResource Margin.Section}" MinWidth="200" Height="280">
-                            <StackPanel Margin="{StaticResource Spacing.Large}" VerticalAlignment="Center">
+                            <StackPanel Margin="{StaticResource Thickness.Large}" VerticalAlignment="Center">
                                 <Grid HorizontalAlignment="Center" MinHeight="160">
                                     <!-- Idle State: Present Card to Reader -->
                                     <StackPanel

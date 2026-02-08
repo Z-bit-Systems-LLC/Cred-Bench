@@ -12,7 +12,7 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="{StaticResource Spacing.Medium}" />
+                <ColumnDefinition Width="{StaticResource Gutter.Medium}" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
