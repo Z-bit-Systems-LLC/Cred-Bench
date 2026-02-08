@@ -6,6 +6,7 @@ using CredBench.Windows.Services;
 using CredBench.Windows.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ZBitSystems.Wpf.UI.Settings;
 
 namespace CredBench.Windows;
 
@@ -18,6 +19,10 @@ public partial class App : Application
         _host = Host.CreateDefaultBuilder()
             .ConfigureServices((_, services) =>
             {
+                // Settings
+                services.AddSingleton<IUserSettingsService<UserSettings>>(
+                    new JsonUserSettingsService<UserSettings>("CredBench"));
+
                 // Smart card services
                 services.AddSingleton<WindowsSmartCardService>();
                 services.AddSingleton<ISmartCardService>(sp => sp.GetRequiredService<WindowsSmartCardService>());
