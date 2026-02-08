@@ -9,6 +9,7 @@ public partial class MainWindow
 {
     private readonly IUserSettingsService<UserSettings> _settingsService;
     private readonly WindowStateManager _windowStateManager;
+    private readonly ThemeManager _themeManager;
 
     public MainWindow(MainViewModel viewModel, IUserSettingsService<UserSettings> settingsService)
     {
@@ -18,11 +19,13 @@ public partial class MainWindow
         _settingsService = settingsService;
         _windowStateManager = new WindowStateManager(this, settingsService.Settings);
         _windowStateManager.RestoreWindowState();
+        _themeManager = new ThemeManager(this);
         Closing += OnClosing;
     }
 
     private async void OnClosing(object? sender, CancelEventArgs e)
     {
+        _themeManager.Dispose();
         _windowStateManager.SaveWindowState();
         await _settingsService.SaveAsync();
     }
