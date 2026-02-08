@@ -12,11 +12,9 @@
     xmlns:cardDetails="clr-namespace:CredBench.Windows.Views.CardDetails"
     mc:Ignorable="d"
     Title="Cred Bench"
-    Width="800"
-    SizeToContent="Height"
     MinWidth="700"
-    WindowStartupLocation="CenterScreen"
-    ResizeMode="CanMinimize"
+    MinHeight="500"
+    ResizeMode="CanResize"
     ExtendsContentIntoTitleBar="True"
     d:DataContext="{d:DesignInstance viewmodels:MainViewModel}">
 
