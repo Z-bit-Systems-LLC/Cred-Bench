@@ -1,130 +1,27 @@
 
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- DesignTokens, ThemeSemanticColors, and ComponentStyles are loaded via App.xaml from Guidelines library -->
+    <!-- This file contains application-specific style overrides only -->
 
-    <!-- Card Styles -->
-    <Style x:Key="Card.Standard" TargetType="ui:Card">
-        <Setter Property="Margin" Value="{StaticResource Margin.Card}"/>
-        <Setter Property="Padding" Value="{StaticResource Padding.Card}"/>
-    </Style>
-
-    <Style x:Key="Card.Bordered" TargetType="Border">
-        <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource ControlElevationBorderBrush}"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="CornerRadius" Value="8"/>
-        <Setter Property="Padding" Value="{StaticResource Padding.Card}"/>
-        <Setter Property="Margin" Value="{StaticResource Margin.Card}"/>
-    </Style>
-
-    <!-- Section Header Style -->
+    <!-- Section Header - Smaller size for tab content density -->
     <Style x:Key="Section.Header" TargetType="TextBlock" BasedOn="{StaticResource Text.Subtitle}">
+        <Setter Property="FontSize" Value="{StaticResource FontSize.BodyLarge}"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Margin" Value="0,0,0,12"/>
     </Style>
 
-    <!-- Field Label Style -->
+    <!-- Field Label - Secondary color, spacing for form fields -->
     <Style x:Key="Field.Label" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
         <Setter Property="FontWeight" Value="Medium"/>
         <Setter Property="Margin" Value="0,0,0,4"/>
         <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}"/>
     </Style>
 
-    <!-- Field Value Style (for read-only display fields) -->
+    <!-- Field Value - Spacing for read-only display -->
     <Style x:Key="Field.Value" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
         <Setter Property="Margin" Value="0,0,0,12"/>
-    </Style>
-
-    <!-- Form Field Layout Template -->
-    <ControlTemplate x:Key="Template.FormField" TargetType="ContentControl">
-        <StackPanel Orientation="Vertical" Margin="0,0,0,12">
-            <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Tag}"
-                       Style="{StaticResource Field.Label}"/>
-            <ContentPresenter/>
-        </StackPanel>
-    </ControlTemplate>
-
-    <!-- Horizontal Field Group (for side-by-side fields) -->
-    <Style x:Key="FieldGroup.Horizontal" TargetType="StackPanel">
-        <Setter Property="Orientation" Value="Horizontal"/>
-        <Setter Property="Margin" Value="0,0,0,12"/>
-    </Style>
-
-    <!-- Standard Button Styles (from Guidelines) -->
-    <!-- These are defined in the Guidelines ComponentStyles.xaml: -->
-    <!-- Button.Primary, Button.Secondary, Button.Transparent -->
-
-    <!-- Badge Styles -->
-    <!-- Success Badge (Green) -->
-    <Style x:Key="Badge.Success" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource Brush.Success}"/>
-        <Setter Property="CornerRadius" Value="4"/>
-        <Setter Property="Padding" Value="8,4"/>
-        <Setter Property="Margin" Value="0,0,8,0"/>
-    </Style>
-
-    <!-- Info Badge (Blue) -->
-    <Style x:Key="Badge.Info" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource Brush.Info}"/>
-        <Setter Property="CornerRadius" Value="4"/>
-        <Setter Property="Padding" Value="8,4"/>
-        <Setter Property="Margin" Value="0,0,8,0"/>
-    </Style>
-
-    <!-- Warning Badge (Orange) -->
-    <Style x:Key="Badge.Warning" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource Brush.Warning}"/>
-        <Setter Property="CornerRadius" Value="4"/>
-        <Setter Property="Padding" Value="8,4"/>
-        <Setter Property="Margin" Value="0,0,8,0"/>
-    </Style>
-
-    <!-- Error Badge (Red) - Outlined for better readability -->
-    <Style x:Key="Badge.Error.Outlined" TargetType="Border">
-        <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderBrush" Value="{StaticResource Brush.Error}"/>
-        <Setter Property="BorderThickness" Value="1.5"/>
-        <Setter Property="CornerRadius" Value="4"/>
-        <Setter Property="Padding" Value="8,4"/>
-        <Setter Property="Margin" Value="0,0,8,0"/>
-    </Style>
-
-    <!-- Badge Text Styles -->
-    <Style x:Key="Badge.Text" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="FontWeight" Value="Medium"/>
-        <Setter Property="FontSize" Value="{StaticResource FontSize.Caption}"/>
-    </Style>
-
-    <Style x:Key="Badge.Text.Error" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
-        <Setter Property="Foreground" Value="{StaticResource Brush.Error}"/>
-        <Setter Property="FontWeight" Value="Medium"/>
-        <Setter Property="FontSize" Value="{StaticResource FontSize.Caption}"/>
-    </Style>
-
-    <!-- Status Text Styles -->
-    <Style x:Key="Text.Success" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
-        <Setter Property="Foreground" Value="{StaticResource Brush.Success}"/>
-    </Style>
-
-    <Style x:Key="Text.Warning" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
-        <Setter Property="Foreground" Value="{StaticResource Brush.Warning}"/>
-    </Style>
-
-    <Style x:Key="Text.Error" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
-        <Setter Property="Foreground" Value="{StaticResource Brush.Error}"/>
-    </Style>
-
-    <Style x:Key="Text.Info" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
-        <Setter Property="Foreground" Value="{StaticResource Brush.Info}"/>
-    </Style>
-
-    <!-- Data Display Grid (for key-value pairs in card details) -->
-    <Style x:Key="DataGrid.KeyValue" TargetType="Grid">
-        <Setter Property="Margin" Value="0,0,0,8"/>
     </Style>
 
 </ResourceDictionary>

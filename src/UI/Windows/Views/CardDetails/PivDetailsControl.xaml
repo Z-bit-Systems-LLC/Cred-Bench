@@ -8,12 +8,12 @@
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance models:PIVDetails}">
 
-    <StackPanel Margin="12">
+    <StackPanel Margin="{StaticResource Padding.Card}">
         <!-- Card Info -->
-        <Grid Margin="0,0,0,16">
+        <Grid Margin="{StaticResource Margin.Section}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="90" />
-                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="{StaticResource Spacing.Medium}" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -21,26 +21,24 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
                 Text="Status:"
-                TextAlignment="Right"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,4" />
+                TextAlignment="Right" />
             <TextBlock Grid.Row="0" Grid.Column="2"
+                Style="{StaticResource Text.Success}"
                 Text="{Binding Status, FallbackValue='Detected'}"
-                Foreground="#22C55E"
                 FontWeight="Medium"
                 Margin="0,0,0,4" />
         </Grid>
 
         <!-- FASC-N Fields -->
         <TextBlock Text="FASC-N"
-            FontWeight="SemiBold"
-            Margin="0,0,0,8" />
+            Style="{StaticResource Section.Header}" />
 
-        <Grid Margin="0,0,0,16">
+        <Grid Margin="{StaticResource Margin.Section}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="130" />
-                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="{StaticResource Spacing.Medium}" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -56,110 +54,99 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
                 Text="Agency Code:"
-                TextAlignment="Right"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,6" />
+                TextAlignment="Right" />
             <TextBlock Grid.Row="0" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
                 Text="{Binding AgencyCode, FallbackValue='N/A'}"
-                FontFamily="Consolas"
-                Margin="0,0,0,6" />
+                FontFamily="Consolas" />
 
             <TextBlock Grid.Row="1" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
                 Text="System Code:"
-                TextAlignment="Right"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,6" />
+                TextAlignment="Right" />
             <TextBlock Grid.Row="1" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
                 Text="{Binding SystemCode, FallbackValue='N/A'}"
-                FontFamily="Consolas"
-                Margin="0,0,0,6" />
+                FontFamily="Consolas" />
 
             <TextBlock Grid.Row="2" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
                 Text="Credential #:"
-                TextAlignment="Right"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,6" />
+                TextAlignment="Right" />
             <TextBlock Grid.Row="2" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
                 Text="{Binding CredentialNumber, FallbackValue='N/A'}"
-                FontFamily="Consolas"
-                Margin="0,0,0,6" />
+                FontFamily="Consolas" />
 
             <TextBlock Grid.Row="3" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
                 Text="Credential Series:"
-                TextAlignment="Right"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,6" />
+                TextAlignment="Right" />
             <TextBlock Grid.Row="3" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
                 Text="{Binding CredentialSeries, FallbackValue='N/A'}"
-                FontFamily="Consolas"
-                Margin="0,0,0,6" />
+                FontFamily="Consolas" />
 
             <TextBlock Grid.Row="4" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
                 Text="ICI:"
-                TextAlignment="Right"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,6" />
+                TextAlignment="Right" />
             <TextBlock Grid.Row="4" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
                 Text="{Binding IndividualCredentialIssue, FallbackValue='N/A'}"
-                FontFamily="Consolas"
-                Margin="0,0,0,6" />
+                FontFamily="Consolas" />
 
             <TextBlock Grid.Row="5" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
                 Text="Person Identifier:"
-                TextAlignment="Right"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,6" />
+                TextAlignment="Right" />
             <TextBlock Grid.Row="5" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
                 Text="{Binding PersonIdentifier, FallbackValue='N/A'}"
-                FontFamily="Consolas"
-                Margin="0,0,0,6" />
+                FontFamily="Consolas" />
 
             <TextBlock Grid.Row="6" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
                 Text="Org. Category:"
-                TextAlignment="Right"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,6" />
+                TextAlignment="Right" />
             <TextBlock Grid.Row="6" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
                 Text="{Binding OrganizationalCategory, FallbackValue='N/A'}"
-                FontFamily="Consolas"
-                Margin="0,0,0,6" />
+                FontFamily="Consolas" />
 
             <TextBlock Grid.Row="7" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
                 Text="Org. Identifier:"
-                TextAlignment="Right"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,6" />
+                TextAlignment="Right" />
             <TextBlock Grid.Row="7" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
                 Text="{Binding OrganizationalIdentifier, FallbackValue='N/A'}"
-                FontFamily="Consolas"
-                Margin="0,0,0,6" />
+                FontFamily="Consolas" />
 
             <TextBlock Grid.Row="8" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
                 Text="POA:"
-                TextAlignment="Right"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,4" />
+                TextAlignment="Right" />
             <TextBlock Grid.Row="8" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
                 Text="{Binding PersonOrgAssociation, FallbackValue='N/A'}"
-                FontFamily="Consolas"
-                Margin="0,0,0,4" />
+                FontFamily="Consolas" />
         </Grid>
 
         <!-- 200-bit Wiegand -->
         <TextBlock Text="Hex"
-            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-            FontSize="11"
-            Margin="0,0,0,4" />
+            Style="{StaticResource Field.Label}"
+            FontSize="{StaticResource FontSize.Caption}" />
         <TextBox Text="{Binding FASCNHex, Mode=OneWay, FallbackValue='N/A'}"
             Style="{StaticResource TextBox.Copyable}"
             FontSize="10"
             Margin="0,0,0,8" />
 
         <TextBlock Text="{Binding WiegandBitsLabel, FallbackValue='Wiegand Bits'}"
-            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-            FontSize="11"
-            Margin="0,0,0,4" />
+            Style="{StaticResource Field.Label}"
+            FontSize="{StaticResource FontSize.Caption}" />
         <TextBox Text="{Binding FASCNWiegandBits, Mode=OneWay, FallbackValue='N/A'}"
             Style="{StaticResource TextBox.Copyable}"
             FontSize="10"

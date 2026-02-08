@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:converters="clr-namespace:CredBench.Windows.Converters"
+    xmlns:guidelinesConverters="clr-namespace:ZBitSystems.Wpf.UI.Converters;assembly=ZBitSystems.Wpf.UI"
     xmlns:viewmodels="clr-namespace:CredBench.Core.ViewModels;assembly=Core"
     xmlns:models="clr-namespace:CredBench.Core.Models.TechnologyDetails;assembly=Core"
     xmlns:cardDetails="clr-namespace:CredBench.Windows.Views.CardDetails"
@@ -20,14 +21,14 @@
     d:DataContext="{d:DesignInstance viewmodels:MainViewModel}">
 
     <ui:FluentWindow.Resources>
-        <converters:BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <guidelinesConverters:BooleanToVisibilityConverter x:Key="BoolToVisibility" />
         <converters:TechnologyToColorConverter x:Key="TechToColor" />
 
         <!-- Tab header style for better visibility -->
         <Style x:Key="DetailTabItemStyle" TargetType="TabItem">
-            <Setter Property="Padding" Value="10,3" />
+            <Setter Property="Padding" Value="{StaticResource Padding.Control}" />
             <Setter Property="Margin" Value="0,0,2,0" />
-            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontSize" Value="{StaticResource FontSize.Caption}" />
             <Setter Property="FontWeight" Value="Medium" />
             <Setter Property="MinWidth" Value="70" />
             <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}" />
@@ -102,7 +103,7 @@
 
         <!-- Base style for technology badges -->
         <Style x:Key="TechBadgeBaseStyle" TargetType="Border">
-            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="CornerRadius" Value="{StaticResource CornerRadius.Small}" />
             <Setter Property="Padding" Value="12,6" />
             <Setter Property="Margin" Value="0,0,8,8" />
             <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
@@ -114,7 +115,7 @@
             <Setter Property="Effect">
                 <Setter.Value>
                     <DropShadowEffect
-                        Color="#3B82F6"
+                        Color="{Binding Color, Source={StaticResource Brush.Info}}"
                         ShadowDepth="0"
                         BlurRadius="15"
                         Opacity="0" />
@@ -228,9 +229,9 @@
             ShowMinimize="True" />
 
         <!-- Main Content -->
-        <StackPanel Grid.Row="1" Margin="24">
+        <StackPanel Grid.Row="1" Margin="{StaticResource Spacing.Large}">
                 <!-- Reader Selection -->
-                <ui:Card Margin="0,0,0,16">
+                <ui:Card Margin="{StaticResource Margin.Section}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -240,8 +241,7 @@
                         <StackPanel Grid.Column="0">
                             <TextBlock
                                 Text="Reader"
-                                FontWeight="SemiBold"
-                                Margin="0,0,0,8" />
+                                Style="{StaticResource Section.Header}" />
                             <ComboBox
                                 ItemsSource="{Binding AvailableReaders}"
                                 SelectedItem="{Binding SelectedReader}"
@@ -265,17 +265,17 @@
                 </ui:Card>
 
                 <!-- Two Column Layout: Card Status (Left) and Details (Right) -->
-                <Grid Margin="0,0,0,16">
+                <Grid Margin="{StaticResource Margin.Section}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <!-- Left Column: Card Status and Technologies -->
-                    <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                    <StackPanel Grid.Column="0" Margin="{StaticResource Margin.Control}">
                         <!-- Card Status Area -->
-                        <ui:Card Margin="0,0,0,16" MinWidth="200" Height="280">
-                            <StackPanel Margin="24,24,24,16" VerticalAlignment="Center">
+                        <ui:Card Margin="{StaticResource Margin.Section}" MinWidth="200" Height="280">
+                            <StackPanel Margin="{StaticResource Spacing.Large}" VerticalAlignment="Center">
                                 <Grid HorizontalAlignment="Center" MinHeight="160">
                                     <!-- Idle State: Present Card to Reader -->
                                     <StackPanel
@@ -288,7 +288,7 @@
                                             Text="Present Card to Reader"
                                             HorizontalAlignment="Center"
                                             Margin="0,16,0,0"
-                                            FontSize="16"
+                                            FontSize="{StaticResource FontSize.BodyLarge}"
                                             Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                                         <ui:Button
                                             Content="Scan Card"
@@ -369,7 +369,7 @@
                                             Text="Scanning Card..."
                                             HorizontalAlignment="Center"
                                             Margin="0,12,0,0"
-                                            FontSize="16"
+                                            FontSize="{StaticResource FontSize.BodyLarge}"
                                             FontWeight="Medium"
                                             Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
                                     </StackPanel>
@@ -391,8 +391,7 @@
                             <StackPanel>
                                 <TextBlock
                                     Text="Detected Technologies"
-                                    FontWeight="SemiBold"
-                                    Margin="0,0,0,12" />
+                                    Style="{StaticResource Section.Header}" />
                                 <WrapPanel>
                                     <Border
                                         Style="{StaticResource PIVBadgeStyle}"
@@ -429,8 +428,7 @@
                         <StackPanel>
                             <TextBlock
                                 Text="Card Details"
-                                FontWeight="SemiBold"
-                                Margin="0,0,0,12" />
+                                Style="{StaticResource Section.Header}" />
 
                             <!-- Placeholder when no card scanned -->
                             <TextBlock

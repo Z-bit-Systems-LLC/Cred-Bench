@@ -8,11 +8,11 @@
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance models:GeneralCardDetails}">
 
-    <StackPanel Margin="12">
-        <Grid Margin="0,0,0,16">
+    <StackPanel Margin="{StaticResource Padding.Card}">
+        <Grid Margin="{StaticResource Margin.Section}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="90" />
-                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="{StaticResource Spacing.Medium}" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -21,31 +21,28 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
                 Text="Reader:"
-                TextAlignment="Right"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,4" />
+                TextAlignment="Right" />
             <TextBlock Grid.Row="0" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
                 Text="{Binding ReaderName, FallbackValue='N/A'}"
                 FontWeight="Medium"
-                TextWrapping="Wrap"
-                Margin="0,0,0,4" />
+                TextWrapping="Wrap" />
 
             <TextBlock Grid.Row="1" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
                 Text="Protocol:"
-                TextAlignment="Right"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,4" />
+                TextAlignment="Right" />
             <TextBlock Grid.Row="1" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
                 Text="{Binding Protocol, FallbackValue='N/A'}"
-                FontFamily="Consolas"
-                Margin="0,0,0,4" />
+                FontFamily="Consolas" />
         </Grid>
 
         <TextBlock Text="ATR"
-            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-            FontSize="11"
-            Margin="0,0,0,4" />
+            Style="{StaticResource Field.Label}"
+            FontSize="{StaticResource FontSize.Caption}" />
         <TextBox Text="{Binding ATR, Mode=OneWay, FallbackValue='N/A'}"
             Style="{StaticResource TextBox.Copyable}"
             FontSize="10"

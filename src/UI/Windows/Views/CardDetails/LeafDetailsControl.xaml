@@ -8,11 +8,11 @@
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance models:LEAFDetails}">
 
-    <StackPanel Margin="12">
+    <StackPanel Margin="{StaticResource Padding.Card}">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="110" />
-                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="{StaticResource Spacing.Medium}" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -21,21 +21,19 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
                 Text="Application Type:"
-                TextAlignment="Right"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,8" />
+                TextAlignment="Right" />
             <TextBlock Grid.Row="0" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
                 Text="{Binding ApplicationType, FallbackValue='Unknown'}"
-                FontWeight="Medium"
-                Margin="0,0,0,8" />
+                FontWeight="Medium" />
 
             <TextBlock Grid.Row="1" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
                 Text="Detected AIDs:"
                 TextAlignment="Right"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                VerticalAlignment="Top"
-                Margin="0,0,0,4" />
+                VerticalAlignment="Top" />
             <ItemsControl Grid.Row="1" Grid.Column="2"
                 ItemsSource="{Binding DetectedAIDs}"
                 Margin="0,0,0,4">
@@ -44,7 +42,7 @@
                         <TextBlock
                             Text="{Binding}"
                             FontFamily="Consolas"
-                            FontSize="11"
+                            FontSize="{StaticResource FontSize.Caption}"
                             Margin="0,0,0,2" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

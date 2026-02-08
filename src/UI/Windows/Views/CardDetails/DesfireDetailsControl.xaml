@@ -8,11 +8,11 @@
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance models:DESFireDetails}">
 
-    <StackPanel Margin="12">
+    <StackPanel Margin="{StaticResource Padding.Card}">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="90" />
-                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="{StaticResource Spacing.Medium}" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -22,34 +22,31 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
                 Text="Card Type:"
-                TextAlignment="Right"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,8" />
+                TextAlignment="Right" />
             <TextBlock Grid.Row="0" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
                 Text="{Binding CardType, FallbackValue='DESFire'}"
-                FontWeight="Medium"
-                Margin="0,0,0,8" />
+                FontWeight="Medium" />
 
             <TextBlock Grid.Row="1" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
                 Text="Version:"
-                TextAlignment="Right"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,8" />
+                TextAlignment="Right" />
             <TextBlock Grid.Row="1" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
                 Text="{Binding HardwareVersion, FallbackValue='N/A'}"
-                FontFamily="Consolas"
-                Margin="0,0,0,8" />
+                FontFamily="Consolas" />
 
             <TextBlock Grid.Row="2" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
                 Text="Storage:"
-                TextAlignment="Right"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Margin="0,0,0,4" />
+                TextAlignment="Right" />
             <TextBlock Grid.Row="2" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
                 Text="{Binding StorageSize, FallbackValue='N/A'}"
-                FontFamily="Consolas"
-                Margin="0,0,0,4" />
+                FontFamily="Consolas" />
         </Grid>
     </StackPanel>
 </UserControl>
