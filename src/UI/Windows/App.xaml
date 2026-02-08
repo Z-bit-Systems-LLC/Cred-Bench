@@ -2,60 +2,24 @@
     x:Class="CredBench.Windows.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    xmlns:helpers="clr-namespace:CredBench.Windows.Helpers">
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemesDictionary Theme="Dark" />
                 <ui:ControlsDictionary />
+                <!-- Z-bit Systems Shared Design System -->
+                <ResourceDictionary Source="pack://application:,,,/ZBitSystems.Wpf.UI;component/Styles/DesignTokens.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/ZBitSystems.Wpf.UI;component/Styles/ThemeSemanticColors.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/ZBitSystems.Wpf.UI;component/Styles/ComponentStyles.xaml"/>
+                <!-- Cred-Bench Application-Specific Templates -->
+                <ResourceDictionary Source="Styles/LayoutTemplates.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
-            <Style x:Key="TextBox.Copyable" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+            <!-- Copyable TextBox Style - Uses Guidelines TextBox.Standard with Consolas font -->
+            <Style x:Key="TextBox.Copyable" TargetType="TextBox" BasedOn="{StaticResource TextBox.Standard}">
                 <Setter Property="IsReadOnly" Value="True" />
                 <Setter Property="FontFamily" Value="Consolas" />
-                <Setter Property="Background" Value="{DynamicResource ControlFillColorDisabledBrush}" />
-                <Setter Property="ContextMenu" Value="{x:Null}" />
-                <Setter Property="helpers:CopyTextBoxHelper.CopyCommand"
-                        Value="{x:Static helpers:CopyTextBoxHelper.DefaultCopyCommand}" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="TextBox">
-                            <Border Background="{DynamicResource ControlFillColorDisabledBrush}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="4"
-                                    Padding="{TemplateBinding Padding}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <ScrollViewer Grid.Column="0"
-                                                  x:Name="PART_ContentHost"
-                                                  Focusable="False"
-                                                  HorizontalScrollBarVisibility="Hidden"
-                                                  VerticalScrollBarVisibility="Hidden"
-                                                  Margin="0,0,4,0" />
-                                    <ui:Button Grid.Column="1"
-                                               Appearance="Transparent"
-                                               BorderThickness="0"
-                                               Padding="4"
-                                               Width="24"
-                                               Height="24"
-                                               VerticalAlignment="Center"
-                                               ToolTip="Copy"
-                                               Command="{Binding RelativeSource={RelativeSource AncestorType=TextBox}, Path=(helpers:CopyTextBoxHelper.CopyCommand)}"
-                                               CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=TextBox}}">
-                                        <ui:Button.Icon>
-                                            <ui:SymbolIcon Symbol="Copy24" />
-                                        </ui:Button.Icon>
-                                    </ui:Button>
-                                </Grid>
-                            </Border>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
             </Style>
         </ResourceDictionary>
     </Application.Resources>

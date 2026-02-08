@@ -1,0 +1,3 @@
+[submodule "lib/Guidelines"]
+	path = lib/Guidelines
+	url = https://github.com/Z-bit-Systems-LLC/Guidelines.git
