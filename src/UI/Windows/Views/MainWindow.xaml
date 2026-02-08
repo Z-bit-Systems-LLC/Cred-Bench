@@ -310,8 +310,8 @@
                                                         <DoubleAnimation
                                                             Storyboard.TargetName="ScanLine"
                                                             Storyboard.TargetProperty="(Canvas.Top)"
-                                                            From="10"
-                                                            To="58"
+                                                            From="8"
+                                                            To="55"
                                                             Duration="0:0:1.2"
                                                             AutoReverse="True" />
                                                     </Storyboard>
@@ -350,14 +350,13 @@
                                             <!-- Scanning Line -->
                                             <Rectangle x:Name="ScanLine"
                                                        Canvas.Left="12" Canvas.Top="10"
-                                                       Width="76" Height="3"
+                                                       Width="76" Height="6"
                                                        RadiusX="1.5" RadiusY="1.5">
                                                 <Rectangle.Fill>
-                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                                                         <GradientStop Color="Transparent" Offset="0" />
-                                                        <GradientStop Color="#60FFFFFF" Offset="0.3" />
-                                                        <GradientStop Color="#FFFFFFFF" Offset="0.5" />
-                                                        <GradientStop Color="#60FFFFFF" Offset="0.7" />
+                                                        <GradientStop Color="{Binding Color, Source={StaticResource Brush.Info}}" Offset="0.4" />
+                                                        <GradientStop Color="{Binding Color, Source={StaticResource Brush.Info}}" Offset="0.6" />
                                                         <GradientStop Color="Transparent" Offset="1" />
                                                     </LinearGradientBrush>
                                                 </Rectangle.Fill>
