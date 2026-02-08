@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:CredBench.Core.Models.TechnologyDetails;assembly=Core"
+    xmlns:localization="clr-namespace:ZBitSystems.Wpf.UI.Localization;assembly=ZBitSystems.Wpf.UI"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance models:PIVDetails}">
 
@@ -22,7 +23,7 @@
 
             <TextBlock Grid.Row="0" Grid.Column="0"
                 Style="{StaticResource Field.Label}"
-                Text="Status:"
+                Text="{localization:Localize PIV_Status}"
                 TextAlignment="Right" />
             <TextBlock Grid.Row="0" Grid.Column="2"
                 Style="{StaticResource Text.Success}"
@@ -32,7 +33,7 @@
         </Grid>
 
         <!-- FASC-N Fields -->
-        <TextBlock Text="FASC-N"
+        <TextBlock Text="{localization:Localize PIV_FASCN}"
             Style="{StaticResource Section.Header}" />
 
         <Grid Margin="{StaticResource Margin.Section}">
@@ -55,7 +56,7 @@
 
             <TextBlock Grid.Row="0" Grid.Column="0"
                 Style="{StaticResource Field.Label}"
-                Text="Agency Code:"
+                Text="{localization:Localize PIV_AgencyCode}"
                 TextAlignment="Right" />
             <TextBlock Grid.Row="0" Grid.Column="2"
                 Style="{StaticResource Field.Value}"
@@ -64,7 +65,7 @@
 
             <TextBlock Grid.Row="1" Grid.Column="0"
                 Style="{StaticResource Field.Label}"
-                Text="System Code:"
+                Text="{localization:Localize PIV_SystemCode}"
                 TextAlignment="Right" />
             <TextBlock Grid.Row="1" Grid.Column="2"
                 Style="{StaticResource Field.Value}"
@@ -73,7 +74,7 @@
 
             <TextBlock Grid.Row="2" Grid.Column="0"
                 Style="{StaticResource Field.Label}"
-                Text="Credential #:"
+                Text="{localization:Localize PIV_CredentialNumber}"
                 TextAlignment="Right" />
             <TextBlock Grid.Row="2" Grid.Column="2"
                 Style="{StaticResource Field.Value}"
@@ -82,7 +83,7 @@
 
             <TextBlock Grid.Row="3" Grid.Column="0"
                 Style="{StaticResource Field.Label}"
-                Text="Credential Series:"
+                Text="{localization:Localize PIV_CredentialSeries}"
                 TextAlignment="Right" />
             <TextBlock Grid.Row="3" Grid.Column="2"
                 Style="{StaticResource Field.Value}"
@@ -91,7 +92,7 @@
 
             <TextBlock Grid.Row="4" Grid.Column="0"
                 Style="{StaticResource Field.Label}"
-                Text="ICI:"
+                Text="{localization:Localize PIV_ICI}"
                 TextAlignment="Right" />
             <TextBlock Grid.Row="4" Grid.Column="2"
                 Style="{StaticResource Field.Value}"
@@ -100,7 +101,7 @@
 
             <TextBlock Grid.Row="5" Grid.Column="0"
                 Style="{StaticResource Field.Label}"
-                Text="Person Identifier:"
+                Text="{localization:Localize PIV_PersonIdentifier}"
                 TextAlignment="Right" />
             <TextBlock Grid.Row="5" Grid.Column="2"
                 Style="{StaticResource Field.Value}"
@@ -109,7 +110,7 @@
 
             <TextBlock Grid.Row="6" Grid.Column="0"
                 Style="{StaticResource Field.Label}"
-                Text="Org. Category:"
+                Text="{localization:Localize PIV_OrgCategory}"
                 TextAlignment="Right" />
             <TextBlock Grid.Row="6" Grid.Column="2"
                 Style="{StaticResource Field.Value}"
@@ -118,7 +119,7 @@
 
             <TextBlock Grid.Row="7" Grid.Column="0"
                 Style="{StaticResource Field.Label}"
-                Text="Org. Identifier:"
+                Text="{localization:Localize PIV_OrgIdentifier}"
                 TextAlignment="Right" />
             <TextBlock Grid.Row="7" Grid.Column="2"
                 Style="{StaticResource Field.Value}"
@@ -127,7 +128,7 @@
 
             <TextBlock Grid.Row="8" Grid.Column="0"
                 Style="{StaticResource Field.Label}"
-                Text="POA:"
+                Text="{localization:Localize PIV_POA}"
                 TextAlignment="Right" />
             <TextBlock Grid.Row="8" Grid.Column="2"
                 Style="{StaticResource Field.Value}"
@@ -136,7 +137,7 @@
         </Grid>
 
         <!-- 200-bit Wiegand -->
-        <TextBlock Text="Hex"
+        <TextBlock Text="{localization:Localize PIV_Hex}"
             Style="{StaticResource Field.Label}"
             FontSize="{StaticResource FontSize.Caption}" />
         <TextBox Text="{Binding FASCNHex, Mode=OneWay, FallbackValue='N/A'}"

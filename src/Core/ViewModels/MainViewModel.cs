@@ -11,6 +11,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private readonly ISmartCardService _smartCardService;
     private readonly IReaderMonitorService _readerMonitorService;
     private readonly CardDetectionService _detectionService;
+    private readonly ILocalizationService _localization;
     private readonly SynchronizationContext? _syncContext;
     private CancellationTokenSource? _scanCts;
     private bool _disposed;
@@ -30,7 +31,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private bool _isScanning;
 
     [ObservableProperty]
-    private string _statusMessage = "Ready";
+    private string _statusMessage = string.Empty;
 
     [ObservableProperty]
     private bool _hasPIV;
@@ -68,12 +69,16 @@ public partial class MainViewModel : ObservableObject, IDisposable
     public MainViewModel(
         ISmartCardService smartCardService,
         IReaderMonitorService readerMonitorService,
-        CardDetectionService detectionService)
+        CardDetectionService detectionService,
+        ILocalizationService localizationService)
     {
         _smartCardService = smartCardService;
         _readerMonitorService = readerMonitorService;
         _detectionService = detectionService;
+        _localization = localizationService;
         _syncContext = SynchronizationContext.Current;
+
+        _statusMessage = _localization.GetString("Status_Ready");
 
         _smartCardService.CardInserted += OnCardInserted;
         _smartCardService.CardRemoved += OnCardRemoved;
@@ -109,8 +114,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
 
         StatusMessage = AvailableReaders.Count > 0
-            ? $"Found {AvailableReaders.Count} reader(s)"
-            : "No readers found";
+            ? _localization.GetString("Status_FoundReaders", AvailableReaders.Count)
+            : _localization.GetString("Status_NoReadersFound");
     }
 
     private bool CanScanCard() => !IsScanning && !string.IsNullOrEmpty(SelectedReader);
@@ -127,7 +132,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         try
         {
             IsScanning = true;
-            StatusMessage = "Scanning card...";
+            StatusMessage = _localization.GetString("Status_ScanningCard");
             CurrentResult = null;
             ClearScanningStates();
 
@@ -137,21 +142,21 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
             if (result.Technologies == CardTechnology.Unknown)
             {
-                StatusMessage = "Card detected but technology unknown";
+                StatusMessage = _localization.GetString("Status_TechUnknown");
             }
             else
             {
                 var technologies = GetTechnologyNames(result.Technologies);
-                StatusMessage = $"Detected: {string.Join(", ", technologies)}";
+                StatusMessage = _localization.GetString("Status_Detected", string.Join(", ", technologies));
             }
         }
         catch (OperationCanceledException)
         {
-            StatusMessage = "Scan cancelled";
+            StatusMessage = _localization.GetString("Status_ScanCancelled");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error: {ex.Message}";
+            StatusMessage = _localization.GetString("Status_Error", ex.Message);
         }
         finally
         {
@@ -199,7 +204,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private void ClearResults()
     {
         CurrentResult = null;
-        StatusMessage = "Ready";
+        StatusMessage = _localization.GetString("Status_Ready");
     }
 
     [RelayCommand]
@@ -207,12 +212,12 @@ public partial class MainViewModel : ObservableObject, IDisposable
     {
         _scanCts?.Cancel();
         CurrentResult = null;
-        StatusMessage = "Resetting reader...";
+        StatusMessage = _localization.GetString("Status_ResettingReader");
 
         _readerMonitorService.Restart();
 
         RefreshReaders();
-        StatusMessage = "Reader reset complete";
+        StatusMessage = _localization.GetString("Status_ReaderResetComplete");
     }
 
     private void OnCardInserted(object? sender, ReaderEventArgs e)
@@ -221,7 +226,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         {
             RunOnUiThread(() =>
             {
-                StatusMessage = "Card inserted - scanning...";
+                StatusMessage = _localization.GetString("Status_CardInserted");
                 ScanCardCommand.Execute(null);
             });
         }
@@ -234,7 +239,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
             RunOnUiThread(() =>
             {
                 _scanCts?.Cancel();
-                StatusMessage = "Card removed";
+                StatusMessage = _localization.GetString("Status_CardRemoved");
             });
         }
     }

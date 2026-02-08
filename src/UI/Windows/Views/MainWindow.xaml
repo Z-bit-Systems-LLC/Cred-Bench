@@ -10,6 +10,7 @@
     xmlns:viewmodels="clr-namespace:CredBench.Core.ViewModels;assembly=Core"
     xmlns:models="clr-namespace:CredBench.Core.Models.TechnologyDetails;assembly=Core"
     xmlns:cardDetails="clr-namespace:CredBench.Windows.Views.CardDetails"
+    xmlns:localization="clr-namespace:ZBitSystems.Wpf.UI.Localization;assembly=ZBitSystems.Wpf.UI"
     mc:Ignorable="d"
     Title="Cred Bench"
     MinWidth="700"
@@ -238,7 +239,7 @@
 
                         <StackPanel Grid.Column="0">
                             <TextBlock
-                                Text="Reader"
+                                Text="{localization:Localize Reader_Header}"
                                 Style="{StaticResource Section.Header}" />
                             <ComboBox
                                 ItemsSource="{Binding AvailableReaders}"
@@ -251,12 +252,12 @@
                             <ui:Button
                                 Icon="{ui:SymbolIcon ArrowSync24}"
                                 Command="{Binding RefreshReadersCommand}"
-                                ToolTip="Refresh readers"
+                                ToolTip="{localization:Localize Reader_RefreshTooltip}"
                                 Margin="12,0,0,0" />
                             <ui:Button
                                 Icon="{ui:SymbolIcon ArrowReset24}"
                                 Command="{Binding ResetReaderCommand}"
-                                ToolTip="Reset reader (use when reader stops responding)"
+                                ToolTip="{localization:Localize Reader_ResetTooltip}"
                                 Margin="4,0,0,0" />
                         </StackPanel>
                     </Grid>
@@ -283,13 +284,13 @@
                                             FontSize="64"
                                             Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                                         <TextBlock
-                                            Text="Present Card to Reader"
+                                            Text="{localization:Localize Card_PresentToReader}"
                                             HorizontalAlignment="Center"
                                             Margin="0,16,0,0"
                                             FontSize="{StaticResource FontSize.BodyLarge}"
                                             Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                                         <ui:Button
-                                            Content="Scan Card"
+                                            Content="{localization:Localize Card_ScanButton}"
                                             Icon="{ui:SymbolIcon ScanDash24}"
                                             Command="{Binding ScanCardCommand}"
                                             HorizontalAlignment="Center"
@@ -364,7 +365,7 @@
                                         </Canvas>
 
                                         <TextBlock
-                                            Text="Scanning Card..."
+                                            Text="{localization:Localize Card_Scanning}"
                                             HorizontalAlignment="Center"
                                             Margin="0,12,0,0"
                                             FontSize="{StaticResource FontSize.BodyLarge}"
@@ -388,7 +389,7 @@
                         <ui:Card>
                             <StackPanel>
                                 <TextBlock
-                                    Text="Detected Technologies"
+                                    Text="{localization:Localize Card_DetectedTechnologies}"
                                     Style="{StaticResource Section.Header}" />
                                 <WrapPanel>
                                     <Border
@@ -425,12 +426,12 @@
                     <ui:Card Grid.Column="1" VerticalAlignment="Top">
                         <StackPanel>
                             <TextBlock
-                                Text="Card Details"
+                                Text="{localization:Localize Card_Details}"
                                 Style="{StaticResource Section.Header}" />
 
                             <!-- Placeholder when no card scanned -->
                             <TextBlock
-                                Text="No card scanned yet"
+                                Text="{localization:Localize Card_NoCardScanned}"
                                 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                 Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}, ConverterParameter=Invert}" />
 
@@ -441,36 +442,36 @@
                                 ItemContainerStyle="{StaticResource DetailTabItemStyle}">
 
                                 <!-- General Tab - Always shown when card detected -->
-                                <TabItem Header="General">
+                                <TabItem Header="{localization:Localize Tab_General}">
                                     <ContentControl Content="{Binding CurrentResult.GeneralDetails}" />
                                 </TabItem>
 
                                 <!-- PIV Tab - Shown only when PIV detected -->
-                                <TabItem Header="PIV"
+                                <TabItem Header="{localization:Localize Tab_PIV}"
                                     Visibility="{Binding HasPIV, Converter={StaticResource BoolToVisibility}}">
                                     <ContentControl Content="{Binding CurrentResult.PIVDetails}" />
                                 </TabItem>
 
                                 <!-- DESFire Tab - Shown only when DESFire detected -->
-                                <TabItem Header="DESFire"
+                                <TabItem Header="{localization:Localize Tab_DESFire}"
                                     Visibility="{Binding HasDESFire, Converter={StaticResource BoolToVisibility}}">
                                     <ContentControl Content="{Binding CurrentResult.DESFireDetails}" />
                                 </TabItem>
 
                                 <!-- ISO14443 Tab - Shown only when ISO14443 detected -->
-                                <TabItem Header="ISO14443"
+                                <TabItem Header="{localization:Localize Tab_ISO14443}"
                                     Visibility="{Binding HasISO14443, Converter={StaticResource BoolToVisibility}}">
                                     <ContentControl Content="{Binding CurrentResult.ISO14443Details}" />
                                 </TabItem>
 
                                 <!-- PKOC Tab - Shown only when PKOC detected -->
-                                <TabItem Header="PKOC"
+                                <TabItem Header="{localization:Localize Tab_PKOC}"
                                     Visibility="{Binding HasPKOC, Converter={StaticResource BoolToVisibility}}">
                                     <ContentControl Content="{Binding CurrentResult.PKOCDetails}" />
                                 </TabItem>
 
                                 <!-- LEAF Tab - Shown only when LEAF detected -->
-                                <TabItem Header="LEAF"
+                                <TabItem Header="{localization:Localize Tab_LEAF}"
                                     Visibility="{Binding HasLEAF, Converter={StaticResource BoolToVisibility}}">
                                     <ContentControl Content="{Binding CurrentResult.LEAFDetails}" />
                                 </TabItem>

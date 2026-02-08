@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:CredBench.Core.Models.TechnologyDetails;assembly=Core"
+    xmlns:localization="clr-namespace:ZBitSystems.Wpf.UI.Localization;assembly=ZBitSystems.Wpf.UI"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance models:ISO14443Details}">
 
@@ -24,7 +25,7 @@
 
             <TextBlock Grid.Row="0" Grid.Column="0"
                 Style="{StaticResource Field.Label}"
-                Text="Manufacturer:"
+                Text="{localization:Localize ISO14443_Manufacturer}"
                 TextAlignment="Right" />
             <TextBlock Grid.Row="0" Grid.Column="2"
                 Style="{StaticResource Field.Value}"
@@ -32,7 +33,7 @@
 
             <TextBlock Grid.Row="1" Grid.Column="0"
                 Style="{StaticResource Field.Label}"
-                Text="UID Length:"
+                Text="{localization:Localize ISO14443_UIDLength}"
                 TextAlignment="Right" />
             <TextBlock Grid.Row="1" Grid.Column="2"
                 Style="{StaticResource Field.Value}"
@@ -40,7 +41,7 @@
 
             <TextBlock Grid.Row="2" Grid.Column="0"
                 Style="{StaticResource Field.Label}"
-                Text="UID:"
+                Text="{localization:Localize ISO14443_UID}"
                 TextAlignment="Right" />
             <TextBlock Grid.Row="2" Grid.Column="2"
                 Style="{StaticResource Field.Value}"
@@ -49,10 +50,10 @@
         </Grid>
 
         <!-- CSN Credential -->
-        <TextBlock Text="CSN"
+        <TextBlock Text="{localization:Localize ISO14443_CSN}"
             Style="{StaticResource Section.Header}" />
 
-        <TextBlock Text="Hex"
+        <TextBlock Text="{localization:Localize ISO14443_Hex}"
             Style="{StaticResource Field.Label}"
             FontSize="{StaticResource FontSize.Caption}" />
         <TextBox Text="{Binding CSN, Mode=OneWay, FallbackValue='N/A'}"

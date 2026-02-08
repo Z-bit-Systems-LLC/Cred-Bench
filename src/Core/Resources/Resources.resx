@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- MainWindow -->
+  <data name="Reader_Header" xml:space="preserve">
+    <value>Reader</value>
+  </data>
+  <data name="Reader_RefreshTooltip" xml:space="preserve">
+    <value>Refresh readers</value>
+  </data>
+  <data name="Reader_ResetTooltip" xml:space="preserve">
+    <value>Reset reader (use when reader stops responding)</value>
+  </data>
+  <data name="Card_PresentToReader" xml:space="preserve">
+    <value>Present Card to Reader</value>
+  </data>
+  <data name="Card_ScanButton" xml:space="preserve">
+    <value>Scan Card</value>
+  </data>
+  <data name="Card_Scanning" xml:space="preserve">
+    <value>Scanning Card...</value>
+  </data>
+  <data name="Card_DetectedTechnologies" xml:space="preserve">
+    <value>Detected Technologies</value>
+  </data>
+  <data name="Card_Details" xml:space="preserve">
+    <value>Card Details</value>
+  </data>
+  <data name="Card_NoCardScanned" xml:space="preserve">
+    <value>No card scanned yet</value>
+  </data>
+
+  <!-- Tab Headers -->
+  <data name="Tab_General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="Tab_PIV" xml:space="preserve">
+    <value>PIV</value>
+  </data>
+  <data name="Tab_DESFire" xml:space="preserve">
+    <value>DESFire</value>
+  </data>
+  <data name="Tab_ISO14443" xml:space="preserve">
+    <value>ISO14443</value>
+  </data>
+  <data name="Tab_PKOC" xml:space="preserve">
+    <value>PKOC</value>
+  </data>
+  <data name="Tab_LEAF" xml:space="preserve">
+    <value>LEAF</value>
+  </data>
+
+  <!-- General Details -->
+  <data name="General_Reader" xml:space="preserve">
+    <value>Reader:</value>
+  </data>
+  <data name="General_Protocol" xml:space="preserve">
+    <value>Protocol:</value>
+  </data>
+  <data name="General_ATR" xml:space="preserve">
+    <value>ATR</value>
+  </data>
+
+  <!-- PIV Details -->
+  <data name="PIV_Status" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="PIV_FASCN" xml:space="preserve">
+    <value>FASC-N</value>
+  </data>
+  <data name="PIV_AgencyCode" xml:space="preserve">
+    <value>Agency Code:</value>
+  </data>
+  <data name="PIV_SystemCode" xml:space="preserve">
+    <value>System Code:</value>
+  </data>
+  <data name="PIV_CredentialNumber" xml:space="preserve">
+    <value>Credential #:</value>
+  </data>
+  <data name="PIV_CredentialSeries" xml:space="preserve">
+    <value>Credential Series:</value>
+  </data>
+  <data name="PIV_ICI" xml:space="preserve">
+    <value>ICI:</value>
+  </data>
+  <data name="PIV_PersonIdentifier" xml:space="preserve">
+    <value>Person Identifier:</value>
+  </data>
+  <data name="PIV_OrgCategory" xml:space="preserve">
+    <value>Org. Category:</value>
+  </data>
+  <data name="PIV_OrgIdentifier" xml:space="preserve">
+    <value>Org. Identifier:</value>
+  </data>
+  <data name="PIV_POA" xml:space="preserve">
+    <value>POA:</value>
+  </data>
+  <data name="PIV_Hex" xml:space="preserve">
+    <value>Hex</value>
+  </data>
+
+  <!-- DESFire Details -->
+  <data name="DESFire_CardType" xml:space="preserve">
+    <value>Card Type:</value>
+  </data>
+  <data name="DESFire_Version" xml:space="preserve">
+    <value>Version:</value>
+  </data>
+  <data name="DESFire_Storage" xml:space="preserve">
+    <value>Storage:</value>
+  </data>
+
+  <!-- ISO14443 Details -->
+  <data name="ISO14443_Manufacturer" xml:space="preserve">
+    <value>Manufacturer:</value>
+  </data>
+  <data name="ISO14443_UIDLength" xml:space="preserve">
+    <value>UID Length:</value>
+  </data>
+  <data name="ISO14443_UID" xml:space="preserve">
+    <value>UID:</value>
+  </data>
+  <data name="ISO14443_CSN" xml:space="preserve">
+    <value>CSN</value>
+  </data>
+  <data name="ISO14443_Hex" xml:space="preserve">
+    <value>Hex</value>
+  </data>
+
+  <!-- PKOC Details -->
+  <data name="PKOC_ProtocolVersion" xml:space="preserve">
+    <value>Protocol Version:</value>
+  </data>
+  <data name="PKOC_Credential" xml:space="preserve">
+    <value>Credential</value>
+  </data>
+  <data name="PKOC_256BitOption" xml:space="preserve">
+    <value>256-bit (Full X Component)</value>
+  </data>
+  <data name="PKOC_75BitOption" xml:space="preserve">
+    <value>75-bit (Recommended for Legacy)</value>
+  </data>
+  <data name="PKOC_64BitOption" xml:space="preserve">
+    <value>64-bit</value>
+  </data>
+  <data name="PKOC_Hex" xml:space="preserve">
+    <value>Hex</value>
+  </data>
+  <data name="PKOC_WiegandBits256" xml:space="preserve">
+    <value>Wiegand Bits (256)</value>
+  </data>
+  <data name="PKOC_WiegandBits75" xml:space="preserve">
+    <value>Wiegand Bits (75)</value>
+  </data>
+  <data name="PKOC_WiegandBits64" xml:space="preserve">
+    <value>Wiegand Bits (64)</value>
+  </data>
+
+  <!-- LEAF Details -->
+  <data name="LEAF_ApplicationType" xml:space="preserve">
+    <value>Application Type:</value>
+  </data>
+  <data name="LEAF_DetectedAIDs" xml:space="preserve">
+    <value>Detected AIDs:</value>
+  </data>
+
+  <!-- ViewModel Status Messages -->
+  <data name="Status_Ready" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="Status_FoundReaders" xml:space="preserve">
+    <value>Found {0} reader(s)</value>
+  </data>
+  <data name="Status_NoReadersFound" xml:space="preserve">
+    <value>No readers found</value>
+  </data>
+  <data name="Status_ScanningCard" xml:space="preserve">
+    <value>Scanning card...</value>
+  </data>
+  <data name="Status_TechUnknown" xml:space="preserve">
+    <value>Card detected but technology unknown</value>
+  </data>
+  <data name="Status_Detected" xml:space="preserve">
+    <value>Detected: {0}</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>Scan cancelled</value>
+  </data>
+  <data name="Status_Error" xml:space="preserve">
+    <value>Error: {0}</value>
+  </data>
+  <data name="Status_CardInserted" xml:space="preserve">
+    <value>Card inserted - scanning...</value>
+  </data>
+  <data name="Status_CardRemoved" xml:space="preserve">
+    <value>Card removed</value>
+  </data>
+  <data name="Status_ResettingReader" xml:space="preserve">
+    <value>Resetting reader...</value>
+  </data>
+  <data name="Status_ReaderResetComplete" xml:space="preserve">
+    <value>Reader reset complete</value>
+  </data>
+</root>

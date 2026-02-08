@@ -16,12 +16,19 @@ public partial class App : Application
 
     public App()
     {
+        // Set up localization before DI so the provider is available for XAML
+        var localizationProvider = new ResourceLocalizationProvider();
+        ZBitSystems.Wpf.UI.Localization.LocalizationService.Provider = localizationProvider;
+
         _host = Host.CreateDefaultBuilder()
             .ConfigureServices((_, services) =>
             {
                 // Settings
                 services.AddSingleton<IUserSettingsService<UserSettings>>(
                     new JsonUserSettingsService<UserSettings>("CredBench"));
+
+                // Localization
+                services.AddSingleton<ILocalizationService, Core.Services.LocalizationService>();
 
                 // Smart card services
                 services.AddSingleton<WindowsSmartCardService>();

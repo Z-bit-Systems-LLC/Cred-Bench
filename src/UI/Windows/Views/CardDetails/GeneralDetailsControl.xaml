@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:CredBench.Core.Models.TechnologyDetails;assembly=Core"
+    xmlns:localization="clr-namespace:ZBitSystems.Wpf.UI.Localization;assembly=ZBitSystems.Wpf.UI"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance models:GeneralCardDetails}">
 
@@ -22,7 +23,7 @@
 
             <TextBlock Grid.Row="0" Grid.Column="0"
                 Style="{StaticResource Field.Label}"
-                Text="Reader:"
+                Text="{localization:Localize General_Reader}"
                 TextAlignment="Right" />
             <TextBlock Grid.Row="0" Grid.Column="2"
                 Style="{StaticResource Field.Value}"
@@ -32,7 +33,7 @@
 
             <TextBlock Grid.Row="1" Grid.Column="0"
                 Style="{StaticResource Field.Label}"
-                Text="Protocol:"
+                Text="{localization:Localize General_Protocol}"
                 TextAlignment="Right" />
             <TextBlock Grid.Row="1" Grid.Column="2"
                 Style="{StaticResource Field.Value}"
@@ -40,7 +41,7 @@
                 FontFamily="Consolas" />
         </Grid>
 
-        <TextBlock Text="ATR"
+        <TextBlock Text="{localization:Localize General_ATR}"
             Style="{StaticResource Field.Label}"
             FontSize="{StaticResource FontSize.Caption}" />
         <TextBox Text="{Binding ATR, Mode=OneWay, FallbackValue='N/A'}"
