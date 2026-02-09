@@ -1,19 +1,16 @@
-using CredBench.Core.Services;
 using PCSC;
 using PCSC.Exceptions;
 
-namespace CredBench.CLI.Services;
+namespace CredBench.Core.Services;
 
 public class SmartCardService : ISmartCardService
 {
     private readonly ISCardContext _context;
     private bool _disposed;
 
-#pragma warning disable CS0067 // Events required by interface, not used in CLI
-    public event EventHandler<ReaderEventArgs>? CardInserted;
-    public event EventHandler<ReaderEventArgs>? CardRemoved;
-    public event EventHandler? ReadersChanged;
-#pragma warning restore CS0067
+    public virtual event EventHandler<ReaderEventArgs>? CardInserted;
+    public virtual event EventHandler<ReaderEventArgs>? CardRemoved;
+    public virtual event EventHandler? ReadersChanged;
 
     public SmartCardService()
     {
@@ -36,6 +33,21 @@ public class SmartCardService : ISmartCardService
     {
         var reader = _context.ConnectReader(readerName, SCardShareMode.Shared, SCardProtocol.Any);
         return new CardConnection(readerName, reader);
+    }
+
+    internal void RaiseCardInserted(string readerName, string? atr)
+    {
+        CardInserted?.Invoke(this, new ReaderEventArgs { ReaderName = readerName, ATR = atr });
+    }
+
+    internal void RaiseCardRemoved(string readerName)
+    {
+        CardRemoved?.Invoke(this, new ReaderEventArgs { ReaderName = readerName });
+    }
+
+    internal void RaiseReadersChanged()
+    {
+        ReadersChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void Dispose()
