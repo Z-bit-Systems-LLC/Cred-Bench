@@ -55,17 +55,31 @@ For APDU commands, TLV parsing, and credential extraction details per technology
 ## Build Commands
 
 ```bash
-# Build
+# Build (Windows WPF)
 dotnet build Cred-Bench.sln
+
+# Build (CLI — cross-platform, works on macOS/Linux)
+dotnet build Cred-Bench-CLI.slnx
 
 # Test
 dotnet test test/Core.Tests/Core.Tests.csproj
 
-# Run
+# Run (Windows WPF)
 dotnet run --project src/UI/Windows/Windows.csproj
 
-# Publish
+# Run (CLI)
+dotnet run --project src/UI/CLI/CLI.csproj
+
+# CLI with options
+dotnet run --project src/UI/CLI/CLI.csproj -- --list
+dotnet run --project src/UI/CLI/CLI.csproj -- --json
+dotnet run --project src/UI/CLI/CLI.csproj -- --reader "Reader Name"
+
+# Publish (Windows)
 dotnet publish src/UI/Windows/Windows.csproj -c Release -r win-x64 --self-contained
+
+# Publish (CLI — macOS)
+dotnet publish src/UI/CLI/CLI.csproj -c Release -r osx-arm64 --self-contained
 ```
 
 ## Adding New Card Technologies
