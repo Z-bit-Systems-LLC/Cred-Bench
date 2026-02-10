@@ -1,5 +1,8 @@
 namespace CredBench.Core.Models.TechnologyDetails;
 
+/// <summary>
+/// PKOC (Physical Key Open Credential) details including public key, derived credentials, and Wiegand bits.
+/// </summary>
 public record PKOCDetails
 {
     public string? ProtocolVersion { get; init; }
@@ -20,6 +23,23 @@ public record PKOCDetails
     public string? Credential256Bits => HexToBinary(Credential256Hex);
     public string? Credential75Bits => Credential256Bits is { Length: >= 256 } ? Credential256Bits[181..] : null;
     public string? Credential64Bits => Credential256Bits is { Length: >= 256 } ? Credential256Bits[192..] : null;
+
+    /// <summary>
+    /// Returns non-null fields as labeled display pairs for text output.
+    /// </summary>
+    public IReadOnlyList<(string Label, string Value)> GetFields()
+    {
+        List<(string, string)> fields = [];
+        if (ProtocolVersion is { } version) fields.Add(("Protocol Version", version));
+        if (PublicKeyHex is { } key) fields.Add(("Public Key", key));
+        if (Credential256Hex is { } c256) fields.Add(("Credential 256-bit", c256));
+        if (Credential75Hex is { } c75) fields.Add(("Credential 75-bit", c75));
+        if (Credential64Hex is { } c64) fields.Add(("Credential 64-bit", c64));
+        if (Credential256Bits is { } bits256) fields.Add(("256-bit Wiegand", bits256));
+        if (Credential75Bits is { } bits75) fields.Add(("75-bit Wiegand", bits75));
+        if (Credential64Bits is { } bits64) fields.Add(("64-bit Wiegand", bits64));
+        return fields;
+    }
 
     private static string? ExtractLowerBitsHex(string? hex, int bitCount)
     {

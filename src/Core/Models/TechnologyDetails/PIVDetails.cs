@@ -1,5 +1,8 @@
 namespace CredBench.Core.Models.TechnologyDetails;
 
+/// <summary>
+/// PIV (Personal Identity Verification) card details including CHUID, FASC-N fields, and Wiegand bits.
+/// </summary>
 public record PIVDetails
 {
     public string Status { get; init; } = "Detected";
@@ -24,6 +27,30 @@ public record PIVDetails
         ? $"Wiegand Bits ({FASCNHex.Length / 2 * 8})"
         : "Wiegand Bits";
     public string? FASCNWiegandBits => HexToBinary(FASCNHex);
+
+    /// <summary>
+    /// Returns non-null fields as labeled display pairs for text output.
+    /// </summary>
+    public IReadOnlyList<(string Label, string Value)> GetFields()
+    {
+        List<(string, string)> fields =
+        [
+            ("Status", Status)
+        ];
+        if (CHUID is { } chuid) fields.Add(("CHUID", chuid));
+        if (FASCN is { } fascn) fields.Add(("FASC-N", fascn));
+        if (AgencyCode is { } agency) fields.Add(("Agency Code", agency));
+        if (SystemCode is { } system) fields.Add(("System Code", system));
+        if (CredentialNumber is { } credNum) fields.Add(("Credential #", credNum));
+        if (CredentialSeries is { } credSeries) fields.Add(("Credential Series", credSeries));
+        if (IndividualCredentialIssue is { } ici) fields.Add(("ICI", ici));
+        if (PersonIdentifier is { } personId) fields.Add(("Person ID", personId));
+        if (OrganizationalCategory is { } orgCat) fields.Add(("Org Category", orgCat));
+        if (OrganizationalIdentifier is { } orgId) fields.Add(("Org ID", orgId));
+        if (PersonOrgAssociation is { } poa) fields.Add(("Person/Org Assoc", poa));
+        if (FASCNWiegandBits is { } wiegand) fields.Add((WiegandBitsLabel, wiegand));
+        return fields;
+    }
 
     private string? ParseField(int start, int length)
     {

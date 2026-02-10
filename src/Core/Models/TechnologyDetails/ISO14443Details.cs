@@ -1,5 +1,8 @@
 namespace CredBench.Core.Models.TechnologyDetails;
 
+/// <summary>
+/// ISO 14443 contactless card details including UID, SAK, manufacturer, and Wiegand bit representation.
+/// </summary>
 public record ISO14443Details
 {
     public string? UID { get; init; }
@@ -13,6 +16,23 @@ public record ISO14443Details
     public string WiegandBitsLabel => BitCount is { } count ? $"Wiegand Bits ({count})" : "Wiegand Bits";
     public string? UIDBytes => HexToDashed(UID);
     public string? CSNWiegandBits => HexToBinary(CSN);
+
+    /// <summary>
+    /// Returns non-null fields as labeled display pairs for text output.
+    /// </summary>
+    public IReadOnlyList<(string Label, string Value)> GetFields()
+    {
+        List<(string, string)> fields = [];
+        if (UID is { } uid) fields.Add(("UID", uid));
+        if (UIDBytes is { } uidBytes) fields.Add(("UID Bytes", uidBytes));
+        if (UIDLength is { } uidLength) fields.Add(("UID Length", uidLength));
+        if (CSN is { } csn) fields.Add(("CSN", csn));
+        if (Manufacturer is { } mfr) fields.Add(("Manufacturer", mfr));
+        if (SAK is { } sak) fields.Add(("SAK", sak.ToString("X2")));
+        if (CardType is { } cardType) fields.Add(("Card Type", cardType));
+        if (CSNWiegandBits is { } wiegand) fields.Add((WiegandBitsLabel, wiegand));
+        return fields;
+    }
 
     private static string? HexToDashed(string? hex)
     {
