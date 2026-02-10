@@ -35,17 +35,17 @@ public class SmartCardService : ISmartCardService
         return new CardConnection(readerName, reader);
     }
 
-    internal void RaiseCardInserted(string readerName, string? atr)
+    public void RaiseCardInserted(string readerName, string? atr)
     {
         CardInserted?.Invoke(this, new ReaderEventArgs { ReaderName = readerName, ATR = atr });
     }
 
-    internal void RaiseCardRemoved(string readerName)
+    public void RaiseCardRemoved(string readerName)
     {
         CardRemoved?.Invoke(this, new ReaderEventArgs { ReaderName = readerName });
     }
 
-    internal void RaiseReadersChanged()
+    public void RaiseReadersChanged()
     {
         ReadersChanged?.Invoke(this, EventArgs.Empty);
     }

@@ -2,13 +2,14 @@
 
 ## Project Overview
 
-Cred-Bench is a Windows application for identifying smart card technologies (PIV, DESFire, iClass, PKOC) using PC/SC readers. It follows the same architecture patterns as OSDP-Bench.
+Cred-Bench is a cross-platform application for identifying smart card technologies (PIV, DESFire, iClass, PKOC) using PC/SC readers. It includes a Windows WPF GUI and a cross-platform CLI. It follows the same architecture patterns as OSDP-Bench.
 
 ## Architecture
 
 - **Core**: Platform-agnostic library containing models, services, and ViewModels
 - **Windows**: WPF UI with Windows-specific PC/SC implementation
-- **Separation of concerns**: UI depends on Core, Core has no UI dependencies
+- **CLI**: Cross-platform command-line interface for card detection
+- **Separation of concerns**: UI projects depend on Core, Core has no UI dependencies
 
 ## Key Technologies
 
@@ -55,11 +56,8 @@ For APDU commands, TLV parsing, and credential extraction details per technology
 ## Build Commands
 
 ```bash
-# Build (Windows WPF)
-dotnet build Cred-Bench.sln
-
-# Build (CLI — cross-platform, works on macOS/Linux)
-dotnet build Cred-Bench-CLI.slnx
+# Build
+dotnet build Cred-Bench.slnx
 
 # Test
 dotnet test test/Core.Tests/Core.Tests.csproj
@@ -88,10 +86,11 @@ dotnet publish src/UI/CLI/CLI.csproj -c Release -r osx-arm64 --self-contained
 2. Create detail model in `Core/Models/TechnologyDetails/`
 3. Create detector class in `Core/Services/CardDetectors/`
 4. Implement `ICardDetector` interface
-5. Register detector in DI container (`App.xaml.cs`)
+5. Register detector in DI container (`App.xaml.cs`) and in CLI detector array (`Program.cs`)
 6. Create detail UserControl in `Windows/Views/CardDetails/`
 7. Add DataTemplate in `MainWindow.xaml` Resources
 8. Add TabItem with visibility binding in `MainWindow.xaml`
+9. Add formatting for the new technology in `CLI/ResultFormatter.cs`
 
 ## UI Card Detail Tabs
 
@@ -118,3 +117,4 @@ Controls are in `Windows/Views/CardDetails/`, models in `Core/Models/TechnologyD
 - XAML views in `Windows/Views/`
 - Card detail controls in `Windows/Views/CardDetails/`
 - Converters in `Windows/Converters/`
+- CLI entry point and output formatting in `UI/CLI/`
