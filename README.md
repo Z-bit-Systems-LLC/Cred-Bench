@@ -32,10 +32,6 @@ See the [docs/](docs/) folder for detailed detection and credential parsing docu
 - Windows 10/11 (for WPF GUI)
 - macOS or Linux with pcscd (for CLI)
 
-## Installation
-
-Download the latest release from the [Releases](https://github.com/Z-bit-Systems-LLC/Cred-Bench/releases) page.
-
 ## Building from Source
 
 ```bash
