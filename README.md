@@ -35,15 +35,21 @@ See the [docs/](docs/) folder for detailed detection and credential parsing docu
 ## Building from Source
 
 ```bash
-# Clone the repository
-git clone https://github.com/Z-bit-Systems-LLC/Cred-Bench.git
+# Clone the repository (include submodules for the WPF GUI)
+git clone --recurse-submodules https://github.com/Z-bit-Systems-LLC/Cred-Bench.git
 cd Cred-Bench
 
-# Build the solution
+# If already cloned without submodules, pull them for the Windows GUI
+git submodule update --init --recursive
+
+# Build the full solution (Windows only — includes WPF GUI)
 dotnet build
 
+# Build just the CLI (cross-platform — works on Linux, macOS, Raspberry Pi)
+dotnet build src/UI/CLI/CLI.csproj
+
 # Run tests
-dotnet test
+dotnet test test/Core.Tests/Core.Tests.csproj
 
 # Run the WPF application (Windows only)
 dotnet run --project src/UI/Windows/Windows.csproj
@@ -51,6 +57,8 @@ dotnet run --project src/UI/Windows/Windows.csproj
 # Run the CLI (cross-platform)
 dotnet run --project src/UI/CLI/CLI.csproj
 ```
+
+> **Note:** The full solution (`dotnet build`) requires Windows because it includes the WPF GUI and its Guidelines dependency. On non-Windows platforms (Linux, macOS, Raspberry Pi), build the CLI project directly instead.
 
 ## CLI Usage
 
