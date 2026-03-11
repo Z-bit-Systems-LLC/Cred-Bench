@@ -66,17 +66,21 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private bool _isScanningLEAF;
 
+    public PkocViewModel PkocViewModel { get; }
+
     public MainViewModel(
         ISmartCardService smartCardService,
         IReaderMonitorService readerMonitorService,
         CardDetectionService detectionService,
-        ILocalizationService localizationService)
+        ILocalizationService localizationService,
+        PkocViewModel pkocViewModel)
     {
         _smartCardService = smartCardService;
         _readerMonitorService = readerMonitorService;
         _detectionService = detectionService;
         _localization = localizationService;
         _syncContext = SynchronizationContext.Current;
+        PkocViewModel = pkocViewModel;
 
         _statusMessage = _localization.GetString("Status_Ready");
 
@@ -95,6 +99,12 @@ public partial class MainViewModel : ObservableObject, IDisposable
         HasISO14443 = value?.HasTechnology(CardTechnology.ISO14443) ?? false;
         HasPKOC = value?.HasTechnology(CardTechnology.PKOC) ?? false;
         HasLEAF = value?.HasTechnology(CardTechnology.LEAF) ?? false;
+        PkocViewModel.DetectedDetails = value?.PKOCDetails;
+    }
+
+    partial void OnSelectedReaderChanged(string? value)
+    {
+        PkocViewModel.SelectedReader = value;
     }
 
     [RelayCommand]

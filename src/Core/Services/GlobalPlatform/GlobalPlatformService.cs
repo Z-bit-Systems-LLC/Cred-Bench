@@ -2,6 +2,18 @@ using System.Security.Cryptography;
 
 namespace CredBench.Core.Services.GlobalPlatform;
 
+public record InitializeUpdateResult
+{
+    public required byte[] HostChallenge { get; init; }
+    public required byte[] KeyDiversification { get; init; }
+    public required byte[] KeyInfo { get; init; }
+    public required byte[] SequenceCounter { get; init; }
+    public required byte[] CardChallenge { get; init; }
+    public required byte[] CardCryptogram { get; init; }
+    /// <summary>Raw INITIALIZE UPDATE response (without SW) for diagnostics.</summary>
+    public byte[] RawResponse { get; init; } = [];
+}
+
 /// <summary>
 /// GlobalPlatform card management — SCP02 channel establishment and card content management.
 /// </summary>
@@ -37,6 +49,7 @@ public class GlobalPlatformService
             throw new GlobalPlatformException(
                 $"INITIALIZE UPDATE response too short: {initResponse.Length} bytes");
 
+        var keyDiversification = initResponse[..10];
         var keyInfo = initResponse[10..12];
         var sequenceCounter = initResponse[12..14];
         var cardChallenge = initResponse[14..20];
@@ -44,19 +57,105 @@ public class GlobalPlatformService
 
         if (keyInfo[1] != 0x02)
             throw new GlobalPlatformException(
-                $"Unsupported SCP version: {keyInfo[1]:X2} (expected SCP02)");
+                $"Unsupported SCP version: {keyInfo[1]:X2} (expected SCP02). " +
+                $"Key diversification: {ToHex(keyDiversification)}, Key info: {ToHex(keyInfo)}");
 
         var session = new Scp02Session();
         session.DeriveSessionKeys(staticEncKey, staticMacKey, staticDekKey, sequenceCounter);
 
         if (!session.VerifyCardCryptogram(hostChallenge, cardChallenge, cardCryptogram))
+        {
+            var computed = session.ComputeExpectedCardCryptogram(hostChallenge, cardChallenge);
             throw new GlobalPlatformException(
-                "Card cryptogram verification failed — wrong keys?");
+                $"Card cryptogram verification failed — wrong keys? " +
+                $"Full response ({initResponse.Length} bytes): {ToHex(initResponse)}, " +
+                $"Host challenge: {ToHex(hostChallenge)}, " +
+                $"Key diversification: {ToHex(keyDiversification)}, " +
+                $"Key version: {keyInfo[0]:X2}, SCP: {keyInfo[1]:X2}, " +
+                $"Seq: {ToHex(sequenceCounter)}, " +
+                $"Card challenge: {ToHex(cardChallenge)}, " +
+                $"Card cryptogram (received): {ToHex(cardCryptogram)}, " +
+                $"Card cryptogram (computed): {ToHex(computed)}, " +
+                $"S-ENC: {ToHex(session.SessionEncKey)}, " +
+                $"S-MAC: {ToHex(session.SessionMacKey)}, " +
+                $"Static key: {ToHex(staticEncKey)}");
+        }
 
         var hostCryptogram = session.ComputeHostCryptogram(cardChallenge, hostChallenge);
         SendExternalAuthenticate(connection, session, hostCryptogram);
 
         return session;
+    }
+
+    /// <summary>
+    /// Performs SELECT ISD and INITIALIZE UPDATE, returning the parsed card response
+    /// and host challenge. Key matching can then be done locally without further card I/O.
+    /// </summary>
+    public InitializeUpdateResult SendInitializeUpdatePhase(ICardConnection connection)
+    {
+        SelectIsd(connection);
+
+        var hostChallenge = RandomNumberGenerator.GetBytes(8);
+        var initResponse = SendInitializeUpdate(connection, hostChallenge);
+
+        if (initResponse.Length < 28)
+            throw new GlobalPlatformException(
+                $"INITIALIZE UPDATE response too short: {initResponse.Length} bytes");
+
+        var keyDiversification = initResponse[..10];
+        var keyInfo = initResponse[10..12];
+
+        if (keyInfo[1] != 0x02)
+            throw new GlobalPlatformException(
+                $"Unsupported SCP version: {keyInfo[1]:X2} (expected SCP02). " +
+                $"Key diversification: {ToHex(keyDiversification)}, Key info: {ToHex(keyInfo)}");
+
+        return new InitializeUpdateResult
+        {
+            HostChallenge = hostChallenge,
+            KeyDiversification = keyDiversification,
+            KeyInfo = keyInfo,
+            SequenceCounter = initResponse[12..14],
+            CardChallenge = initResponse[14..20],
+            CardCryptogram = initResponse[20..28],
+            RawResponse = initResponse
+        };
+    }
+
+    /// <summary>
+    /// Tries to derive session keys and verify the card cryptogram locally (no card I/O).
+    /// Returns the session if the key matches, null otherwise.
+    /// </summary>
+    public Scp02Session? TryDeriveSession(InitializeUpdateResult initData, byte[] staticKey)
+    {
+        return TryDeriveSession(initData, staticKey, staticKey, staticKey);
+    }
+
+    /// <summary>
+    /// Tries to derive session keys and verify the card cryptogram locally (no card I/O).
+    /// Returns the session if the key matches, null otherwise.
+    /// </summary>
+    public Scp02Session? TryDeriveSession(
+        InitializeUpdateResult initData,
+        byte[] staticEncKey, byte[] staticMacKey, byte[] staticDekKey)
+    {
+        var session = new Scp02Session();
+        session.DeriveSessionKeys(staticEncKey, staticMacKey, staticDekKey, initData.SequenceCounter);
+
+        return session.VerifyCardCryptogram(
+            initData.HostChallenge, initData.CardChallenge, initData.CardCryptogram)
+            ? session
+            : null;
+    }
+
+    /// <summary>
+    /// Completes authentication by sending EXTERNAL AUTHENTICATE with an already-verified session.
+    /// </summary>
+    public void CompleteAuthentication(
+        ICardConnection connection, Scp02Session session, InitializeUpdateResult initData)
+    {
+        var hostCryptogram = session.ComputeHostCryptogram(initData.CardChallenge, initData.HostChallenge);
+        SendExternalAuthenticate(connection, session, hostCryptogram);
     }
 
     /// <summary>
@@ -132,6 +231,9 @@ public class GlobalPlatformService
         var response = connection.Transmit(wrapped);
         var (sw1, sw2) = GetStatusWords(response);
         CheckStatus(sw1, sw2, "EXTERNAL AUTHENTICATE");
+
+        // Enable ICV encryption for subsequent commands (SCP02 i=55)
+        session.EnableIcvEncryption();
     }
 
     // ── Shared utilities (used by AppletLoader too) ────────────────────
@@ -158,6 +260,10 @@ public class GlobalPlatformService
     internal static void CheckStatus(byte sw1, byte sw2, string commandName)
     {
         if (sw1 != 0x90 || sw2 != 0x00)
-            throw new GlobalPlatformException(sw1, sw2);
+            throw new GlobalPlatformException(
+                $"GlobalPlatform error: SW={sw1:X2}{sw2:X2} during {commandName}");
     }
+
+    private static string ToHex(byte[] data) =>
+        BitConverter.ToString(data).Replace("-", "");
 }

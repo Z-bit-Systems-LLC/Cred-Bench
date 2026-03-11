@@ -1,6 +1,7 @@
 using System.Windows;
 using CredBench.Core.Services;
 using CredBench.Core.Services.CardDetectors;
+using CredBench.Core.Services.Pkoc;
 using CredBench.Core.ViewModels;
 using CredBench.Windows.Services;
 using CredBench.Windows.Views;
@@ -45,7 +46,11 @@ public partial class App : Application
                 // Detection service
                 services.AddSingleton<CardDetectionService>();
 
+                // PKOC programming
+                services.AddSingleton<PkocCardProgrammer>();
+
                 // ViewModels
+                services.AddSingleton<PkocViewModel>();
                 services.AddSingleton<MainViewModel>();
 
                 // Views

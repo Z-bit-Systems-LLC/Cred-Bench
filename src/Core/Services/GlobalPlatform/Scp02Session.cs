@@ -12,6 +12,7 @@ public class Scp02Session
     private byte[] _sessionMacKey = null!;
     private byte[] _sessionDekKey = null!;
     private byte[] _icv = new byte[8];
+    private bool _icvEncryption;
 
     public byte[] SequenceCounter { get; private set; } = null!;
 
@@ -19,6 +20,22 @@ public class Scp02Session
     /// Session DEK key, used externally for key encryption during PUT KEY.
     /// </summary>
     public byte[] SessionDekKey => _sessionDekKey;
+
+    /// <summary>
+    /// Enables ICV encryption for C-MAC (SCP02 i=55).
+    /// Call after successful EXTERNAL AUTHENTICATE.
+    /// </summary>
+    public void EnableIcvEncryption() => _icvEncryption = true;
+
+    /// <summary>
+    /// Session ENC key (exposed for diagnostics).
+    /// </summary>
+    internal byte[] SessionEncKey => _sessionEncKey;
+
+    /// <summary>
+    /// Session MAC key (exposed for diagnostics).
+    /// </summary>
+    internal byte[] SessionMacKey => _sessionMacKey;
 
     // Derivation constants per GP 2.1.1 Appendix B.1.2
     private static readonly byte[] DerivationConstantEnc = [0x01, 0x82];
@@ -53,6 +70,19 @@ public class Scp02Session
 
         var computed = FullTripleDesCbcMac(data, _sessionEncKey);
         return CryptographicOperations.FixedTimeEquals(computed, expectedCryptogram);
+    }
+
+    /// <summary>
+    /// Computes what the card cryptogram should be (for diagnostics).
+    /// Same logic as VerifyCardCryptogram but returns the computed value.
+    /// </summary>
+    internal byte[] ComputeExpectedCardCryptogram(byte[] hostChallenge, byte[] cardChallenge)
+    {
+        var data = new byte[16];
+        Buffer.BlockCopy(hostChallenge, 0, data, 0, 8);
+        Buffer.BlockCopy(SequenceCounter, 0, data, 8, 2);
+        Buffer.BlockCopy(cardChallenge, 0, data, 10, 6);
+        return FullTripleDesCbcMac(data, _sessionEncKey);
     }
 
     /// <summary>
@@ -96,8 +126,13 @@ public class Scp02Session
         if (data.Length > 0)
             Buffer.BlockCopy(data, 0, macInput, 5, data.Length);
 
-        var mac = RetailMac(macInput, _sessionMacKey, _icv);
-        _icv = mac; // SCP02 i=15: next ICV = this C-MAC
+        // SCP02 i=55: encrypt ICV with single DES ECB using S-MAC[0..8] before use
+        // Per GP Card Specification 2.1.1 Appendix B: "left-most 8 bytes of the session C-MAC key"
+        var icv = _icvEncryption
+            ? DesEcbProcess(_icv, _sessionMacKey[..8], encrypting: true)
+            : _icv;
+        var mac = RetailMac(macInput, _sessionMacKey, icv);
+        _icv = mac;
 
         // Final APDU: CLA' INS P1 P2 Lc' Data MAC
         var wrapped = new byte[5 + data.Length + 8];
@@ -132,12 +167,15 @@ public class Scp02Session
     }
 
     /// <summary>
-    /// Full 3DES-CBC MAC: encrypt data with 3DES-CBC, return last 8 bytes.
-    /// Data length must be a multiple of 8.
+    /// Full 3DES-CBC MAC with ISO 9797-1 padding method 2:
+    /// pad the data, encrypt with 3DES-CBC, return last 8 bytes.
+    /// Per GP Card Specification 2.1.1 Appendix B.1.2.1, cryptograms
+    /// are always computed with padding method 2, even when data is block-aligned.
     /// </summary>
     internal static byte[] FullTripleDesCbcMac(byte[] data, byte[] key)
     {
-        var encrypted = TripleDesCbcEncrypt(data, key, new byte[8]);
+        var padded = Pad80(data);
+        var encrypted = TripleDesCbcEncrypt(padded, key, new byte[8]);
         return encrypted[^8..];
     }
 
@@ -160,44 +198,70 @@ public class Scp02Session
 
     /// <summary>
     /// 3DES-CBC encrypt. Returns full ciphertext (same length as input).
+    /// Falls back to software DES for weak keys that .NET rejects.
     /// </summary>
     internal static byte[] TripleDesCbcEncrypt(byte[] data, byte[] key, byte[] iv)
     {
-        using var tdes = TripleDES.Create();
-        tdes.Key = EnsureKey24(key);
-        tdes.IV = iv;
-        tdes.Mode = CipherMode.CBC;
-        tdes.Padding = PaddingMode.None;
+        try
+        {
+            using var tdes = TripleDES.Create();
+            tdes.Key = EnsureKey24(key);
+            tdes.IV = iv;
+            tdes.Mode = CipherMode.CBC;
+            tdes.Padding = PaddingMode.None;
 
-        using var enc = tdes.CreateEncryptor();
-        return enc.TransformFinalBlock(data, 0, data.Length);
+            using var enc = tdes.CreateEncryptor();
+            return enc.TransformFinalBlock(data, 0, data.Length);
+        }
+        catch (CryptographicException)
+        {
+            return SoftDes.TripleDesCbcEncrypt(data, key.Length == 24 ? key[..16] : key, iv);
+        }
     }
 
     /// <summary>
     /// Single-DES CBC MAC: DES-CBC encrypt, return last 8 bytes.
+    /// Falls back to software DES for weak keys.
     /// </summary>
     private static byte[] DesCbcMac(byte[] data, byte[] key, byte[] iv)
     {
-        using var des = DES.Create();
-        des.Key = key;
-        des.IV = iv;
-        des.Mode = CipherMode.CBC;
-        des.Padding = PaddingMode.None;
+        try
+        {
+            using var des = DES.Create();
+            des.Key = key;
+            des.IV = iv;
+            des.Mode = CipherMode.CBC;
+            des.Padding = PaddingMode.None;
 
-        using var enc = des.CreateEncryptor();
-        var ct = enc.TransformFinalBlock(data, 0, data.Length);
-        return ct[^8..];
+            using var enc = des.CreateEncryptor();
+            var ct = enc.TransformFinalBlock(data, 0, data.Length);
+            return ct[^8..];
+        }
+        catch (CryptographicException)
+        {
+            var ct = SoftDes.DesCbcEncrypt(data, key, iv);
+            return ct[^8..];
+        }
     }
 
     private static byte[] DesEcbProcess(byte[] block, byte[] key, bool encrypting)
     {
-        using var des = DES.Create();
-        des.Key = key;
-        des.Mode = CipherMode.ECB;
-        des.Padding = PaddingMode.None;
+        try
+        {
+            using var des = DES.Create();
+            des.Key = key;
+            des.Mode = CipherMode.ECB;
+            des.Padding = PaddingMode.None;
 
-        using var transform = encrypting ? des.CreateEncryptor() : des.CreateDecryptor();
-        return transform.TransformFinalBlock(block, 0, block.Length);
+            using var transform = encrypting ? des.CreateEncryptor() : des.CreateDecryptor();
+            return transform.TransformFinalBlock(block, 0, block.Length);
+        }
+        catch (CryptographicException)
+        {
+            return encrypting
+                ? SoftDes.DesEcbEncrypt(block, key)
+                : SoftDes.DesEcbDecrypt(block, key);
+        }
     }
 
     /// <summary>

@@ -213,6 +213,38 @@
     <value>Wiegand Bits (64)</value>
   </data>
 
+  <!-- PKOC Programming -->
+  <data name="PKOC_Programming_Header" xml:space="preserve">
+    <value>Card Programming</value>
+  </data>
+  <data name="PKOC_Programming_DefaultKey" xml:space="preserve">
+    <value>Default GP Key (404142...4F)</value>
+  </data>
+  <data name="PKOC_Programming_CustomKey" xml:space="preserve">
+    <value>Custom GP Key</value>
+  </data>
+  <data name="PKOC_Programming_ProgramButton" xml:space="preserve">
+    <value>Program Card</value>
+  </data>
+  <data name="PKOC_Programming_SecureChannel" xml:space="preserve">
+    <value>Establishing secure channel...</value>
+  </data>
+  <data name="PKOC_Programming_Loading" xml:space="preserve">
+    <value>Loading applet... ({0}/{1})</value>
+  </data>
+  <data name="PKOC_Programming_Complete" xml:space="preserve">
+    <value>Programming complete!</value>
+  </data>
+  <data name="PKOC_Programming_ScanToView" xml:space="preserve">
+    <value>Programming complete! Scan card to view credential.</value>
+  </data>
+  <data name="PKOC_Programming_Failed" xml:space="preserve">
+    <value>Programming failed</value>
+  </data>
+  <data name="PKOC_Programming_Dismiss" xml:space="preserve">
+    <value>Dismiss</value>
+  </data>
+
   <!-- LEAF Details -->
   <data name="LEAF_ApplicationType" xml:space="preserve">
     <value>Application Type:</value>

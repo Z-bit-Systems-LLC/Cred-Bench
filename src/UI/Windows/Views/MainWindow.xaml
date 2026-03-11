@@ -209,6 +209,10 @@
             <cardDetails:PkocDetailsControl />
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type viewmodels:PkocViewModel}">
+            <cardDetails:PkocDetailsControl />
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type models:LEAFDetails}">
             <cardDetails:LeafDetailsControl />
         </DataTemplate>
@@ -463,10 +467,9 @@
                                     <ContentControl Content="{Binding CurrentResult.ISO14443Details}" />
                                 </TabItem>
 
-                                <!-- PKOC Tab - Shown only when PKOC detected -->
-                                <TabItem Header="{localization:Localize Tab_PKOC}"
-                                    Visibility="{Binding HasPKOC, Converter={StaticResource BoolToVisibility}}">
-                                    <ContentControl Content="{Binding CurrentResult.PKOCDetails}" />
+                                <!-- PKOC Tab - Always shown -->
+                                <TabItem Header="{localization:Localize Tab_PKOC}">
+                                    <ContentControl Content="{Binding PkocViewModel}" />
                                 </TabItem>
 
                                 <!-- LEAF Tab - Shown only when LEAF detected -->

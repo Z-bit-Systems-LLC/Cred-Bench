@@ -4,134 +4,266 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="clr-namespace:CredBench.Core.Models.TechnologyDetails;assembly=Core"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:viewmodels="clr-namespace:CredBench.Core.ViewModels;assembly=Core"
+    xmlns:guidelinesConverters="clr-namespace:ZBitSystems.Wpf.UI.Converters;assembly=ZBitSystems.Wpf.UI"
     xmlns:localization="clr-namespace:ZBitSystems.Wpf.UI.Localization;assembly=ZBitSystems.Wpf.UI"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance models:PKOCDetails}">
+    d:DataContext="{d:DesignInstance viewmodels:PkocViewModel}">
 
-    <StackPanel Margin="{StaticResource Padding.Card}">
-        <!-- Card Info -->
-        <Grid Margin="{StaticResource Margin.Section}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="{StaticResource Gutter.Medium}" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+    <UserControl.Resources>
+        <guidelinesConverters:BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <guidelinesConverters:NullToVisibilityConverter x:Key="NullToVisibility" />
+    </UserControl.Resources>
 
-            <TextBlock Grid.Row="0" Grid.Column="0"
-                Style="{StaticResource Field.Label}"
-                Text="{localization:Localize PKOC_ProtocolVersion}"
-                TextAlignment="Right" />
-            <TextBlock Grid.Row="0" Grid.Column="2"
-                Style="{StaticResource Field.Value}"
-                Text="{Binding ProtocolVersion, FallbackValue='N/A'}"
-                FontFamily="Consolas"
-                FontWeight="Medium" />
-        </Grid>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="{StaticResource Padding.Card}">
 
-        <!-- Credential Size Selector -->
-        <TextBlock Text="{localization:Localize PKOC_Credential}"
-            Style="{StaticResource Section.Header}" />
-        <ComboBox x:Name="BitSizeSelector"
-            Style="{StaticResource ComboBox.Standard}"
-            SelectedIndex="0"
-            Margin="0,0,0,12"
-            Width="280"
-            HorizontalAlignment="Left">
-            <ComboBoxItem Content="{localization:Localize PKOC_256BitOption}" />
-            <ComboBoxItem Content="{localization:Localize PKOC_75BitOption}" />
-            <ComboBoxItem Content="{localization:Localize PKOC_64BitOption}" />
-        </ComboBox>
+            <!-- ═══════════════════════════════════════════ -->
+            <!-- Credential Section (when PKOC detected)    -->
+            <!-- ═══════════════════════════════════════════ -->
+            <StackPanel Visibility="{Binding HasDetectedCredential, Converter={StaticResource BoolToVisibility}}">
 
-        <!-- 256-bit Credential -->
-        <StackPanel>
-            <StackPanel.Style>
-                <Style TargetType="StackPanel">
-                    <Setter Property="Visibility" Value="Collapsed" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding SelectedIndex, ElementName=BitSizeSelector}" Value="0">
-                            <Setter Property="Visibility" Value="Visible" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </StackPanel.Style>
+                <!-- Card Info -->
+                <Grid Margin="{StaticResource Margin.Section}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="{StaticResource Gutter.Medium}" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-            <TextBlock Text="{localization:Localize PKOC_Hex}"
-                Style="{StaticResource Field.Label}"
-                FontSize="{StaticResource FontSize.Caption}" />
-            <TextBox Text="{Binding Credential256Hex, Mode=OneWay, FallbackValue='N/A'}"
-                Style="{StaticResource TextBox.Copyable}"
-                FontSize="10"
-                Margin="0,0,0,8" />
+                    <TextBlock Grid.Column="0"
+                        Style="{StaticResource Field.Label}"
+                        Text="{localization:Localize PKOC_ProtocolVersion}"
+                        TextAlignment="Right" />
+                    <TextBlock Grid.Column="2"
+                        Style="{StaticResource Field.Value}"
+                        Text="{Binding DetectedDetails.ProtocolVersion, FallbackValue='N/A'}"
+                        FontFamily="Consolas"
+                        FontWeight="Medium" />
+                </Grid>
 
-            <TextBlock Text="{localization:Localize PKOC_WiegandBits256}"
-                Style="{StaticResource Field.Label}"
-                FontSize="{StaticResource FontSize.Caption}" />
-            <TextBox Text="{Binding Credential256Bits, Mode=OneWay, FallbackValue='N/A'}"
-                Style="{StaticResource TextBox.Copyable}"
-                FontSize="10"
-                TextWrapping="Wrap" />
+                <!-- Credential Size Selector -->
+                <TextBlock Text="{localization:Localize PKOC_Credential}"
+                    Style="{StaticResource Section.Header}" />
+                <ComboBox x:Name="BitSizeSelector"
+                    Style="{StaticResource ComboBox.Standard}"
+                    SelectedIndex="0"
+                    Margin="0,0,0,12"
+                    Width="280"
+                    HorizontalAlignment="Left">
+                    <ComboBoxItem Content="{localization:Localize PKOC_256BitOption}" />
+                    <ComboBoxItem Content="{localization:Localize PKOC_75BitOption}" />
+                    <ComboBoxItem Content="{localization:Localize PKOC_64BitOption}" />
+                </ComboBox>
+
+                <!-- 256-bit Credential -->
+                <StackPanel>
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=BitSizeSelector}" Value="0">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
+                    <TextBlock Text="{localization:Localize PKOC_Hex}"
+                        Style="{StaticResource Field.Label}"
+                        FontSize="{StaticResource FontSize.Caption}" />
+                    <TextBox Text="{Binding DetectedDetails.Credential256Hex, Mode=OneWay, FallbackValue='N/A'}"
+                        Style="{StaticResource TextBox.Copyable}"
+                        FontSize="10"
+                        Margin="0,0,0,8" />
+
+                    <TextBlock Text="{localization:Localize PKOC_WiegandBits256}"
+                        Style="{StaticResource Field.Label}"
+                        FontSize="{StaticResource FontSize.Caption}" />
+                    <TextBox Text="{Binding DetectedDetails.Credential256Bits, Mode=OneWay, FallbackValue='N/A'}"
+                        Style="{StaticResource TextBox.Copyable}"
+                        FontSize="10"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+
+                <!-- 75-bit Credential -->
+                <StackPanel>
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=BitSizeSelector}" Value="1">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
+                    <TextBlock Text="{localization:Localize PKOC_Hex}"
+                        Style="{StaticResource Field.Label}"
+                        FontSize="{StaticResource FontSize.Caption}" />
+                    <TextBox Text="{Binding DetectedDetails.Credential75Hex, Mode=OneWay, FallbackValue='N/A'}"
+                        Style="{StaticResource TextBox.Copyable}"
+                        FontSize="10"
+                        Margin="0,0,0,8" />
+
+                    <TextBlock Text="{localization:Localize PKOC_WiegandBits75}"
+                        Style="{StaticResource Field.Label}"
+                        FontSize="{StaticResource FontSize.Caption}" />
+                    <TextBox Text="{Binding DetectedDetails.Credential75Bits, Mode=OneWay, FallbackValue='N/A'}"
+                        Style="{StaticResource TextBox.Copyable}"
+                        FontSize="10" />
+                </StackPanel>
+
+                <!-- 64-bit Credential -->
+                <StackPanel>
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=BitSizeSelector}" Value="2">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
+                    <TextBlock Text="{localization:Localize PKOC_Hex}"
+                        Style="{StaticResource Field.Label}"
+                        FontSize="{StaticResource FontSize.Caption}" />
+                    <TextBox Text="{Binding DetectedDetails.Credential64Hex, Mode=OneWay, FallbackValue='N/A'}"
+                        Style="{StaticResource TextBox.Copyable}"
+                        FontSize="10"
+                        Margin="0,0,0,8" />
+
+                    <TextBlock Text="{localization:Localize PKOC_WiegandBits64}"
+                        Style="{StaticResource Field.Label}"
+                        FontSize="{StaticResource FontSize.Caption}" />
+                    <TextBox Text="{Binding DetectedDetails.Credential64Bits, Mode=OneWay, FallbackValue='N/A'}"
+                        Style="{StaticResource TextBox.Copyable}"
+                        FontSize="10" />
+                </StackPanel>
+
+                <Separator Margin="0,16,0,8" />
+            </StackPanel>
+
+            <!-- ═══════════════════════════════════════════ -->
+            <!-- Card Programming Section                   -->
+            <!-- ═══════════════════════════════════════════ -->
+            <TextBlock Text="{localization:Localize PKOC_Programming_Header}"
+                Style="{StaticResource Section.Header}" />
+
+            <!-- GP Key Selection -->
+            <StackPanel Margin="{StaticResource Margin.Section}">
+                <RadioButton
+                    Content="{localization:Localize PKOC_Programming_DefaultKey}"
+                    GroupName="GpKey"
+                    IsChecked="True"
+                    Margin="0,0,0,4">
+                    <RadioButton.Style>
+                        <Style TargetType="RadioButton">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsProgramming}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RadioButton.Style>
+                </RadioButton>
+                <RadioButton
+                    Content="{localization:Localize PKOC_Programming_CustomKey}"
+                    GroupName="GpKey"
+                    IsChecked="{Binding UseCustomKey}"
+                    Margin="0,0,0,4">
+                    <RadioButton.Style>
+                        <Style TargetType="RadioButton">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsProgramming}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RadioButton.Style>
+                </RadioButton>
+
+                <!-- Custom Key Input -->
+                <TextBox
+                    Text="{Binding CustomKeyHex, UpdateSourceTrigger=PropertyChanged}"
+                    FontFamily="Consolas"
+                    MaxLength="32"
+                    Margin="20,4,0,0"
+                    Width="300"
+                    HorizontalAlignment="Left"
+                    Visibility="{Binding UseCustomKey, Converter={StaticResource BoolToVisibility}}">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsProgramming}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+            </StackPanel>
+
+            <!-- Program Button -->
+            <ui:Button
+                Content="{localization:Localize PKOC_Programming_ProgramButton}"
+                Icon="{ui:SymbolIcon ArrowDownload24}"
+                Command="{Binding ProgramCardCommand}"
+                Appearance="Primary"
+                Margin="0,8,0,0" />
+
+            <!-- Progress Bar (shown during programming) -->
+            <ProgressBar
+                IsIndeterminate="True"
+                Height="4"
+                Margin="0,12,0,0"
+                Visibility="{Binding IsProgramming, Converter={StaticResource BoolToVisibility}}" />
+
+            <!-- Status Text -->
+            <TextBlock
+                Text="{Binding ProgrammingStatus}"
+                Margin="0,8,0,0"
+                TextWrapping="Wrap"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Visibility="{Binding ProgrammingStatus, Converter={StaticResource NullToVisibility}}" />
+
+            <!-- Success Message -->
+            <Border
+                Margin="0,8,0,0"
+                Padding="12,8"
+                CornerRadius="{StaticResource CornerRadius.Small}"
+                Background="{StaticResource Brush.Success}"
+                Visibility="{Binding ProgrammingComplete, Converter={StaticResource BoolToVisibility}}">
+                <TextBlock
+                    Text="{localization:Localize PKOC_Programming_ScanToView}"
+                    Foreground="White"
+                    FontWeight="Medium" />
+            </Border>
+
+            <!-- Error Message -->
+            <Border
+                Margin="0,8,0,0"
+                Padding="12,8"
+                CornerRadius="{StaticResource CornerRadius.Small}"
+                Background="{StaticResource Brush.Error}"
+                Visibility="{Binding ErrorMessage, Converter={StaticResource NullToVisibility}}">
+                <StackPanel>
+                    <TextBlock
+                        Text="{Binding ErrorMessage}"
+                        Foreground="White"
+                        TextWrapping="Wrap" />
+                    <ui:Button
+                        Content="{localization:Localize PKOC_Programming_Dismiss}"
+                        Command="{Binding DismissErrorCommand}"
+                        Margin="0,4,0,0"
+                        Appearance="Secondary" />
+                </StackPanel>
+            </Border>
+
         </StackPanel>
-
-        <!-- 75-bit Credential -->
-        <StackPanel>
-            <StackPanel.Style>
-                <Style TargetType="StackPanel">
-                    <Setter Property="Visibility" Value="Collapsed" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding SelectedIndex, ElementName=BitSizeSelector}" Value="1">
-                            <Setter Property="Visibility" Value="Visible" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </StackPanel.Style>
-
-            <TextBlock Text="{localization:Localize PKOC_Hex}"
-                Style="{StaticResource Field.Label}"
-                FontSize="{StaticResource FontSize.Caption}" />
-            <TextBox Text="{Binding Credential75Hex, Mode=OneWay, FallbackValue='N/A'}"
-                Style="{StaticResource TextBox.Copyable}"
-                FontSize="10"
-                Margin="0,0,0,8" />
-
-            <TextBlock Text="{localization:Localize PKOC_WiegandBits75}"
-                Style="{StaticResource Field.Label}"
-                FontSize="{StaticResource FontSize.Caption}" />
-            <TextBox Text="{Binding Credential75Bits, Mode=OneWay, FallbackValue='N/A'}"
-                Style="{StaticResource TextBox.Copyable}"
-                FontSize="10" />
-        </StackPanel>
-
-        <!-- 64-bit Credential -->
-        <StackPanel>
-            <StackPanel.Style>
-                <Style TargetType="StackPanel">
-                    <Setter Property="Visibility" Value="Collapsed" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding SelectedIndex, ElementName=BitSizeSelector}" Value="2">
-                            <Setter Property="Visibility" Value="Visible" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </StackPanel.Style>
-
-            <TextBlock Text="{localization:Localize PKOC_Hex}"
-                Style="{StaticResource Field.Label}"
-                FontSize="{StaticResource FontSize.Caption}" />
-            <TextBox Text="{Binding Credential64Hex, Mode=OneWay, FallbackValue='N/A'}"
-                Style="{StaticResource TextBox.Copyable}"
-                FontSize="10"
-                Margin="0,0,0,8" />
-
-            <TextBlock Text="{localization:Localize PKOC_WiegandBits64}"
-                Style="{StaticResource Field.Label}"
-                FontSize="{StaticResource FontSize.Caption}" />
-            <TextBox Text="{Binding Credential64Bits, Mode=OneWay, FallbackValue='N/A'}"
-                Style="{StaticResource TextBox.Copyable}"
-                FontSize="10" />
-        </StackPanel>
-    </StackPanel>
+    </ScrollViewer>
 </UserControl>

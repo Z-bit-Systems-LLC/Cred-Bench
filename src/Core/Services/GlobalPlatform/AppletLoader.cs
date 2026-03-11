@@ -53,7 +53,8 @@ public class AppletLoader
         byte[] capFileData,
         IProgress<(int Current, int Total)>? progress)
     {
-        var loadFileData = WrapWithC4Tag(capFileData);
+        var ijcData = CapFileConverter.ToIjc(capFileData);
+        var loadFileData = WrapWithC4Tag(ijcData);
         int totalBlocks = (loadFileData.Length + MaxBlockSize - 1) / MaxBlockSize;
         int blockNumber = 0;
         int offset = 0;
