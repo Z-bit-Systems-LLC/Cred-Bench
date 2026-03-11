@@ -260,8 +260,7 @@ public class GlobalPlatformService
     internal static void CheckStatus(byte sw1, byte sw2, string commandName)
     {
         if (sw1 != 0x90 || sw2 != 0x00)
-            throw new GlobalPlatformException(
-                $"GlobalPlatform error: SW={sw1:X2}{sw2:X2} during {commandName}");
+            throw new GlobalPlatformException(sw1, sw2);
     }
 
     private static string ToHex(byte[] data) =>
