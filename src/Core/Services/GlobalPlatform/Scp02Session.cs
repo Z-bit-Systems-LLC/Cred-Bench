@@ -198,70 +198,44 @@ public class Scp02Session
 
     /// <summary>
     /// 3DES-CBC encrypt. Returns full ciphertext (same length as input).
-    /// Falls back to software DES for weak keys that .NET rejects.
     /// </summary>
     internal static byte[] TripleDesCbcEncrypt(byte[] data, byte[] key, byte[] iv)
     {
-        try
-        {
-            using var tdes = TripleDES.Create();
-            tdes.Key = EnsureKey24(key);
-            tdes.IV = iv;
-            tdes.Mode = CipherMode.CBC;
-            tdes.Padding = PaddingMode.None;
+        using var tdes = TripleDES.Create();
+        tdes.Key = EnsureKey24(key);
+        tdes.IV = iv;
+        tdes.Mode = CipherMode.CBC;
+        tdes.Padding = PaddingMode.None;
 
-            using var enc = tdes.CreateEncryptor();
-            return enc.TransformFinalBlock(data, 0, data.Length);
-        }
-        catch (CryptographicException)
-        {
-            return SoftDes.TripleDesCbcEncrypt(data, key.Length == 24 ? key[..16] : key, iv);
-        }
+        using var enc = tdes.CreateEncryptor();
+        return enc.TransformFinalBlock(data, 0, data.Length);
     }
 
     /// <summary>
     /// Single-DES CBC MAC: DES-CBC encrypt, return last 8 bytes.
-    /// Falls back to software DES for weak keys.
     /// </summary>
     private static byte[] DesCbcMac(byte[] data, byte[] key, byte[] iv)
     {
-        try
-        {
-            using var des = DES.Create();
-            des.Key = key;
-            des.IV = iv;
-            des.Mode = CipherMode.CBC;
-            des.Padding = PaddingMode.None;
+        using var des = DES.Create();
+        des.Key = key;
+        des.IV = iv;
+        des.Mode = CipherMode.CBC;
+        des.Padding = PaddingMode.None;
 
-            using var enc = des.CreateEncryptor();
-            var ct = enc.TransformFinalBlock(data, 0, data.Length);
-            return ct[^8..];
-        }
-        catch (CryptographicException)
-        {
-            var ct = SoftDes.DesCbcEncrypt(data, key, iv);
-            return ct[^8..];
-        }
+        using var enc = des.CreateEncryptor();
+        var ct = enc.TransformFinalBlock(data, 0, data.Length);
+        return ct[^8..];
     }
 
     private static byte[] DesEcbProcess(byte[] block, byte[] key, bool encrypting)
     {
-        try
-        {
-            using var des = DES.Create();
-            des.Key = key;
-            des.Mode = CipherMode.ECB;
-            des.Padding = PaddingMode.None;
+        using var des = DES.Create();
+        des.Key = key;
+        des.Mode = CipherMode.ECB;
+        des.Padding = PaddingMode.None;
 
-            using var transform = encrypting ? des.CreateEncryptor() : des.CreateDecryptor();
-            return transform.TransformFinalBlock(block, 0, block.Length);
-        }
-        catch (CryptographicException)
-        {
-            return encrypting
-                ? SoftDes.DesEcbEncrypt(block, key)
-                : SoftDes.DesEcbDecrypt(block, key);
-        }
+        using var transform = encrypting ? des.CreateEncryptor() : des.CreateDecryptor();
+        return transform.TransformFinalBlock(block, 0, block.Length);
     }
 
     /// <summary>
