@@ -23,6 +23,7 @@ public class PKOCDetector : ICardDetector
     // TLV tags per PSIA PKOC 1.1 spec
     private const byte TagProtocolVersion = 0x5C;
     private const byte TagPublicKey = 0x5A;
+    private const byte TagSignature = 0x9E;
 
     public (bool Detected, string? Details, object? TypedDetails) Detect(ICardConnection connection)
     {
@@ -42,15 +43,16 @@ public class PKOCDetector : ICardDetector
 
             var versionString = $"{protocolVersion[0]:X2}.{protocolVersion[1]:X2}";
 
-            // Step 2: AUTHENTICATE to retrieve public key
-            var publicKey = TryGetPublicKey(connection, protocolVersion);
+            // Step 2: AUTHENTICATE to retrieve public key and signature
+            var authResult = TryAuthenticate(connection, protocolVersion);
 
             var details = new PKOCDetails
             {
                 ProtocolVersion = versionString,
-                PublicKeyHex = publicKey != null
-                    ? BitConverter.ToString(publicKey).Replace("-", "")
+                PublicKeyHex = authResult?.PublicKey != null
+                    ? BitConverter.ToString(authResult.PublicKey).Replace("-", "")
                     : null,
+                SignatureValid = authResult?.SignatureValid,
             };
 
             return (true, $"PKOC v{versionString}", details);
@@ -61,7 +63,9 @@ public class PKOCDetector : ICardDetector
         }
     }
 
-    private static byte[]? TryGetPublicKey(ICardConnection connection, byte[] protocolVersion)
+    private record AuthenticateResult(byte[] PublicKey, bool? SignatureValid);
+
+    private static AuthenticateResult? TryAuthenticate(ICardConnection connection, byte[] protocolVersion)
     {
         try
         {
@@ -111,11 +115,47 @@ public class PKOCDetector : ICardDetector
             var responseData = response[..^2];
 
             // Parse TLV for public key (tag 0x5A, length 0x41 = 65 bytes)
-            return ParseTlvValue(responseData, TagPublicKey);
+            var publicKey = ParseTlvValue(responseData, TagPublicKey);
+            if (publicKey is null)
+                return null;
+
+            // Parse TLV for signature (tag 0x9E, length 0x40 = 64 bytes raw R||S)
+            var signature = ParseTlvValue(responseData, TagSignature);
+
+            // Verify signature over transaction ID using the public key
+            bool? signatureValid = null;
+            if (signature is { Length: 64 } && publicKey.Length == 65)
+            {
+                signatureValid = VerifySignature(publicKey, transactionId, signature);
+            }
+
+            return new AuthenticateResult(publicKey, signatureValid);
         }
         catch
         {
             return null;
+        }
+    }
+
+    private static bool VerifySignature(byte[] publicKeyUncompressed, byte[] transactionId, byte[] rawSignature)
+    {
+        try
+        {
+            using var ecdsa = ECDsa.Create(new ECParameters
+            {
+                Curve = ECCurve.NamedCurves.nistP256,
+                Q = new ECPoint
+                {
+                    X = publicKeyUncompressed[1..33],
+                    Y = publicKeyUncompressed[33..65],
+                },
+            });
+
+            return ecdsa.VerifyData(transactionId, rawSignature, HashAlgorithmName.SHA256, DSASignatureFormat.IeeeP1363FixedFieldConcatenation);
+        }
+        catch
+        {
+            return false;
         }
     }
 

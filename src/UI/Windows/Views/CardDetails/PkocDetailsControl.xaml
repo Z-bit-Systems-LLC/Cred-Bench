@@ -31,16 +31,53 @@
                         <ColumnDefinition Width="{StaticResource Gutter.Medium}" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Column="0"
+                    <TextBlock Grid.Row="0" Grid.Column="0"
                         Style="{StaticResource Field.Label}"
                         Text="{localization:Localize PKOC_ProtocolVersion}"
                         TextAlignment="Right" />
-                    <TextBlock Grid.Column="2"
+                    <TextBlock Grid.Row="0" Grid.Column="2"
                         Style="{StaticResource Field.Value}"
                         Text="{Binding DetectedDetails.ProtocolVersion, FallbackValue='N/A'}"
                         FontFamily="Consolas"
                         FontWeight="Medium" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0"
+                        Style="{StaticResource Field.Label}"
+                        Text="{localization:Localize PKOC_SignatureValidation}"
+                        TextAlignment="Right"
+                        Margin="0,4,0,0" />
+                    <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="0,4,0,0">
+                        <!-- Valid -->
+                        <StackPanel Orientation="Horizontal"
+                            Visibility="{Binding SignatureValidVisible, Converter={StaticResource BoolToVisibility}}">
+                            <ui:SymbolIcon Symbol="CheckmarkCircle24"
+                                Foreground="{StaticResource Brush.Success}"
+                                Margin="0,0,6,0" />
+                            <TextBlock Text="{localization:Localize PKOC_SignatureValid}"
+                                Foreground="{StaticResource Brush.Success}"
+                                FontWeight="Medium" />
+                        </StackPanel>
+                        <!-- Invalid -->
+                        <StackPanel Orientation="Horizontal"
+                            Visibility="{Binding SignatureInvalidVisible, Converter={StaticResource BoolToVisibility}}">
+                            <ui:SymbolIcon Symbol="DismissCircle24"
+                                Foreground="{StaticResource Brush.Error}"
+                                Margin="0,0,6,0" />
+                            <TextBlock Text="{localization:Localize PKOC_SignatureInvalid}"
+                                Foreground="{StaticResource Brush.Error}"
+                                FontWeight="Medium" />
+                        </StackPanel>
+                        <!-- Not Available -->
+                        <TextBlock
+                            Text="{localization:Localize PKOC_SignatureNotAvailable}"
+                            Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                            Visibility="{Binding SignatureNotAvailableVisible, Converter={StaticResource BoolToVisibility}}" />
+                    </StackPanel>
                 </Grid>
 
                 <!-- Credential Size Selector -->

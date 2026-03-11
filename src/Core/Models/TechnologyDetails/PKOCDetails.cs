@@ -7,6 +7,7 @@ public record PKOCDetails
 {
     public string? ProtocolVersion { get; init; }
     public string? PublicKeyHex { get; init; }
+    public bool? SignatureValid { get; init; }
 
     // ECC P-256 uncompressed key: 04 [32-byte X] [32-byte Y] = 65 bytes = 130 hex chars
     // Credential is derived from the X component
@@ -31,6 +32,7 @@ public record PKOCDetails
     {
         List<(string, string)> fields = [];
         if (ProtocolVersion is { } version) fields.Add(("Protocol Version", version));
+        if (SignatureValid is { } valid) fields.Add(("Signature Valid", valid ? "Yes" : "No"));
         if (PublicKeyHex is { } key) fields.Add(("Public Key", key));
         if (Credential256Hex is { } c256) fields.Add(("Credential 256-bit", c256));
         if (Credential75Hex is { } c75) fields.Add(("Credential 75-bit", c75));

@@ -15,6 +15,9 @@ public partial class PkocViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasDetectedCredential))]
+    [NotifyPropertyChangedFor(nameof(SignatureValidVisible))]
+    [NotifyPropertyChangedFor(nameof(SignatureInvalidVisible))]
+    [NotifyPropertyChangedFor(nameof(SignatureNotAvailableVisible))]
     private PKOCDetails? _detectedDetails;
 
     [ObservableProperty]
@@ -47,6 +50,9 @@ public partial class PkocViewModel : ObservableObject
     private string? _errorMessage;
 
     public bool HasDetectedCredential => DetectedDetails != null;
+    public bool SignatureValidVisible => DetectedDetails?.SignatureValid == true;
+    public bool SignatureInvalidVisible => DetectedDetails?.SignatureValid == false;
+    public bool SignatureNotAvailableVisible => DetectedDetails != null && DetectedDetails.SignatureValid is null;
 
     public PkocViewModel(
         ISmartCardService smartCardService,
