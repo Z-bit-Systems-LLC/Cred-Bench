@@ -97,14 +97,21 @@ Cred-Bench/
 │   │   ├── Models/     # Data models (CardTechnology, DetectionResult)
 │   │   ├── Services/   # Card detection services and interfaces
 │   │   └── ViewModels/ # MVVM ViewModels
-│   └── UI/
-│       ├── CLI/        # Cross-platform CLI
-│       └── Windows/    # WPF application
-│           ├── Services/   # Windows-specific PC/SC implementation
-│           └── Views/      # XAML views
+│   ├── UI/
+│   │   ├── CLI/        # Cross-platform CLI
+│   │   └── Windows/    # WPF application
+│   │       ├── Services/   # Windows-specific PC/SC implementation
+│   │       └── Views/      # XAML views
+│   └── Applet/         # PKOC JavaCard applet (Java, built with Ant)
 └── test/
     └── Core.Tests/     # Unit tests
 ```
+
+## PKOC JavaCard Applet
+
+The `src/Applet/` directory contains an open-source JavaCard applet implementing the PSIA PKOC NFC Card 1.1 specification. It generates a P-256 key pair on-card and supports the SELECT/AUTHENTICATE APDU flow. This applet can be loaded onto blank JavaCards to create PKOC credentials.
+
+See [src/Applet/README.md](src/Applet/README.md) for build instructions and prerequisites (requires JDK 8 + Apache Ant, separate from the .NET build).
 
 ## Technology Stack
 

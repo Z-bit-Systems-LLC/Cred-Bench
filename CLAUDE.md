@@ -118,3 +118,4 @@ Controls are in `Windows/Views/CardDetails/`, models in `Core/Models/TechnologyD
 - Card detail controls in `Windows/Views/CardDetails/`
 - Converters in `Windows/Converters/`
 - CLI entry point and output formatting in `UI/CLI/`
+- PKOC JavaCard applet in `src/Applet/` (Java, built with Ant — separate from .NET solution)

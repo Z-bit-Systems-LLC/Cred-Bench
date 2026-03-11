@@ -1,0 +1,7 @@
+build/
+sdks/
+lib/*.jar
+*.cap
+*.exp
+*.jca
+*.class
