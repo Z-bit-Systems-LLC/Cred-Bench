@@ -22,7 +22,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\pkoc.cap" />
+    <EmbeddedResource Include="..\Applet\build\pkoc.cap" Link="Resources\pkoc.cap" />
   </ItemGroup>
 
   <ItemGroup>
