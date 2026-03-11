@@ -188,24 +188,45 @@
                 </RadioButton>
 
                 <!-- Custom Key Input -->
-                <TextBox
-                    Text="{Binding CustomKeyHex, UpdateSourceTrigger=PropertyChanged}"
-                    FontFamily="Consolas"
-                    MaxLength="32"
+                <StackPanel
                     Margin="20,4,0,0"
-                    Width="300"
-                    HorizontalAlignment="Left"
                     Visibility="{Binding UseCustomKey, Converter={StaticResource BoolToVisibility}}">
-                    <TextBox.Style>
-                        <Style TargetType="TextBox">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsProgramming}" Value="True">
-                                    <Setter Property="IsEnabled" Value="False" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBox.Style>
-                </TextBox>
+                    <TextBox
+                        x:Name="CustomKeyInput"
+                        Text="{Binding CustomKeyHex, UpdateSourceTrigger=PropertyChanged}"
+                        MaxLength="32"
+                        CharacterCasing="Upper"
+                        Width="300"
+                        HorizontalAlignment="Left"
+                        PreviewTextInput="CustomKeyInput_PreviewTextInput"
+                        DataObject.Pasting="CustomKeyInput_Pasting">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox" BasedOn="{StaticResource TextBox.Standard}">
+                                <Setter Property="FontFamily" Value="Consolas" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsProgramming}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                    <TextBlock
+                        FontSize="{StaticResource FontSize.Caption}"
+                        Margin="0,2,0,0"
+                        Foreground="{DynamicResource TextFillColorTertiaryBrush}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Text" Value="{Binding CustomKeyHex.Length, StringFormat='{}{0}/32 hex characters'}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CustomKeyHex.Length}" Value="32">
+                                        <Setter Property="Foreground" Value="{StaticResource Brush.Success}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
             </StackPanel>
 
             <!-- Program Button -->
