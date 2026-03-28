@@ -19,6 +19,15 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="{StaticResource Padding.Card}">
 
+            <!-- Program PKOC Button (always visible) -->
+            <ui:Button
+                Content="{localization:Localize PKOC_Programming_ProgramButton}"
+                Icon="{ui:SymbolIcon ArrowDownload24}"
+                Click="OnProgramPkocClick"
+                Appearance="Primary"
+                HorizontalAlignment="Left"
+                Margin="0,0,0,12" />
+
             <!-- ═══════════════════════════════════════════ -->
             <!-- Credential Section (when PKOC detected)    -->
             <!-- ═══════════════════════════════════════════ -->
@@ -32,7 +41,6 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
@@ -79,15 +87,6 @@
                             Foreground="{DynamicResource TextFillColorTertiaryBrush}"
                             Visibility="{Binding SignatureNotAvailableVisible, Converter={StaticResource BoolToVisibility}}" />
                     </StackPanel>
-
-                    <!-- Program PKOC Button -->
-                    <ui:Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
-                        Content="{localization:Localize PKOC_Programming_ProgramButton}"
-                        Icon="{ui:SymbolIcon ArrowDownload24}"
-                        Click="OnProgramPkocClick"
-                        Appearance="Primary"
-                        HorizontalAlignment="Left"
-                        Margin="0,12,0,0" />
                 </Grid>
 
                 <!-- Credential Size Selector -->
