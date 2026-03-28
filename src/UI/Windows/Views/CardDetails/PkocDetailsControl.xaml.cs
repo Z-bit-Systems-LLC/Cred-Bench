@@ -1,35 +1,25 @@
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
+using CredBench.Core.ViewModels;
 
 namespace CredBench.Windows.Views.CardDetails;
 
 public partial class PkocDetailsControl : UserControl
 {
-    private static readonly Regex HexRegex = new("^[0-9A-Fa-f]+$", RegexOptions.Compiled);
-
     public PkocDetailsControl()
     {
         InitializeComponent();
     }
 
-    private void CustomKeyInput_PreviewTextInput(object sender, TextCompositionEventArgs e)
+    private void OnProgramPkocClick(object sender, RoutedEventArgs e)
     {
-        e.Handled = !HexRegex.IsMatch(e.Text);
-    }
+        if (DataContext is not PkocViewModel viewModel)
+            return;
 
-    private void CustomKeyInput_Pasting(object sender, DataObjectPastingEventArgs e)
-    {
-        if (e.DataObject.GetDataPresent(typeof(string)))
+        var dialog = new PkocProgramDialog(viewModel)
         {
-            var text = (string)e.DataObject.GetData(typeof(string))!;
-            if (!HexRegex.IsMatch(text))
-                e.CancelCommand();
-        }
-        else
-        {
-            e.CancelCommand();
-        }
+            Owner = Window.GetWindow(this)
+        };
+        dialog.ShowDialog();
     }
 }

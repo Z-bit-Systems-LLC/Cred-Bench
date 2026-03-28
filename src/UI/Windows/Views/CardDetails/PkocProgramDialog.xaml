@@ -1,0 +1,177 @@
+<ui:FluentWindow
+    x:Class="CredBench.Windows.Views.CardDetails.PkocProgramDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:viewmodels="clr-namespace:CredBench.Core.ViewModels;assembly=Core"
+    xmlns:guidelinesConverters="clr-namespace:ZBitSystems.Wpf.UI.Converters;assembly=ZBitSystems.Wpf.UI"
+    xmlns:localization="clr-namespace:ZBitSystems.Wpf.UI.Localization;assembly=ZBitSystems.Wpf.UI"
+    mc:Ignorable="d"
+    Title="{localization:Localize PKOC_Programming_Header}"
+    Width="460"
+    Height="400"
+    MinWidth="400"
+    MinHeight="350"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner"
+    ExtendsContentIntoTitleBar="True"
+    d:DataContext="{d:DesignInstance viewmodels:PkocViewModel}">
+
+    <ui:FluentWindow.Resources>
+        <guidelinesConverters:BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <guidelinesConverters:NullToVisibilityConverter x:Key="NullToVisibility" />
+    </ui:FluentWindow.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar
+            Grid.Row="0"
+            Title="{localization:Localize PKOC_Programming_Header}"
+            ShowMaximize="False"
+            ShowMinimize="False" />
+
+        <StackPanel Grid.Row="1" Margin="24,8,24,24">
+
+            <!-- GP Key Selection -->
+            <TextBlock Text="{localization:Localize PKOC_Programming_Header}"
+                Style="{StaticResource Section.Header}" />
+
+            <StackPanel Margin="{StaticResource Margin.Section}">
+                <RadioButton
+                    Content="{localization:Localize PKOC_Programming_DefaultKey}"
+                    GroupName="GpKey"
+                    IsChecked="True"
+                    Margin="0,0,0,4">
+                    <RadioButton.Style>
+                        <Style TargetType="RadioButton">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsProgramming}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RadioButton.Style>
+                </RadioButton>
+                <RadioButton
+                    Content="{localization:Localize PKOC_Programming_CustomKey}"
+                    GroupName="GpKey"
+                    IsChecked="{Binding UseCustomKey}"
+                    Margin="0,0,0,4">
+                    <RadioButton.Style>
+                        <Style TargetType="RadioButton">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsProgramming}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RadioButton.Style>
+                </RadioButton>
+
+                <!-- Custom Key Input -->
+                <StackPanel
+                    Margin="20,4,0,0"
+                    Visibility="{Binding UseCustomKey, Converter={StaticResource BoolToVisibility}}">
+                    <TextBox
+                        x:Name="CustomKeyInput"
+                        Text="{Binding CustomKeyHex, UpdateSourceTrigger=PropertyChanged}"
+                        MaxLength="32"
+                        CharacterCasing="Upper"
+                        Width="300"
+                        HorizontalAlignment="Left"
+                        PreviewTextInput="CustomKeyInput_PreviewTextInput"
+                        DataObject.Pasting="CustomKeyInput_Pasting">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox" BasedOn="{StaticResource TextBox.Standard}">
+                                <Setter Property="FontFamily" Value="Consolas" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsProgramming}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                    <TextBlock
+                        FontSize="{StaticResource FontSize.Caption}"
+                        Margin="0,2,0,0"
+                        Foreground="{DynamicResource TextFillColorTertiaryBrush}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Text" Value="{Binding CustomKeyHex.Length, StringFormat='{}{0}/32 hex characters'}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CustomKeyHex.Length}" Value="32">
+                                        <Setter Property="Foreground" Value="{StaticResource Brush.Success}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Program Button -->
+            <ui:Button
+                Content="{localization:Localize PKOC_Programming_ProgramButton}"
+                Icon="{ui:SymbolIcon ArrowDownload24}"
+                Command="{Binding ProgramCardCommand}"
+                Appearance="Primary"
+                Margin="0,8,0,0" />
+
+            <!-- Progress Bar (shown during programming) -->
+            <ProgressBar
+                IsIndeterminate="True"
+                Height="4"
+                Margin="0,12,0,0"
+                Visibility="{Binding IsProgramming, Converter={StaticResource BoolToVisibility}}" />
+
+            <!-- Status Text -->
+            <TextBlock
+                Text="{Binding ProgrammingStatus}"
+                Margin="0,8,0,0"
+                TextWrapping="Wrap"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Visibility="{Binding ProgrammingStatus, Converter={StaticResource NullToVisibility}}" />
+
+            <!-- Success Message -->
+            <Border
+                Margin="0,8,0,0"
+                Padding="12,8"
+                CornerRadius="{StaticResource CornerRadius.Small}"
+                Background="{StaticResource Brush.Success}"
+                Visibility="{Binding ProgrammingComplete, Converter={StaticResource BoolToVisibility}}">
+                <TextBlock
+                    Text="{localization:Localize PKOC_Programming_ScanToView}"
+                    Foreground="White"
+                    FontWeight="Medium" />
+            </Border>
+
+            <!-- Error Message -->
+            <Border
+                Margin="0,8,0,0"
+                Padding="12,8"
+                CornerRadius="{StaticResource CornerRadius.Small}"
+                Background="{StaticResource Brush.Error}"
+                Visibility="{Binding ErrorMessage, Converter={StaticResource NullToVisibility}}">
+                <StackPanel>
+                    <TextBlock
+                        Text="{Binding ErrorMessage}"
+                        Foreground="White"
+                        TextWrapping="Wrap" />
+                    <ui:Button
+                        Content="{localization:Localize PKOC_Programming_Dismiss}"
+                        Command="{Binding DismissErrorCommand}"
+                        Margin="0,4,0,0"
+                        Appearance="Secondary" />
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </Grid>
+</ui:FluentWindow>

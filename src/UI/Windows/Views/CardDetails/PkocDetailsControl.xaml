@@ -34,6 +34,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0" Grid.Column="0"
@@ -78,6 +79,15 @@
                             Foreground="{DynamicResource TextFillColorTertiaryBrush}"
                             Visibility="{Binding SignatureNotAvailableVisible, Converter={StaticResource BoolToVisibility}}" />
                     </StackPanel>
+
+                    <!-- Program PKOC Button -->
+                    <ui:Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
+                        Content="{localization:Localize PKOC_Programming_ProgramButton}"
+                        Icon="{ui:SymbolIcon ArrowDownload24}"
+                        Click="OnProgramPkocClick"
+                        Appearance="Primary"
+                        HorizontalAlignment="Left"
+                        Margin="0,12,0,0" />
                 </Grid>
 
                 <!-- Credential Size Selector -->
@@ -184,143 +194,6 @@
 
                 <Separator Margin="0,16,0,8" />
             </StackPanel>
-
-            <!-- ═══════════════════════════════════════════ -->
-            <!-- Card Programming Section                   -->
-            <!-- ═══════════════════════════════════════════ -->
-            <TextBlock Text="{localization:Localize PKOC_Programming_Header}"
-                Style="{StaticResource Section.Header}" />
-
-            <!-- GP Key Selection -->
-            <StackPanel Margin="{StaticResource Margin.Section}">
-                <RadioButton
-                    Content="{localization:Localize PKOC_Programming_DefaultKey}"
-                    GroupName="GpKey"
-                    IsChecked="True"
-                    Margin="0,0,0,4">
-                    <RadioButton.Style>
-                        <Style TargetType="RadioButton">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsProgramming}" Value="True">
-                                    <Setter Property="IsEnabled" Value="False" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </RadioButton.Style>
-                </RadioButton>
-                <RadioButton
-                    Content="{localization:Localize PKOC_Programming_CustomKey}"
-                    GroupName="GpKey"
-                    IsChecked="{Binding UseCustomKey}"
-                    Margin="0,0,0,4">
-                    <RadioButton.Style>
-                        <Style TargetType="RadioButton">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsProgramming}" Value="True">
-                                    <Setter Property="IsEnabled" Value="False" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </RadioButton.Style>
-                </RadioButton>
-
-                <!-- Custom Key Input -->
-                <StackPanel
-                    Margin="20,4,0,0"
-                    Visibility="{Binding UseCustomKey, Converter={StaticResource BoolToVisibility}}">
-                    <TextBox
-                        x:Name="CustomKeyInput"
-                        Text="{Binding CustomKeyHex, UpdateSourceTrigger=PropertyChanged}"
-                        MaxLength="32"
-                        CharacterCasing="Upper"
-                        Width="300"
-                        HorizontalAlignment="Left"
-                        PreviewTextInput="CustomKeyInput_PreviewTextInput"
-                        DataObject.Pasting="CustomKeyInput_Pasting">
-                        <TextBox.Style>
-                            <Style TargetType="TextBox" BasedOn="{StaticResource TextBox.Standard}">
-                                <Setter Property="FontFamily" Value="Consolas" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsProgramming}" Value="True">
-                                        <Setter Property="IsEnabled" Value="False" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBox.Style>
-                    </TextBox>
-                    <TextBlock
-                        FontSize="{StaticResource FontSize.Caption}"
-                        Margin="0,2,0,0"
-                        Foreground="{DynamicResource TextFillColorTertiaryBrush}">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="Text" Value="{Binding CustomKeyHex.Length, StringFormat='{}{0}/32 hex characters'}" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding CustomKeyHex.Length}" Value="32">
-                                        <Setter Property="Foreground" Value="{StaticResource Brush.Success}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
-                </StackPanel>
-            </StackPanel>
-
-            <!-- Program Button -->
-            <ui:Button
-                Content="{localization:Localize PKOC_Programming_ProgramButton}"
-                Icon="{ui:SymbolIcon ArrowDownload24}"
-                Command="{Binding ProgramCardCommand}"
-                Appearance="Primary"
-                Margin="0,8,0,0" />
-
-            <!-- Progress Bar (shown during programming) -->
-            <ProgressBar
-                IsIndeterminate="True"
-                Height="4"
-                Margin="0,12,0,0"
-                Visibility="{Binding IsProgramming, Converter={StaticResource BoolToVisibility}}" />
-
-            <!-- Status Text -->
-            <TextBlock
-                Text="{Binding ProgrammingStatus}"
-                Margin="0,8,0,0"
-                TextWrapping="Wrap"
-                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                Visibility="{Binding ProgrammingStatus, Converter={StaticResource NullToVisibility}}" />
-
-            <!-- Success Message -->
-            <Border
-                Margin="0,8,0,0"
-                Padding="12,8"
-                CornerRadius="{StaticResource CornerRadius.Small}"
-                Background="{StaticResource Brush.Success}"
-                Visibility="{Binding ProgrammingComplete, Converter={StaticResource BoolToVisibility}}">
-                <TextBlock
-                    Text="{localization:Localize PKOC_Programming_ScanToView}"
-                    Foreground="White"
-                    FontWeight="Medium" />
-            </Border>
-
-            <!-- Error Message -->
-            <Border
-                Margin="0,8,0,0"
-                Padding="12,8"
-                CornerRadius="{StaticResource CornerRadius.Small}"
-                Background="{StaticResource Brush.Error}"
-                Visibility="{Binding ErrorMessage, Converter={StaticResource NullToVisibility}}">
-                <StackPanel>
-                    <TextBlock
-                        Text="{Binding ErrorMessage}"
-                        Foreground="White"
-                        TextWrapping="Wrap" />
-                    <ui:Button
-                        Content="{localization:Localize PKOC_Programming_Dismiss}"
-                        Command="{Binding DismissErrorCommand}"
-                        Margin="0,4,0,0"
-                        Appearance="Secondary" />
-                </StackPanel>
-            </Border>
 
         </StackPanel>
     </ScrollViewer>
