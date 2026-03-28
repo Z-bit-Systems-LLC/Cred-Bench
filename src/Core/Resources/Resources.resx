@@ -225,6 +225,38 @@
     <value>Wiegand Bits (64)</value>
   </data>
 
+  <!-- PKOC Card Info -->
+  <data name="PKOC_CardInfo_Header" xml:space="preserve">
+    <value>Card Content</value>
+  </data>
+  <data name="PKOC_CardInfo_QueryButton" xml:space="preserve">
+    <value>Query Card</value>
+  </data>
+  <data name="PKOC_CardInfo_FreeMemory" xml:space="preserve">
+    <value>Free Memory:</value>
+  </data>
+  <data name="PKOC_CardInfo_PkocInstalled" xml:space="preserve">
+    <value>PKOC applet is installed</value>
+  </data>
+  <data name="PKOC_CardInfo_PkocNotInstalled" xml:space="preserve">
+    <value>PKOC applet is not installed</value>
+  </data>
+  <data name="PKOC_CardInfo_Applets" xml:space="preserve">
+    <value>Installed Applets</value>
+  </data>
+  <data name="PKOC_CardInfo_Packages" xml:space="preserve">
+    <value>Loaded Packages</value>
+  </data>
+  <data name="PKOC_CardInfo_ShowDetails" xml:space="preserve">
+    <value>Show Details</value>
+  </data>
+  <data name="PKOC_CardInfo_HideDetails" xml:space="preserve">
+    <value>Hide Details</value>
+  </data>
+  <data name="PKOC_CardInfo_RefreshButton" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+
   <!-- PKOC Programming -->
   <data name="PKOC_Programming_Header" xml:space="preserve">
     <value>Card Programming</value>

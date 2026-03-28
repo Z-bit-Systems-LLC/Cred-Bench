@@ -150,15 +150,19 @@ public class PkocCardProgrammer
         var diagComputed = diagSession.ComputeExpectedCardCryptogram(
             initData.HostChallenge, initData.CardChallenge);
 
-        throw new GlobalPlatformException(
-            $"Key discovery failed. " +
+        var details =
             $"Raw INIT UPDATE ({initData.RawResponse.Length}B): {toHex(initData.RawResponse)}, " +
             $"Host challenge: {toHex(initData.HostChallenge)}, " +
             $"Seq: {toHex(initData.SequenceCounter)}, " +
             $"Card challenge: {toHex(initData.CardChallenge)}, " +
             $"Received cryptogram: {toHex(initData.CardCryptogram)}, " +
             $"Computed (GP default undiv): {toHex(diagComputed)}, " +
-            $"S-ENC: {toHex(diagSession.SessionEncKey)}");
+            $"S-ENC: {toHex(diagSession.SessionEncKey)}";
+
+        throw new GlobalPlatformException(
+            "Key discovery failed — the card does not use a known default key. " +
+            "Try entering the correct key under Custom GP Key.",
+            details);
     }
 
     /// <summary>
@@ -169,5 +173,29 @@ public class PkocCardProgrammer
     {
         var response = connection.Transmit(SelectPkocCommand);
         return response.Length >= 2 && response[^2] == 0x90 && response[^1] == 0x00;
+    }
+
+    /// <summary>
+    /// Establishes SCP02 and queries card content (installed applets, packages, free memory).
+    /// </summary>
+    public CardContent QueryCardContent(
+        ICardConnection connection,
+        byte[]? gpKey = null,
+        IProgress<string>? statusProgress = null)
+    {
+        Scp02Session session;
+
+        if (gpKey != null)
+        {
+            statusProgress?.Report("Authenticating...");
+            session = _gpService.EstablishSecureChannel(connection, gpKey);
+        }
+        else
+        {
+            session = EstablishWithKeyDiscovery(connection, statusProgress);
+        }
+
+        statusProgress?.Report("Reading card content...");
+        return _gpService.GetCardContent(connection, session);
     }
 }

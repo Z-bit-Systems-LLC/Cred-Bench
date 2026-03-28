@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CredBench.Core.Models.TechnologyDetails;
 using CredBench.Core.Services;
+using CredBench.Core.Services.GlobalPlatform;
 using CredBench.Core.Services.Pkoc;
 
 namespace CredBench.Core.ViewModels;
@@ -48,6 +49,24 @@ public partial class PkocViewModel : ObservableObject
 
     [ObservableProperty]
     private string? _errorMessage;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasCardContent))]
+    private CardContent? _cardContent;
+
+    [ObservableProperty]
+    private bool _isQuerying;
+
+    [ObservableProperty]
+    private string? _queryError;
+
+    [ObservableProperty]
+    private string? _queryErrorDetails;
+
+    [ObservableProperty]
+    private bool _showQueryErrorDetails;
+
+    public bool HasCardContent => CardContent != null;
 
     public bool HasDetectedCredential => DetectedDetails != null;
     public bool SignatureValidVisible => DetectedDetails?.SignatureValid == true;
@@ -122,6 +141,67 @@ public partial class PkocViewModel : ObservableObject
     {
         ErrorMessage = null;
         ProgrammingStatus = null;
+    }
+
+    [RelayCommand]
+    private async Task QueryCardContentAsync()
+    {
+        if (string.IsNullOrEmpty(SelectedReader))
+            return;
+
+        try
+        {
+            IsQuerying = true;
+            QueryError = null;
+            QueryErrorDetails = null;
+            ShowQueryErrorDetails = false;
+            CardContent = null;
+
+            byte[]? gpKey = UseCustomKey ? ParseHexKey(CustomKeyHex) : null;
+
+            var statusProgress = new Progress<string>(status =>
+            {
+                ProgrammingStatus = status;
+            });
+
+            var content = await Task.Run(() =>
+            {
+                using var connection = _smartCardService.Connect(SelectedReader);
+                return _programmer.QueryCardContent(connection, gpKey, statusProgress);
+            });
+
+            CardContent = content;
+            ProgrammingStatus = null;
+        }
+        catch (GlobalPlatformException gpEx)
+        {
+            QueryError = gpEx.Message;
+            QueryErrorDetails = gpEx.DiagnosticDetails;
+            ProgrammingStatus = null;
+        }
+        catch (Exception ex)
+        {
+            QueryError = ex.Message;
+            ProgrammingStatus = null;
+        }
+        finally
+        {
+            IsQuerying = false;
+        }
+    }
+
+    [RelayCommand]
+    private void DismissQueryError()
+    {
+        QueryError = null;
+        QueryErrorDetails = null;
+        ShowQueryErrorDetails = false;
+    }
+
+    [RelayCommand]
+    private void ToggleQueryErrorDetails()
+    {
+        ShowQueryErrorDetails = !ShowQueryErrorDetails;
     }
 
     private static byte[] LoadCapFile()

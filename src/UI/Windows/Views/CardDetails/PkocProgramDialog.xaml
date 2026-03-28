@@ -11,9 +11,9 @@
     mc:Ignorable="d"
     Title="{localization:Localize PKOC_Programming_Header}"
     Width="460"
-    Height="400"
+    Height="580"
     MinWidth="400"
-    MinHeight="350"
+    MinHeight="500"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterOwner"
     ExtendsContentIntoTitleBar="True"
@@ -36,7 +36,191 @@
             ShowMaximize="False"
             ShowMinimize="False" />
 
-        <StackPanel Grid.Row="1" Margin="24,8,24,24">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24,8,24,24">
+
+            <!-- Card Info Section -->
+            <TextBlock Text="{localization:Localize PKOC_CardInfo_Header}"
+                Style="{StaticResource Section.Header}" />
+
+            <StackPanel Margin="{StaticResource Margin.Section}">
+                <!-- Query Progress -->
+                <ProgressBar
+                    IsIndeterminate="True"
+                    Height="4"
+                    Margin="0,0,0,8"
+                    Visibility="{Binding IsQuerying, Converter={StaticResource BoolToVisibility}}" />
+
+                <!-- Query Error -->
+                <Border
+                    Margin="0,0,0,8"
+                    Padding="10,8"
+                    CornerRadius="{StaticResource CornerRadius.Small}"
+                    Background="{StaticResource Brush.Error}"
+                    Visibility="{Binding QueryError, Converter={StaticResource NullToVisibility}}">
+                    <StackPanel>
+                        <TextBlock
+                            Text="{Binding QueryError}"
+                            Foreground="White"
+                            TextWrapping="Wrap" />
+
+                        <!-- Expandable diagnostic details -->
+                        <StackPanel Visibility="{Binding QueryErrorDetails, Converter={StaticResource NullToVisibility}}">
+                            <ui:Button
+                                Command="{Binding ToggleQueryErrorDetailsCommand}"
+                                Margin="0,6,0,0"
+                                Appearance="Secondary"
+                                Padding="8,2">
+                                <ui:Button.Style>
+                                    <Style TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+                                        <Setter Property="Content" Value="{localization:Localize PKOC_CardInfo_ShowDetails}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ShowQueryErrorDetails}" Value="True">
+                                                <Setter Property="Content" Value="{localization:Localize PKOC_CardInfo_HideDetails}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ui:Button.Style>
+                            </ui:Button>
+                            <TextBlock
+                                Text="{Binding QueryErrorDetails}"
+                                Foreground="#FFCCCC"
+                                TextWrapping="Wrap"
+                                FontFamily="Consolas"
+                                FontSize="{StaticResource FontSize.Caption}"
+                                Margin="0,4,0,0"
+                                Visibility="{Binding ShowQueryErrorDetails, Converter={StaticResource BoolToVisibility}}" />
+                        </StackPanel>
+
+                        <ui:Button
+                            Content="{localization:Localize PKOC_Programming_Dismiss}"
+                            Command="{Binding DismissQueryErrorCommand}"
+                            Margin="0,6,0,0"
+                            Appearance="Secondary" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Card Content Results -->
+                <StackPanel Visibility="{Binding HasCardContent, Converter={StaticResource BoolToVisibility}}">
+
+                    <!-- Memory Info -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4"
+                        Visibility="{Binding CardContent.FreePersistentMemory, Converter={StaticResource NullToVisibility}}">
+                        <TextBlock Text="{localization:Localize PKOC_CardInfo_FreeMemory}"
+                            Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        <TextBlock Margin="4,0,0,0">
+                            <TextBlock.Text>
+                                <Binding Path="CardContent.FreePersistentMemory" StringFormat="{}{0:N0} bytes" />
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <!-- PKOC Status -->
+                    <Border
+                        Margin="0,4,0,4"
+                        Padding="8,6"
+                        CornerRadius="{StaticResource CornerRadius.Small}">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CardContent.HasPkocApplet}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource Brush.Success}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock>
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="{localization:Localize PKOC_CardInfo_PkocNotInstalled}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding CardContent.HasPkocApplet}" Value="True">
+                                            <Setter Property="Text" Value="{localization:Localize PKOC_CardInfo_PkocInstalled}" />
+                                            <Setter Property="Foreground" Value="White" />
+                                            <Setter Property="FontWeight" Value="Medium" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Border>
+
+                    <!-- Installed Applets List -->
+                    <TextBlock Text="{localization:Localize PKOC_CardInfo_Applets}"
+                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                        Margin="0,4,0,2"
+                        FontSize="{StaticResource FontSize.Caption}" />
+                    <ItemsControl ItemsSource="{Binding CardContent.Applets}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="0,1">
+                                    <TextBlock Text="{Binding AidHex}"
+                                        FontFamily="Consolas"
+                                        FontSize="{StaticResource FontSize.Caption}" />
+                                    <TextBlock Text=" — " FontSize="{StaticResource FontSize.Caption}"
+                                        Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                                    <TextBlock Text="{Binding LifecycleDescription}"
+                                        FontSize="{StaticResource FontSize.Caption}"
+                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Loaded Packages List -->
+                    <TextBlock Text="{localization:Localize PKOC_CardInfo_Packages}"
+                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                        Margin="0,6,0,2"
+                        FontSize="{StaticResource FontSize.Caption}" />
+                    <ItemsControl ItemsSource="{Binding CardContent.Packages}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="0,1">
+                                    <TextBlock Text="{Binding AidHex}"
+                                        FontFamily="Consolas"
+                                        FontSize="{StaticResource FontSize.Caption}" />
+                                    <TextBlock Text=" — " FontSize="{StaticResource FontSize.Caption}"
+                                        Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                                    <TextBlock Text="{Binding LifecycleDescription}"
+                                        FontSize="{StaticResource FontSize.Caption}"
+                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+                <!-- Refresh button (shown after initial query completes) -->
+                <ui:Button
+                    Content="{localization:Localize PKOC_CardInfo_RefreshButton}"
+                    Icon="{ui:SymbolIcon ArrowSync24}"
+                    Command="{Binding QueryCardContentCommand}"
+                    Appearance="Secondary"
+                    Margin="0,8,0,0">
+                    <ui:Button.Style>
+                        <Style TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsQuerying}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsProgramming}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding HasCardContent}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding QueryError, Converter={StaticResource NullToVisibility}}" Value="Visible">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ui:Button.Style>
+                </ui:Button>
+            </StackPanel>
+
+            <Separator Margin="0,8" />
 
             <!-- GP Key Selection -->
             <TextBlock Text="{localization:Localize PKOC_Programming_Header}"
@@ -173,5 +357,6 @@
             </Border>
 
         </StackPanel>
+        </ScrollViewer>
     </Grid>
 </ui:FluentWindow>

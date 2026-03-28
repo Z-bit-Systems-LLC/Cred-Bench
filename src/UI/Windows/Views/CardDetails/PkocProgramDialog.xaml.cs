@@ -13,6 +13,13 @@ public partial class PkocProgramDialog
     {
         DataContext = viewModel;
         InitializeComponent();
+        Loaded += OnLoaded;
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is PkocViewModel vm && vm.QueryCardContentCommand.CanExecute(null))
+            vm.QueryCardContentCommand.Execute(null);
     }
 
     private void CustomKeyInput_PreviewTextInput(object sender, TextCompositionEventArgs e)
