@@ -13,8 +13,10 @@
     xmlns:localization="clr-namespace:ZBitSystems.Wpf.UI.Localization;assembly=ZBitSystems.Wpf.UI"
     mc:Ignorable="d"
     Title="Cred Bench"
-    MinWidth="700"
+    MinWidth="500"
     MinHeight="500"
+    
+    Height="800"
     ResizeMode="CanResize"
     ExtendsContentIntoTitleBar="True"
     d:DataContext="{d:DesignInstance viewmodels:MainViewModel}">
@@ -232,9 +234,10 @@
             ShowMinimize="True" />
 
         <!-- Main Content -->
-        <StackPanel Grid.Row="1" Margin="{StaticResource Thickness.Large}">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <DockPanel Margin="{StaticResource Thickness.Large}">
                 <!-- Reader Selection -->
-                <ui:Card Margin="{StaticResource Margin.Section}">
+                <ui:Card DockPanel.Dock="Top" Margin="{StaticResource Margin.Section}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -275,7 +278,7 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Left Column: Card Status and Technologies -->
-                    <StackPanel Grid.Column="0" Margin="{StaticResource Margin.Control}">
+                    <StackPanel x:Name="LeftColumn" Grid.Column="0" Margin="{StaticResource Margin.Control}">
                         <!-- Card Status Area -->
                         <ui:Card Margin="{StaticResource Margin.Section}" MinWidth="200" Height="280">
                             <StackPanel Margin="{StaticResource Thickness.Large}" VerticalAlignment="Center">
@@ -481,6 +484,7 @@
                         </StackPanel>
                     </ui:Card>
                 </Grid>
-            </StackPanel>
+            </DockPanel>
+        </ScrollViewer>
     </Grid>
 </ui:FluentWindow>
