@@ -106,16 +106,26 @@ Cred-Bench/
 │   │   └── Windows/    # WPF application
 │   │       ├── Services/   # Windows-specific PC/SC implementation
 │   │       └── Views/      # XAML views
-│   └── Applet/         # PKOC JavaCard applet (Java, built with Ant)
+│   └── Applet/         # PKOC and LEAF Verified emulation JavaCard applets (Java, built with Ant)
 └── test/
     └── Core.Tests/     # Unit tests
 ```
 
-## PKOC JavaCard Applet
+## JavaCard Applets
 
-The `src/Applet/` directory contains an open-source JavaCard applet implementing the PSIA PKOC NFC Card 1.1 specification. It generates a P-256 key pair on-card and supports the SELECT/AUTHENTICATE APDU flow. This applet can be loaded onto blank JavaCards to create PKOC credentials.
+The `src/Applet/` directory contains two open-source JavaCard applets. Their CAP files are committed and embedded in Cred-Bench, so the Windows app's **Program Card…** dialog can install either or both on a blank JavaCard (tested on NXP JCOP4) without other tools.
 
-See [src/Applet/README.md](src/Applet/README.md) for build instructions and prerequisites (requires JDK 8 + Apache Ant, separate from the .NET build).
+| Applet | Package AID | Applet AID | Purpose |
+|---|---|---|---|
+| PKOC | `A000000898000002` | `A000000898000001` | PSIA PKOC NFC Card 1.1 credential |
+| LEAF Verified emulation | `F05A424C454146` | `F05A424C45414601` | Test credential for LEAF Verified readers |
+
+- **PKOC** generates a P-256 key pair on the card and supports the SELECT/AUTHENTICATE APDU flow, creating a PKOC credential. See [docs/PKOC.md](docs/PKOC.md#programming-a-test-card).
+- **LEAF Verified emulation** answers a LEAF Verified reader the way a MIFARE DUOX carrying the LEAF Open Application does: the reader reads the card certificate and challenges the card's on-card P-256 key. It installs as the default-selected applet, because LEAF readers never send an ISO SELECT, and is personalised with a certificate from a **test root** that Cred-Bench creates or loads (compatible with AsymCred's `leaf-tool`). See [docs/LEAF.md](docs/LEAF.md#programming-a-test-card).
+
+> **LEAF Verified emulation is for testing only, not for production.** Its certificates come from your own test root, not the LEAF CA, and readers that trust only the NXP root reject it. Production LEAF Verified credentials are MIFARE DUOX cards issued through the LEAF program. Do not issue emulated cards to users or enrol them in a production access system.
+
+Both applets are copies of the sources in [AsymCred](https://github.com/Z-bit-Systems-LLC/AsymCred). See [src/Applet/README.md](src/Applet/README.md) for commands, build instructions and prerequisites (JDK 8 + Apache Ant, separate from the .NET build) and manual installation with GlobalPlatformPro.
 
 ## Technology Stack
 

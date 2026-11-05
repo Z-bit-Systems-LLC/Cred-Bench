@@ -228,7 +228,8 @@ LEAF programming (`LeafCardProgrammer`):
 2. INSTALL with privilege `04` (Card Reset, i.e. default-selected) and the GP Amendment C
    implicit-selection parameter `EF 03 CF 01 C0`, so a LEAF reader reaches it without SELECT on
    the contactless interface. A card that rejects the parameter (`6A80`) is installed with Card
-   Reset alone and the dialog warns.
+   Reset alone and the dialog warns. Tested on NXP JCOP4 (IC D321, 2026-11-05): the parameter is
+   accepted. Whether Card Reset alone gives contactless implicit selection is untested.
 3. Personalise: SELECT the applet, GET PUBLIC KEY (`80 10`), have the test root issue the card
    certificate, PUT CERTIFICATE in 128-byte chunks (`80 12`), LOCK (`80 14`).
 4. Read the card back with `LEAFVerifiedDetector`, trusting only the test root. It must be
