@@ -229,29 +229,17 @@
   </data>
 
   <!-- PKOC Programming -->
-  <data name="PKOC_Programming_Header" xml:space="preserve">
-    <value>Card Programming</value>
-  </data>
   <data name="PKOC_Programming_DefaultKey" xml:space="preserve">
     <value>Default GP Key (404142...4F)</value>
   </data>
   <data name="PKOC_Programming_CustomKey" xml:space="preserve">
     <value>Custom GP Key</value>
   </data>
-  <data name="PKOC_Programming_ProgramButton" xml:space="preserve">
-    <value>Program Card</value>
-  </data>
   <data name="PKOC_Programming_SecureChannel" xml:space="preserve">
     <value>Establishing secure channel...</value>
   </data>
   <data name="PKOC_Programming_Loading" xml:space="preserve">
     <value>Loading applet... ({0}/{1})</value>
-  </data>
-  <data name="PKOC_Programming_Complete" xml:space="preserve">
-    <value>Programming complete!</value>
-  </data>
-  <data name="PKOC_Programming_ScanToView" xml:space="preserve">
-    <value>Programming complete! Scan card to view credential.</value>
   </data>
   <data name="PKOC_Programming_Failed" xml:space="preserve">
     <value>Programming failed</value>
@@ -426,5 +414,95 @@
   </data>
   <data name="Status_ReaderResetComplete" xml:space="preserve">
     <value>Reader reset complete</value>
+  </data>
+  <data name="LEAFV_Prog_TestRoot" xml:space="preserve">
+    <value>Test root:</value>
+  </data>
+  <data name="LEAFV_Prog_NoTestRoot" xml:space="preserve">
+    <value>No test root loaded</value>
+  </data>
+  <data name="LEAFV_Prog_CreateTestRoot" xml:space="preserve">
+    <value>Create Test Root…</value>
+  </data>
+  <data name="LEAFV_Prog_LoadTestRoot" xml:space="preserve">
+    <value>Load Test Root…</value>
+  </data>
+  <data name="LEAFV_Prog_TestRootHint" xml:space="preserve">
+    <value>A test root is a folder holding ca.key and ca.crt, the same files AsymCred's leaf-tool uses. ca.key is an unencrypted private key: keep it out of source control.</value>
+  </data>
+  <data name="LEAFV_Prog_TestRootCreated" xml:space="preserve">
+    <value>Created test root "{0}" in {1}. It is now a trusted anchor.</value>
+  </data>
+  <data name="LEAFV_Prog_TestRootLoaded" xml:space="preserve">
+    <value>Loaded test root "{0}". It is now a trusted anchor.</value>
+  </data>
+  <data name="LEAFV_Prog_TestRootExists" xml:space="preserve">
+    <value>{0} already holds a test root. Use Load Test Root… instead.</value>
+  </data>
+  <data name="LEAFV_Prog_TestRootFailed" xml:space="preserve">
+    <value>Could not use the test root: {0}</value>
+  </data>
+  <data name="LEAFV_Prog_OpenId" xml:space="preserve">
+    <value>Open ID (0 to 274877906943):</value>
+  </data>
+  <data name="LEAFV_Prog_Random" xml:space="preserve">
+    <value>Random</value>
+  </data>
+  <data name="LEAFV_Prog_OpenIdInvalid" xml:space="preserve">
+    <value>Enter up to 12 digits, at most 274877906943.</value>
+  </data>
+  <data name="LEAFV_Prog_W40Preview" xml:space="preserve">
+    <value>W40-2: {0}</value>
+  </data>
+  <data name="LEAFV_Prog_ReadBackFailed" xml:space="preserve">
+    <value>The card was programmed, but it did not read back as verified: {0}</value>
+  </data>
+  <data name="LEAFV_Prog_NoImplicitSelection" xml:space="preserve">
+    <value>The card rejected the contactless implicit-selection parameter, so the applet was installed with Card Reset only. If a fresh tap does not detect LEAF Verified, this card cannot make it the contactless default.</value>
+  </data>
+  <data name="Prog_OpenButton" xml:space="preserve">
+    <value>Program Card…</value>
+  </data>
+  <data name="Prog_Title" xml:space="preserve">
+    <value>Program Card</value>
+  </data>
+  <data name="Prog_Intro" xml:space="preserve">
+    <value>Installs credentials on a blank JavaCard (JCOP4 or similar) over GlobalPlatform. Each credential replaces only its own applet; anything else on the card stays.</value>
+  </data>
+  <data name="Prog_Pkoc" xml:space="preserve">
+    <value>PKOC</value>
+  </data>
+  <data name="Prog_Pkoc_Hint" xml:space="preserve">
+    <value>PSIA PKOC 1.1 applet. The card generates its key when the applet is installed.</value>
+  </data>
+  <data name="Prog_Leaf" xml:space="preserve">
+    <value>LEAF Verified (testing only)</value>
+  </data>
+  <data name="Prog_Leaf_Hint" xml:space="preserve">
+    <value>Emulation applet, installed as the default-selected applet, with its key certified by a test root. Readers that trust only the NXP root will reject the card.</value>
+  </data>
+  <data name="Prog_BothHint" xml:space="preserve">
+    <value>With both, LEAF Verified is the default-selected applet, so LEAF readers find it without SELECT, and PKOC readers select PKOC by AID. A reader that tries PKOC first in the same tap will miss LEAF.</value>
+  </data>
+  <data name="Prog_GpKey" xml:space="preserve">
+    <value>GlobalPlatform key</value>
+  </data>
+  <data name="Prog_Run" xml:space="preserve">
+    <value>Program</value>
+  </data>
+  <data name="Prog_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Prog_Done_Pkoc" xml:space="preserve">
+    <value>PKOC applet installed.</value>
+  </data>
+  <data name="Prog_Done_Leaf" xml:space="preserve">
+    <value>LEAF Verified test credential: Open ID {0}, W40-2 {1}, reads back as Verified under the test root. Not for production use.</value>
+  </data>
+  <data name="Prog_Done_Scan" xml:space="preserve">
+    <value>Lift the card and scan it to view.</value>
+  </data>
+  <data name="Prog_Leaf_TestOnly" xml:space="preserve">
+    <value>For testing only, not for production. This is a JavaCard emulation of a LEAF Verified card, certified by your own test root rather than the LEAF CA. Production LEAF Verified credentials are MIFARE DUOX cards issued through the LEAF program. Do not issue these cards to users or enrol them in a production access system.</value>
   </data>
 </root>

@@ -187,4 +187,41 @@ public class AppletLoaderTests
             new AppletLoader().LoadAndInstall(mock.Object, session, new byte[500],
                 PackageAid, AppletAid, AppletAid));
     }
+
+    private static byte[] CaptureInstallForInstall(byte privileges, byte[]? systemParameters)
+    {
+        var mock = new Mock<ICardConnection>();
+        var commands = new List<byte[]>();
+        var session = new Scp02Session();
+        session.DeriveSessionKeys(TestKey, TestKey, TestKey, [0x00, 0x01]);
+        mock.Setup(x => x.Transmit(It.IsAny<byte[]>()))
+            .Callback<byte[]>(cmd => commands.Add((byte[])cmd.Clone()))
+            .Returns([0x90, 0x00]);
+
+        new AppletLoader().Install(mock.Object, session, PackageAid, AppletAid, AppletAid, privileges, systemParameters);
+
+        return commands.Single();
+    }
+
+    private static bool Contains(byte[] haystack, byte[] needle) =>
+        haystack.AsSpan().IndexOf(needle) >= 0;
+
+    [Test]
+    public void Install_Default_HasNoPrivilegesAndEmptyParameters()
+    {
+        var command = CaptureInstallForInstall(0x00, null);
+
+        Assert.That(command[2], Is.EqualTo(0x0C));
+        Assert.That(Contains(command, [.. AppletAid, 0x01, 0x00, 0x02, 0xC9, 0x00, 0x00]), Is.True);
+    }
+
+    [Test]
+    public void Install_DefaultSelected_SendsCardResetAndImplicitSelection()
+    {
+        var command = CaptureInstallForInstall(AppletLoader.PrivilegeCardReset, AppletLoader.ImplicitSelectionAllInterfaces);
+
+        // Same bytes as the hand-made install that worked on a JCOP4 card:
+        // privileges 04, parameters C9 00 EF 03 CF 01 C0, no token
+        Assert.That(Contains(command, [.. AppletAid, 0x01, 0x04, 0x07, 0xC9, 0x00, 0xEF, 0x03, 0xCF, 0x01, 0xC0, 0x00]), Is.True);
+    }
 }

@@ -552,8 +552,12 @@ Also record, from the first JavaCard programmed:
 
 ## 8. Order of work
 
-> **Status (2026-11-05):** steps 1–4 done (detection, trust store, CLI, WPF tab, tests).
-> Next: step 5, reading a Wavelynx card.
+> **Status (2026-11-05):** steps 1–8 done. A Wavelynx card was read (step 5); `leaf.cap` is
+> vendored like PKOC (step 6); programming is in Core (step 7) and in a combined **Program Card**
+> dialog for PKOC and LEAF rather than a section on the LEAF tab (step 8). Verified on a JCOP4
+> card: PKOC then LEAF in one run, LEAF found without SELECT after a fresh reset, and test roots
+> interchangeable with `leaf-tool`. §7 question 5: Card Reset plus `EF 03 CF 01 C0` works on
+> JCOP4; Card Reset alone was not tested. User docs: [LEAF.md](LEAF.md#programming-a-test-card).
 
 1. `CardTechnology.LEAFVerified`, `LEAFVerifiedDetails` with W40, and its
    tests.

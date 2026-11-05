@@ -115,7 +115,8 @@ Controls are in `Windows/Views/CardDetails/`, models in `Core/Models/TechnologyD
 - Interfaces in `Core/Services/`
 - Implementations in `Core/Services/` or `Windows/Services/`
 - Card detectors in `Core/Services/CardDetectors/`
-- LEAF Verified certificate parsing and trust store in `Core/Services/Leaf/`
+- LEAF Verified certificate parsing, trust store, test root and card programmer in `Core/Services/Leaf/`
+- Card programming (PKOC and LEAF Verified test cards): `Core/ViewModels/ProgramCardViewModel.cs` and the `Windows/Views/ProgramCardWindow.xaml` dialog; GP session setup shared in `Core/Services/GlobalPlatform/GpSessionFactory.cs`
 - XAML views in `Windows/Views/`
 - Card detail controls in `Windows/Views/CardDetails/`
 - Converters in `Windows/Converters/`

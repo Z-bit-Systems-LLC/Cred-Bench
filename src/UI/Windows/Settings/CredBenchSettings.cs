@@ -12,4 +12,9 @@ public class CredBenchSettings : UserSettings
     /// than file paths so they survive the original files being moved or deleted.
     /// </summary>
     public List<string> LeafTestRoots { get; set; } = [];
+
+    /// <summary>
+    /// Folder of the LEAF test root (ca.key, ca.crt) last used for programming, reloaded at startup.
+    /// </summary>
+    public string? LeafTestCaDirectory { get; set; }
 }

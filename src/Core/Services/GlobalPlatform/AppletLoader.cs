@@ -9,6 +9,19 @@ public class AppletLoader
     private const int MaxBlockSize = 240;
 
     /// <summary>
+    /// GlobalPlatform privilege byte 1, b3: Card Reset, i.e. Default Selected (implicitly selected
+    /// at power-up). Only one application holds it; the ISD gives it up to the new holder.
+    /// </summary>
+    public const byte PrivilegeCardReset = 0x04;
+
+    /// <summary>
+    /// System-specific install parameter (inside tag EF) from GlobalPlatform Amendment C: implicit
+    /// selection on the contact and the contactless interface, logical channel 0 (tag CF, value C0).
+    /// Needed on cards where Card Reset alone does not cover the contactless interface.
+    /// </summary>
+    public static readonly byte[] ImplicitSelectionAllInterfaces = [0xCF, 0x01, 0xC0];
+
+    /// <summary>
     /// Loads a CAP file and installs the applet in a single operation.
     /// </summary>
     public void LoadAndInstall(
@@ -18,11 +31,43 @@ public class AppletLoader
         byte[] packageAid,
         byte[] appletAid,
         byte[] instanceAid,
+        IProgress<(int Current, int Total)>? progress = null,
+        byte privileges = 0x00,
+        byte[]? systemParameters = null)
+    {
+        Load(connection, session, capFileData, packageAid, progress);
+        Install(connection, session, packageAid, appletAid, instanceAid, privileges, systemParameters);
+    }
+
+    /// <summary>
+    /// INSTALL [for load] and the LOAD blocks: puts the package on the card without creating an instance.
+    /// </summary>
+    public void Load(
+        ICardConnection connection,
+        Scp02Session session,
+        byte[] capFileData,
+        byte[] packageAid,
         IProgress<(int Current, int Total)>? progress = null)
     {
         SendInstallForLoad(connection, session, packageAid);
         SendLoadBlocks(connection, session, capFileData, progress);
-        SendInstallForInstall(connection, session, packageAid, appletAid, instanceAid);
+    }
+
+    /// <summary>
+    /// INSTALL [for install and make selectable]: creates the applet instance from a loaded package.
+    /// </summary>
+    /// <param name="privileges">Privilege byte, e.g. <see cref="PrivilegeCardReset"/>.</param>
+    /// <param name="systemParameters">Contents of the EF system-specific parameters, or null for none.</param>
+    public void Install(
+        ICardConnection connection,
+        Scp02Session session,
+        byte[] packageAid,
+        byte[] appletAid,
+        byte[] instanceAid,
+        byte privileges = 0x00,
+        byte[]? systemParameters = null)
+    {
+        SendInstallForInstall(connection, session, packageAid, appletAid, instanceAid, privileges, systemParameters);
     }
 
     private void SendInstallForLoad(
@@ -85,17 +130,20 @@ public class AppletLoader
         Scp02Session session,
         byte[] packageAid,
         byte[] appletAid,
-        byte[] instanceAid)
+        byte[] instanceAid,
+        byte privileges,
+        byte[]? systemParameters)
     {
         // [pkg AID len][pkg AID][module AID len][module AID][instance AID len][instance AID]
-        // [privileges len][privileges][params len][C9 00][token len]
+        // [privileges len][privileges][params len][C9 00 (EF len sys params)][token len]
+        var paramsLength = 2 + (systemParameters is null ? 0 : 2 + systemParameters.Length);
         var data = new byte[
             1 + packageAid.Length +
             1 + appletAid.Length +
             1 + instanceAid.Length +
-            1 + 1 +  // privileges
-            1 + 2 +  // install params (C9 00)
-            1         // token
+            1 + 1 +            // privileges
+            1 + paramsLength + // install params
+            1                  // token
         ];
 
         int pos = 0;
@@ -111,12 +159,19 @@ public class AppletLoader
         Buffer.BlockCopy(instanceAid, 0, data, pos, instanceAid.Length);
         pos += instanceAid.Length;
 
-        data[pos++] = 0x01; // Privileges length
-        data[pos++] = 0x00; // No special privileges
+        data[pos++] = 0x01;       // Privileges length
+        data[pos++] = privileges; // 0x00 = no special privileges
 
-        data[pos++] = 0x02; // Install parameters field length
-        data[pos++] = 0xC9; // Application-specific parameters tag
-        data[pos++] = 0x00; // Empty
+        data[pos++] = (byte)paramsLength; // Install parameters field length
+        data[pos++] = 0xC9;               // Application-specific parameters tag
+        data[pos++] = 0x00;               // Empty
+        if (systemParameters is not null)
+        {
+            data[pos++] = 0xEF; // System-specific parameters tag
+            data[pos++] = (byte)systemParameters.Length;
+            Buffer.BlockCopy(systemParameters, 0, data, pos, systemParameters.Length);
+            pos += systemParameters.Length;
+        }
 
         data[pos] = 0x00;   // Token length
 

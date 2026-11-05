@@ -201,7 +201,7 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
                                     <ui:SymbolIcon Symbol="Warning16" Foreground="{StaticResource Brush.Warning}" Margin="0,0,6,0" />
-                                    <TextBlock Text="{Binding}" TextWrapping="Wrap" />
+                                    <TextBlock Text="{Binding}" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -236,7 +236,7 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <StackPanel>
-                                <TextBlock FontWeight="Medium">
+                                <TextBlock FontWeight="Medium" Foreground="{DynamicResource TextFillColorPrimaryBrush}">
                                     <Run Text="{Binding Name, Mode=OneWay}" />
                                     <Run Text="{Binding Kind, Mode=OneWay, StringFormat='({0})'}"
                                         Foreground="{DynamicResource TextFillColorTertiaryBrush}" />

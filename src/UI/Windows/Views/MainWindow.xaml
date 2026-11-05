@@ -310,13 +310,19 @@
                                             Margin="0,16,0,0"
                                             FontSize="{StaticResource FontSize.BodyLarge}"
                                             Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                                        <ui:Button
-                                            Content="{localization:Localize Card_ScanButton}"
-                                            Icon="{ui:SymbolIcon ScanDash24}"
-                                            Command="{Binding ScanCardCommand}"
-                                            HorizontalAlignment="Center"
-                                            Margin="0,16,0,0"
-                                            Appearance="Primary" />
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
+                                            <ui:Button
+                                                Content="{localization:Localize Card_ScanButton}"
+                                                Icon="{ui:SymbolIcon ScanDash24}"
+                                                Command="{Binding ScanCardCommand}"
+                                                Appearance="Primary" />
+                                            <ui:Button
+                                                Content="{localization:Localize Prog_OpenButton}"
+                                                Icon="{ui:SymbolIcon ArrowDownload24}"
+                                                Click="ProgramCard_Click"
+                                                Appearance="Secondary"
+                                                Margin="8,0,0,0" />
+                                        </StackPanel>
                                     </StackPanel>
 
                                     <!-- Scanning State: Card Being Scanned Animation -->
@@ -507,8 +513,9 @@
                                     </ScrollViewer>
                                 </TabItem>
 
-                                <!-- PKOC Tab - Always shown -->
-                                <TabItem Header="{localization:Localize Tab_PKOC}">
+                                <!-- PKOC Tab - Shown only when PKOC detected -->
+                                <TabItem Header="{localization:Localize Tab_PKOC}"
+                                    Visibility="{Binding HasPKOC, Converter={StaticResource BoolToVisibility}}">
                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                                         <ContentControl Content="{Binding PkocViewModel}" />
                                     </ScrollViewer>

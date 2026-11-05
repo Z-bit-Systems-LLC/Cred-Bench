@@ -61,12 +61,14 @@ public partial class App : Application
                 // LEAF Verified Printed ID lookup (opt-in, online)
                 services.AddSingleton(_ => new LeafPrintedIdLookup());
 
-                // PKOC programming
+                // PKOC and LEAF Verified programming
                 services.AddSingleton<PkocCardProgrammer>();
+                services.AddSingleton<LeafCardProgrammer>();
 
                 // ViewModels
                 services.AddSingleton<PkocViewModel>();
                 services.AddSingleton<LeafVerifiedViewModel>();
+                services.AddSingleton(sp => CreateProgramCardViewModel(sp, settingsService));
                 services.AddSingleton<MainViewModel>();
 
                 // Views
@@ -98,6 +100,25 @@ public partial class App : Application
         };
 
         return store;
+    }
+
+    private static ProgramCardViewModel CreateProgramCardViewModel(
+        IServiceProvider services, IUserSettingsService<CredBenchSettings> settingsService)
+    {
+        var viewModel = ActivatorUtilities.CreateInstance<ProgramCardViewModel>(services);
+        viewModel.RestoreTestCa(settingsService.Settings.LeafTestCaDirectory);
+
+        viewModel.PropertyChanged += async (_, e) =>
+        {
+            if (e.PropertyName != nameof(ProgramCardViewModel.TestCaDirectory)
+                || settingsService.Settings.LeafTestCaDirectory == viewModel.TestCaDirectory)
+                return;
+
+            settingsService.Settings.LeafTestCaDirectory = viewModel.TestCaDirectory;
+            await settingsService.SaveAsync();
+        };
+
+        return viewModel;
     }
 
     protected override async void OnStartup(StartupEventArgs e)

@@ -206,6 +206,47 @@ The CLI's `--json` output includes it as base64.
 | `91 AE` | Authentication error |
 | `91 CA` | Command aborted |
 
+## Programming a Test Card
+
+> **For testing only, not for production.** A programmed card is a JavaCard *emulation* of a
+> LEAF Verified card, certified by your own test root, not by the LEAF CA. Production LEAF
+> Verified credentials are MIFARE DUOX cards issued through the LEAF program. Do not issue test
+> cards to users or enrol them in a production access system. Readers that trust only the NXP
+> root reject them, as they should.
+
+**Program Card…** (next to Scan Card) opens a dialog that installs PKOC, a LEAF Verified test
+credential, or both, on a blank JavaCard (tested on NXP JCOP4) with the default GP keys or a
+custom one. With both ticked it installs PKOC first, then LEAF, in one run.
+
+LEAF programming (`LeafCardProgrammer`):
+
+1. SCP02 with the ISD (`GpSessionFactory`, shared with PKOC), DELETE the LEAF applet and package
+   (`F05A424C45414601`, `F05A424C454146`; never PKOC's), LOAD `leaf.cap`.
+2. INSTALL with privilege `04` (Card Reset, i.e. default-selected) and the GP Amendment C
+   implicit-selection parameter `EF 03 CF 01 C0`, so a LEAF reader reaches it without SELECT on
+   the contactless interface. A card that rejects the parameter (`6A80`) is installed with Card
+   Reset alone and the dialog warns.
+3. Personalise: SELECT the applet, GET PUBLIC KEY (`80 10`), have the test root issue the card
+   certificate, PUT CERTIFICATE in 128-byte chunks (`80 12`), LOCK (`80 14`).
+4. Read the card back with `LEAFVerifiedDetector`, trusting only the test root. It must be
+   Verified. (Implicit selection itself needs a fresh tap: lift the card and scan.)
+
+**Create Test Root…** makes a root whose certificate says it is fake:
+`CN=FAKE LEAF Test Root - NOT FOR PRODUCTION, O=Z-bit Systems (TEST ONLY)`. Card certificates
+copy that as their issuer, so the trust anchor list, the card's Issuer field and any reader log
+that records the issuer all show it.
+
+The **test root** (`LeafTestCa`) is a folder holding `ca.key` (unencrypted PKCS#8 PEM) and
+`ca.crt`, the same files as AsymCred's `leaf-tool`, so one root serves both tools. Loading or
+creating one also adds it to the trust anchors, and the folder is remembered between sessions.
+Card certificates match `leaf-tool`'s: subject serialNumber = the 12-digit Open ID,
+basicConstraints and keyUsage (digitalSignature) critical, an authority key identifier, and no
+expiry (`99991231235959Z`).
+
+With PKOC and LEAF on one card, LEAF is the default-selected applet and PKOC readers select PKOC
+by AID. A reader that tries PKOC before LEAF in the same tap misses LEAF (see
+[Detector Order](#detector-order)).
+
 ## Field Observations
 
 > **Provenance.** Everything from here to the end of this document was found by probing **one**

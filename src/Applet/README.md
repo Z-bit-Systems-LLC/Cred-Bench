@@ -142,6 +142,9 @@ ant build-leaf
 
 ### Installing on a card (tested 2026-11-05: NXP JCOP4, IC type D321, on an ACR122)
 
+Cred-Bench's **Program Card…** dialog does all of this (install, personalise, read back): see
+[docs/LEAF.md](../../docs/LEAF.md#programming-a-test-card). By hand:
+
 GlobalPlatformPro 26.02.11 ignores `--default` and `--default-contactless` during `--install`:
 its INSTALL [for install] carries privileges `000000`. Give the privilege explicitly:
 

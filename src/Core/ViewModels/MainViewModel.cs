@@ -76,13 +76,16 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     public LeafVerifiedViewModel LeafVerifiedViewModel { get; }
 
+    public ProgramCardViewModel ProgramCardViewModel { get; }
+
     public MainViewModel(
         ISmartCardService smartCardService,
         IReaderMonitorService readerMonitorService,
         CardDetectionService detectionService,
         ILocalizationService localizationService,
         PkocViewModel pkocViewModel,
-        LeafVerifiedViewModel leafVerifiedViewModel)
+        LeafVerifiedViewModel leafVerifiedViewModel,
+        ProgramCardViewModel programCardViewModel)
     {
         _smartCardService = smartCardService;
         _readerMonitorService = readerMonitorService;
@@ -91,6 +94,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _syncContext = SynchronizationContext.Current;
         PkocViewModel = pkocViewModel;
         LeafVerifiedViewModel = leafVerifiedViewModel;
+        ProgramCardViewModel = programCardViewModel;
 
         _statusMessage = _localization.GetString("Status_Ready");
 
@@ -116,7 +120,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     partial void OnSelectedReaderChanged(string? value)
     {
-        PkocViewModel.SelectedReader = value;
+        ProgramCardViewModel.SelectedReader = value;
     }
 
     [RelayCommand]

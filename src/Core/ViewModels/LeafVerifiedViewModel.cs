@@ -12,6 +12,7 @@ namespace CredBench.Core.ViewModels;
 /// <summary>
 /// State for the LEAF Verified tab: the detected credential, its trust verdict,
 /// and the trust anchors (built-in NXP root plus user-added test roots).
+/// Programming lives in <see cref="ProgramCardViewModel"/>.
 /// </summary>
 public partial class LeafVerifiedViewModel : ObservableObject
 {
