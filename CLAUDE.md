@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Cred-Bench is a cross-platform application for identifying smart card technologies (PIV, DESFire, iClass, PKOC) using PC/SC readers. It includes a Windows WPF GUI and a cross-platform CLI. It follows the same architecture patterns as OSDP-Bench.
+Cred-Bench is a cross-platform application for identifying smart card technologies (PIV, DESFire, iClass, PKOC, LEAF) using PC/SC readers. It includes a Windows WPF GUI and a cross-platform CLI. It follows the same architecture patterns as OSDP-Bench.
 
 ## Architecture
 
@@ -86,7 +86,7 @@ dotnet publish src/UI/CLI/CLI.csproj -c Release -r osx-arm64 --self-contained
 2. Create detail model in `Core/Models/TechnologyDetails/`
 3. Create detector class in `Core/Services/CardDetectors/`
 4. Implement `ICardDetector` interface
-5. Register detector in DI container (`App.xaml.cs`) and in CLI detector array (`Program.cs`)
+5. Register detector in DI container (`App.xaml.cs`) and in CLI detector array (`Program.cs`). Order matters on JavaCard: keep `LEAFVerifiedDetector` first, because an ISO SELECT of another applet hides the default-selected LEAF applet
 6. Create detail UserControl in `Windows/Views/CardDetails/`
 7. Add DataTemplate in `MainWindow.xaml` Resources
 8. Add TabItem with visibility binding in `MainWindow.xaml`
@@ -103,7 +103,8 @@ Each card technology has a dedicated UserControl for displaying its details. The
 | `PivDetailsControl`        | `PIVDetails`         | [docs/PIV.md](docs/PIV.md) |
 | `PkocDetailsControl`       | `PKOCDetails`        | [docs/PKOC.md](docs/PKOC.md) |
 | `DesfireDetailsControl`    | `DESFireDetails`     | [docs/DESFire.md](docs/DESFire.md) |
-| `LeafDetailsControl`       | `LEAFDetails`        | [docs/LEAF.md](docs/LEAF.md) |
+| `LeafDetailsControl`       | `LEAFDetails` (LEAF Universal) | [docs/LEAF.md](docs/LEAF.md) |
+| `LeafVerifiedDetailsControl` | `LeafVerifiedViewModel` (wraps `LEAFVerifiedDetails`) | [docs/LEAF.md](docs/LEAF.md#leaf-verified) |
 
 Controls are in `Windows/Views/CardDetails/`, models in `Core/Models/TechnologyDetails/`.
 
@@ -114,6 +115,7 @@ Controls are in `Windows/Views/CardDetails/`, models in `Core/Models/TechnologyD
 - Interfaces in `Core/Services/`
 - Implementations in `Core/Services/` or `Windows/Services/`
 - Card detectors in `Core/Services/CardDetectors/`
+- LEAF Verified certificate parsing and trust store in `Core/Services/Leaf/`
 - XAML views in `Windows/Views/`
 - Card detail controls in `Windows/Views/CardDetails/`
 - Converters in `Windows/Converters/`

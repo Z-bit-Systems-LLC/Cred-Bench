@@ -4,7 +4,7 @@ A cross-platform diagnostic tool for identifying smart card technologies and exa
 
 ## Features
 
-- **Card type identification**: Automatically detects PIV, DESFire, ISO14443, PKOC, and LEAF credentials
+- **Card type identification**: Automatically detects PIV, DESFire, ISO14443, PKOC, LEAF Universal, and LEAF Verified credentials
 - **Credential data display**: Shows the actual data transmitted by the card (UID, CSN, ATR, version info, etc.)
 - **Technology-specific details**: Dedicated views for each card type showing relevant fields
 - **Real-time monitoring**: Automatically detects card insertion and removal
@@ -20,7 +20,7 @@ A cross-platform diagnostic tool for identifying smart card technologies and exa
 | PIV        | [docs/PIV.md](docs/PIV.md) |
 | PKOC       | [docs/PKOC.md](docs/PKOC.md) |
 | DESFire    | [docs/DESFire.md](docs/DESFire.md) |
-| LEAF       | [docs/LEAF.md](docs/LEAF.md) |
+| LEAF Universal / LEAF Verified | [docs/LEAF.md](docs/LEAF.md) |
 | General    | [docs/General.md](docs/General.md) |
 
 See the [docs/](docs/) folder for detailed detection and credential parsing documentation for each card technology.

@@ -104,7 +104,10 @@
     <value>PKOC</value>
   </data>
   <data name="Tab_LEAF" xml:space="preserve">
-    <value>LEAF</value>
+    <value>LEAF Universal</value>
+  </data>
+  <data name="Tab_LEAFVerified" xml:space="preserve">
+    <value>LEAF Verified</value>
   </data>
 
   <!-- General Details -->
@@ -263,6 +266,128 @@
   </data>
   <data name="LEAF_DetectedAIDs" xml:space="preserve">
     <value>Detected AIDs:</value>
+  </data>
+
+  <!-- LEAF Verified Details -->
+  <data name="LEAFV_OpenId" xml:space="preserve">
+    <value>Open ID:</value>
+  </data>
+  <data name="LEAFV_W40Hex" xml:space="preserve">
+    <value>W40-2 Hex:</value>
+  </data>
+  <data name="LEAFV_W40Bits" xml:space="preserve">
+    <value>W40-2 Wiegand Bits:</value>
+  </data>
+  <data name="LEAFV_PrintedId" xml:space="preserve">
+    <value>Printed ID:</value>
+  </data>
+  <data name="LEAFV_PrintedId_NotLookedUp" xml:space="preserve">
+    <value>Not looked up</value>
+  </data>
+  <data name="LEAFV_LookUpPrintedId" xml:space="preserve">
+    <value>Look Up Printed ID…</value>
+  </data>
+  <data name="LEAFV_LookUpPrintedId_Hint" xml:space="preserve">
+    <value>Online lookup: sends the card's one-time tap URL to d.leaf-community.com, as a phone tap would.</value>
+  </data>
+  <data name="LEAFV_TapUrl" xml:space="preserve">
+    <value>Tap URL (NDEF):</value>
+  </data>
+  <data name="LEAFV_Certificate" xml:space="preserve">
+    <value>Certificate:</value>
+  </data>
+  <data name="LEAFV_Issuer" xml:space="preserve">
+    <value>Issuer:</value>
+  </data>
+  <data name="LEAFV_AuthorityKeyId" xml:space="preserve">
+    <value>Authority Key ID:</value>
+  </data>
+  <data name="LEAFV_CardSignature" xml:space="preserve">
+    <value>Card Signature:</value>
+  </data>
+  <data name="LEAFV_CardPublicKey" xml:space="preserve">
+    <value>Card Public Key:</value>
+  </data>
+  <data name="LEAFV_StatusWord" xml:space="preserve">
+    <value>Status Word:</value>
+  </data>
+  <data name="LEAFV_ProfileIssues" xml:space="preserve">
+    <value>Certificate Profile Issues</value>
+  </data>
+  <data name="LEAFV_Error" xml:space="preserve">
+    <value>Error:</value>
+  </data>
+  <data name="LEAFV_Unverified" xml:space="preserve">
+    <value>(unverified)</value>
+  </data>
+  <data name="LEAFV_Status_Verified" xml:space="preserve">
+    <value>Verified — {0}</value>
+  </data>
+  <data name="LEAFV_Status_CloneSuspect" xml:space="preserve">
+    <value>Card failed the challenge — possible clone</value>
+  </data>
+  <data name="LEAFV_Status_Untrusted" xml:space="preserve">
+    <value>Certificate not signed by a trusted root (issuer: {0})</value>
+  </data>
+  <data name="LEAFV_Status_ProfileViolation" xml:space="preserve">
+    <value>Certificate breaks the LEAF Verified profile</value>
+  </data>
+  <data name="LEAFV_Status_Unreadable" xml:space="preserve">
+    <value>LEAF Open Application found, but its certificate could not be read</value>
+  </data>
+  <data name="LEAFV_Status_ChallengeIncomplete" xml:space="preserve">
+    <value>Certificate trusted, but the card challenge did not complete</value>
+  </data>
+  <data name="LEAFV_Cert_Trusted" xml:space="preserve">
+    <value>Trusted ({0})</value>
+  </data>
+  <data name="LEAFV_Cert_Untrusted" xml:space="preserve">
+    <value>Untrusted issuer</value>
+  </data>
+  <data name="LEAFV_Cert_ProfileViolation" xml:space="preserve">
+    <value>Profile violation</value>
+  </data>
+  <data name="LEAFV_Cert_ProfileViolationTrusted" xml:space="preserve">
+    <value>Profile violation (signed by {0})</value>
+  </data>
+  <data name="LEAFV_Cert_Unreadable" xml:space="preserve">
+    <value>Unreadable</value>
+  </data>
+  <data name="LEAFV_CardSig_Valid" xml:space="preserve">
+    <value>Valid</value>
+  </data>
+  <data name="LEAFV_CardSig_Invalid" xml:space="preserve">
+    <value>Invalid</value>
+  </data>
+  <data name="LEAFV_CardSig_NotChecked" xml:space="preserve">
+    <value>Not checked</value>
+  </data>
+  <data name="LEAFV_ExportCertificate" xml:space="preserve">
+    <value>Export Certificate…</value>
+  </data>
+  <data name="LEAFV_TrustAnchors" xml:space="preserve">
+    <value>Trust Anchors</value>
+  </data>
+  <data name="LEAFV_TrustAnchors_Hint" xml:space="preserve">
+    <value>Card certificates are checked against these roots. Add a test root (ca.crt) to verify JavaCard emulation cards.</value>
+  </data>
+  <data name="LEAFV_AddTestRoot" xml:space="preserve">
+    <value>Add Test Root…</value>
+  </data>
+  <data name="LEAFV_RemoveTestRoot" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="LEAFV_TrustStore_Added" xml:space="preserve">
+    <value>Added test root "{0}"</value>
+  </data>
+  <data name="LEAFV_TrustStore_AddFailed" xml:space="preserve">
+    <value>Could not add test root: {0}</value>
+  </data>
+  <data name="LEAFV_TrustStore_Removed" xml:space="preserve">
+    <value>Removed test root "{0}"</value>
+  </data>
+  <data name="LEAFV_ExportFailed" xml:space="preserve">
+    <value>Could not export certificate: {0}</value>
   </data>
 
   <!-- ViewModel Status Messages -->

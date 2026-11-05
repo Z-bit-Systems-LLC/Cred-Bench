@@ -188,6 +188,19 @@
             </Style.Triggers>
         </Style>
 
+        <Style x:Key="LEAFVerifiedBadgeStyle" TargetType="Border" BasedOn="{StaticResource TechBadgeBaseStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsScanningLEAFVerified}" Value="True">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard x:Name="GlowStoryboard" Storyboard="{StaticResource ScanningGlowAnimation}" />
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <StopStoryboard BeginStoryboardName="GlowStoryboard" />
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
         <!-- DataTemplates for card detail types -->
         <DataTemplate DataType="{x:Type models:GeneralCardDetails}">
             <cardDetails:GeneralDetailsControl />
@@ -215,6 +228,10 @@
 
         <DataTemplate DataType="{x:Type models:LEAFDetails}">
             <cardDetails:LeafDetailsControl />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:LeafVerifiedViewModel}">
+            <cardDetails:LeafVerifiedDetailsControl />
         </DataTemplate>
     </ui:FluentWindow.Resources>
 
@@ -275,7 +292,7 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Left Column: Card Status and Technologies -->
-                    <StackPanel Grid.Column="0" Margin="{StaticResource Margin.Control}">
+                    <StackPanel x:Name="LeftColumn" Grid.Column="0" Margin="{StaticResource Margin.Control}" VerticalAlignment="Top">
                         <!-- Card Status Area -->
                         <ui:Card Margin="{StaticResource Margin.Section}" MinWidth="200" Height="280">
                             <StackPanel Margin="{StaticResource Thickness.Large}" VerticalAlignment="Center">
@@ -418,67 +435,102 @@
                                     <Border
                                         Style="{StaticResource LEAFBadgeStyle}"
                                         Background="{Binding HasLEAF, Converter={StaticResource TechToColor}}">
-                                        <TextBlock Text="LEAF" Foreground="White" FontWeight="Medium" />
+                                        <TextBlock Text="LEAF Universal" Foreground="White" FontWeight="Medium" />
+                                    </Border>
+                                    <Border
+                                        Style="{StaticResource LEAFVerifiedBadgeStyle}"
+                                        Background="{Binding HasLEAFVerified, Converter={StaticResource TechToColor}}">
+                                        <TextBlock Text="LEAF Verified" Foreground="White" FontWeight="Medium" />
                                     </Border>
                                 </WrapPanel>
                             </StackPanel>
                         </ui:Card>
                     </StackPanel>
 
-                    <!-- Right Column: Card Details with Tabs -->
-                    <ui:Card Grid.Column="1" VerticalAlignment="Top">
-                        <StackPanel>
-                            <TextBlock
+                    <!-- Right Column: Card Details with Tabs.
+                         Height follows the left column; each tab scrolls its own content. -->
+                    <ui:Card Grid.Column="1"
+                        VerticalAlignment="Top"
+                        VerticalContentAlignment="Stretch"
+                        Height="{Binding ActualHeight, ElementName=LeftColumn}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0"
                                 Text="{localization:Localize Card_Details}"
                                 Style="{StaticResource Section.Header}" />
 
                             <!-- Placeholder when no card scanned -->
-                            <TextBlock
+                            <TextBlock Grid.Row="1"
                                 Text="{localization:Localize Card_NoCardScanned}"
                                 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                 Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}, ConverterParameter=Invert}" />
 
                             <!-- Tabbed card details when available -->
-                            <TabControl
+                            <TabControl Grid.Row="2"
                                 Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}}"
                                 Padding="0"
                                 ItemContainerStyle="{StaticResource DetailTabItemStyle}">
 
                                 <!-- General Tab - Always shown when card detected -->
                                 <TabItem Header="{localization:Localize Tab_General}">
-                                    <ContentControl Content="{Binding CurrentResult.GeneralDetails}" />
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <ContentControl Content="{Binding CurrentResult.GeneralDetails}" />
+                                    </ScrollViewer>
                                 </TabItem>
 
                                 <!-- PIV Tab - Shown only when PIV detected -->
                                 <TabItem Header="{localization:Localize Tab_PIV}"
                                     Visibility="{Binding HasPIV, Converter={StaticResource BoolToVisibility}}">
-                                    <ContentControl Content="{Binding CurrentResult.PIVDetails}" />
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <ContentControl Content="{Binding CurrentResult.PIVDetails}" />
+                                    </ScrollViewer>
                                 </TabItem>
 
                                 <!-- DESFire Tab - Shown only when DESFire detected -->
                                 <TabItem Header="{localization:Localize Tab_DESFire}"
                                     Visibility="{Binding HasDESFire, Converter={StaticResource BoolToVisibility}}">
-                                    <ContentControl Content="{Binding CurrentResult.DESFireDetails}" />
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <ContentControl Content="{Binding CurrentResult.DESFireDetails}" />
+                                    </ScrollViewer>
                                 </TabItem>
 
                                 <!-- ISO14443 Tab - Shown only when ISO14443 detected -->
                                 <TabItem Header="{localization:Localize Tab_ISO14443}"
                                     Visibility="{Binding HasISO14443, Converter={StaticResource BoolToVisibility}}">
-                                    <ContentControl Content="{Binding CurrentResult.ISO14443Details}" />
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <ContentControl Content="{Binding CurrentResult.ISO14443Details}" />
+                                    </ScrollViewer>
                                 </TabItem>
 
                                 <!-- PKOC Tab - Always shown -->
                                 <TabItem Header="{localization:Localize Tab_PKOC}">
-                                    <ContentControl Content="{Binding PkocViewModel}" />
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <ContentControl Content="{Binding PkocViewModel}" />
+                                    </ScrollViewer>
                                 </TabItem>
 
-                                <!-- LEAF Tab - Shown only when LEAF detected -->
+                                <!-- LEAF Verified Tab - Shown only when LEAF Verified detected -->
+                                <TabItem Header="{localization:Localize Tab_LEAFVerified}"
+                                    Visibility="{Binding HasLEAFVerified, Converter={StaticResource BoolToVisibility}}">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <ContentControl Content="{Binding LeafVerifiedViewModel}" />
+                                    </ScrollViewer>
+                                </TabItem>
+
+                                <!-- LEAF Universal Tab - Shown only when LEAF Universal detected -->
                                 <TabItem Header="{localization:Localize Tab_LEAF}"
                                     Visibility="{Binding HasLEAF, Converter={StaticResource BoolToVisibility}}">
-                                    <ContentControl Content="{Binding CurrentResult.LEAFDetails}" />
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <ContentControl Content="{Binding CurrentResult.LEAFDetails}" />
+                                    </ScrollViewer>
                                 </TabItem>
                             </TabControl>
-                        </StackPanel>
+                        </Grid>
                     </ui:Card>
                 </Grid>
             </StackPanel>

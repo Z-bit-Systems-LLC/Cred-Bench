@@ -18,6 +18,7 @@ public record DetectionResult
     public ISO14443Details? ISO14443Details { get; init; }
     public PKOCDetails? PKOCDetails { get; init; }
     public LEAFDetails? LEAFDetails { get; init; }
+    public LEAFVerifiedDetails? LEAFVerifiedDetails { get; init; }
 
     public bool HasTechnology(CardTechnology technology) =>
         (Technologies & technology) == technology;

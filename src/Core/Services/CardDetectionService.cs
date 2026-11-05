@@ -45,6 +45,7 @@ public class CardDetectionService
             ISO14443Details? iso14443Details = null;
             PKOCDetails? pkocDetails = null;
             LEAFDetails? leafDetails = null;
+            LEAFVerifiedDetails? leafVerifiedDetails = null;
 
             // Use a single connection for all detection operations
             using (var connection = _smartCardService.Connect(readerName))
@@ -91,6 +92,9 @@ public class CardDetectionService
                                 case LEAFDetails leaf:
                                     leafDetails = leaf;
                                     break;
+                                case LEAFVerifiedDetails leafVerified:
+                                    leafVerifiedDetails = leafVerified;
+                                    break;
                             }
                         }
                     }
@@ -123,7 +127,8 @@ public class CardDetectionService
                 DESFireDetails = desfireDetails,
                 ISO14443Details = iso14443Details,
                 PKOCDetails = pkocDetails,
-                LEAFDetails = leafDetails
+                LEAFDetails = leafDetails,
+                LEAFVerifiedDetails = leafVerifiedDetails
             };
         }, cancellationToken);
     }
@@ -147,8 +152,10 @@ public class CardDetectionService
             typeNames.Add("DESFire");
         if (technologies.HasFlag(CardTechnology.PKOC))
             typeNames.Add("PKOC");
+        if (technologies.HasFlag(CardTechnology.LEAFVerified))
+            typeNames.Add("LEAF Verified");
         if (technologies.HasFlag(CardTechnology.LEAF))
-            typeNames.Add("LEAF");
+            typeNames.Add("LEAF Universal");
 
         var summary = typeNames.Count > 0
             ? string.Join(" + ", typeNames)

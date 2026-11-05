@@ -1,0 +1,275 @@
+<UserControl
+    x:Class="CredBench.Windows.Views.CardDetails.LeafVerifiedDetailsControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:viewmodels="clr-namespace:CredBench.Core.ViewModels;assembly=Core"
+    xmlns:guidelinesConverters="clr-namespace:ZBitSystems.Wpf.UI.Converters;assembly=ZBitSystems.Wpf.UI"
+    xmlns:localization="clr-namespace:ZBitSystems.Wpf.UI.Localization;assembly=ZBitSystems.Wpf.UI"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance viewmodels:LeafVerifiedViewModel}">
+
+    <UserControl.Resources>
+        <guidelinesConverters:BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <guidelinesConverters:NullToVisibilityConverter x:Key="NullToVisibility" />
+    </UserControl.Resources>
+
+        <StackPanel Margin="{StaticResource Padding.Card}">
+
+            <!-- ═══════════════════════════════════════════ -->
+            <!-- Verdict banner                              -->
+            <!-- ═══════════════════════════════════════════ -->
+            <StackPanel Visibility="{Binding HasDetectedCredential, Converter={StaticResource BoolToVisibility}}">
+
+                <Border Padding="12,8" Margin="0,0,0,16"
+                    CornerRadius="{StaticResource CornerRadius.Small}">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Background" Value="{StaticResource Brush.Warning}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowVerified}" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource Brush.Success}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ShowFailure}" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource Brush.Error}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="CheckmarkCircle24" Foreground="White" Margin="0,0,8,0"
+                            Visibility="{Binding ShowVerified, Converter={StaticResource BoolToVisibility}}" />
+                        <ui:SymbolIcon Symbol="Warning24" Foreground="White" Margin="0,0,8,0"
+                            Visibility="{Binding ShowWarning, Converter={StaticResource BoolToVisibility}}" />
+                        <ui:SymbolIcon Symbol="DismissCircle24" Foreground="White" Margin="0,0,8,0"
+                            Visibility="{Binding ShowFailure, Converter={StaticResource BoolToVisibility}}" />
+                        <TextBlock Text="{Binding StatusText}" Foreground="White" FontWeight="Medium"
+                            TextWrapping="Wrap" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+
+                <!-- ═══════════════════════════════════════════ -->
+                <!-- Credential                                  -->
+                <!-- ═══════════════════════════════════════════ -->
+                <TextBlock Style="{StaticResource Field.Label}" FontSize="{StaticResource FontSize.Caption}">
+                    <Run Text="{localization:Localize LEAFV_OpenId}" />
+                    <Run Text="{Binding OpenIdQualifier, Mode=OneWay}" Foreground="{StaticResource Brush.Warning}" />
+                </TextBlock>
+                <TextBox Text="{Binding DetectedDetails.OpenId, Mode=OneWay, FallbackValue='N/A', TargetNullValue='N/A'}"
+                    Style="{StaticResource TextBox.Copyable}"
+                    FontSize="{StaticResource FontSize.Subtitle}"
+                    FontWeight="SemiBold"
+                    Margin="0,0,0,8" />
+
+                <TextBlock Text="{localization:Localize LEAFV_W40Hex}"
+                    Style="{StaticResource Field.Label}"
+                    FontSize="{StaticResource FontSize.Caption}" />
+                <TextBox Text="{Binding DetectedDetails.W40Hex, Mode=OneWay, FallbackValue='N/A', TargetNullValue='N/A'}"
+                    Style="{StaticResource TextBox.Copyable}"
+                    Margin="0,0,0,8" />
+
+                <TextBlock Text="{localization:Localize LEAFV_W40Bits}"
+                    Style="{StaticResource Field.Label}"
+                    FontSize="{StaticResource FontSize.Caption}" />
+                <TextBox Text="{Binding DetectedDetails.W40Bits, Mode=OneWay, FallbackValue='N/A', TargetNullValue='N/A'}"
+                    Style="{StaticResource TextBox.Copyable}"
+                    TextWrapping="Wrap"
+                    Margin="0,0,0,8" />
+
+                <!-- Printed ID: opt-in online lookup through the card's tap URL -->
+                <StackPanel Visibility="{Binding HasTapUrl, Converter={StaticResource BoolToVisibility}}">
+                    <TextBlock Text="{localization:Localize LEAFV_PrintedId}"
+                        Style="{StaticResource Field.Label}"
+                        FontSize="{StaticResource FontSize.Caption}" />
+                    <!-- After the lookup: the value -->
+                    <TextBox
+                        Text="{Binding DetectedDetails.PrintedId, Mode=OneWay}"
+                        Style="{StaticResource TextBox.Copyable}"
+                        FontWeight="SemiBold"
+                        Visibility="{Binding HasPrintedId, Converter={StaticResource BoolToVisibility}}" />
+                    <!-- Before the lookup: the opt-in button, once per scan -->
+                    <ui:Button
+                        Content="{localization:Localize LEAFV_LookUpPrintedId}"
+                        Icon="{ui:SymbolIcon Globe24}"
+                        Command="{Binding LookUpPrintedIdCommand}"
+                        Appearance="Secondary"
+                        HorizontalAlignment="Left"
+                        Visibility="{Binding ShowLookUpPrintedId, Converter={StaticResource BoolToVisibility}}" />
+                    <ProgressBar IsIndeterminate="True" Height="4" Margin="0,4,0,0"
+                        Visibility="{Binding IsLookingUpPrintedId, Converter={StaticResource BoolToVisibility}}" />
+                    <TextBlock Text="{Binding DetectedDetails.PrintedIdNote}"
+                        TextWrapping="Wrap"
+                        Margin="0,4,0,0"
+                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                        Visibility="{Binding HasPrintedIdNote, Converter={StaticResource BoolToVisibility}}" />
+                    <TextBlock Text="{localization:Localize LEAFV_LookUpPrintedId_Hint}"
+                        TextWrapping="Wrap"
+                        FontSize="{StaticResource FontSize.Caption}"
+                        Margin="0,4,0,0"
+                        Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                        Visibility="{Binding ShowLookUpPrintedId, Converter={StaticResource BoolToVisibility}}" />
+                </StackPanel>
+
+                <Border Height="16" />
+
+                <!-- ═══════════════════════════════════════════ -->
+                <!-- Certificate and challenge                   -->
+                <!-- ═══════════════════════════════════════════ -->
+                <Grid Margin="{StaticResource Margin.Section}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="{StaticResource Gutter.Medium}" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource Field.Label}"
+                        Text="{localization:Localize LEAFV_Certificate}" TextAlignment="Right" />
+                    <TextBlock Grid.Row="0" Grid.Column="2" Style="{StaticResource Field.Value}"
+                        Text="{Binding CertificateText}" FontWeight="Medium" TextWrapping="Wrap" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource Field.Label}"
+                        Text="{localization:Localize LEAFV_CardSignature}" TextAlignment="Right" />
+                    <TextBlock Grid.Row="1" Grid.Column="2" Style="{StaticResource Field.Value}"
+                        Text="{Binding CardSignatureText}" FontWeight="Medium" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource Field.Label}"
+                        Text="{localization:Localize LEAFV_Issuer}" TextAlignment="Right" />
+                    <TextBlock Grid.Row="2" Grid.Column="2" Style="{StaticResource Field.Value}"
+                        Text="{Binding DetectedDetails.Issuer, FallbackValue='N/A', TargetNullValue='N/A'}"
+                        TextWrapping="Wrap" />
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource Field.Label}"
+                        Text="{localization:Localize LEAFV_AuthorityKeyId}" TextAlignment="Right" />
+                    <TextBlock Grid.Row="3" Grid.Column="2" Style="{StaticResource Field.Value}"
+                        Text="{Binding DetectedDetails.AuthorityKeyId, FallbackValue='N/A', TargetNullValue='N/A'}"
+                        FontFamily="Consolas" TextWrapping="Wrap" />
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource Field.Label}"
+                        Text="{localization:Localize LEAFV_StatusWord}" TextAlignment="Right"
+                        Visibility="{Binding DetectedDetails.LastStatusWord, Converter={StaticResource NullToVisibility}}" />
+                    <TextBlock Grid.Row="4" Grid.Column="2" Style="{StaticResource Field.Value}"
+                        Text="{Binding DetectedDetails.LastStatusWord}" FontFamily="Consolas"
+                        Visibility="{Binding DetectedDetails.LastStatusWord, Converter={StaticResource NullToVisibility}}" />
+                </Grid>
+
+                <TextBlock Text="{localization:Localize LEAFV_CardPublicKey}"
+                    Style="{StaticResource Field.Label}"
+                    FontSize="{StaticResource FontSize.Caption}" />
+                <TextBox Text="{Binding DetectedDetails.CardPublicKeyHex, Mode=OneWay, FallbackValue='N/A', TargetNullValue='N/A'}"
+                    Style="{StaticResource TextBox.Copyable}"
+                    FontSize="10"
+                    TextWrapping="Wrap"
+                    Margin="0,0,0,12" />
+
+                <StackPanel Visibility="{Binding HasTapUrl, Converter={StaticResource BoolToVisibility}}" Margin="0,0,0,12">
+                    <TextBlock Text="{localization:Localize LEAFV_TapUrl}"
+                        Style="{StaticResource Field.Label}"
+                        FontSize="{StaticResource FontSize.Caption}" />
+                    <TextBox Text="{Binding DetectedDetails.TapUrl, Mode=OneWay}"
+                        Style="{StaticResource TextBox.Copyable}"
+                        FontSize="10"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+
+                <!-- Error -->
+                <StackPanel Visibility="{Binding HasError, Converter={StaticResource BoolToVisibility}}" Margin="0,0,0,12">
+                    <TextBlock Text="{localization:Localize LEAFV_Error}"
+                        Style="{StaticResource Field.Label}"
+                        FontSize="{StaticResource FontSize.Caption}" />
+                    <TextBox Text="{Binding DetectedDetails.Error, Mode=OneWay}"
+                        Style="{StaticResource TextBox.Copyable}"
+                        Foreground="{StaticResource Brush.Error}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+
+                <!-- Profile issues -->
+                <StackPanel Visibility="{Binding HasProfileIssues, Converter={StaticResource BoolToVisibility}}" Margin="0,0,0,12">
+                    <TextBlock Text="{localization:Localize LEAFV_ProfileIssues}"
+                        Style="{StaticResource Field.Label}"
+                        FontSize="{StaticResource FontSize.Caption}" />
+                    <ItemsControl ItemsSource="{Binding DetectedDetails.ProfileIssues}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                                    <ui:SymbolIcon Symbol="Warning16" Foreground="{StaticResource Brush.Warning}" Margin="0,0,6,0" />
+                                    <TextBlock Text="{Binding}" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+                <ui:Button
+                    Content="{localization:Localize LEAFV_ExportCertificate}"
+                    Icon="{ui:SymbolIcon Certificate24}"
+                    Click="ExportCertificate_Click"
+                    IsEnabled="{Binding CanExportCertificate}"
+                    Appearance="Secondary"
+                    Margin="0,0,0,24" />
+            </StackPanel>
+
+            <!-- ═══════════════════════════════════════════ -->
+            <!-- Trust anchors                               -->
+            <!-- ═══════════════════════════════════════════ -->
+            <TextBlock Text="{localization:Localize LEAFV_TrustAnchors}"
+                Style="{StaticResource Section.Header}" />
+            <TextBlock Text="{localization:Localize LEAFV_TrustAnchors_Hint}"
+                TextWrapping="Wrap"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Margin="0,0,0,8" />
+
+            <ItemsControl ItemsSource="{Binding TrustAnchors}" Margin="0,0,0,8">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock FontWeight="Medium">
+                                    <Run Text="{Binding Name, Mode=OneWay}" />
+                                    <Run Text="{Binding Kind, Mode=OneWay, StringFormat='({0})'}"
+                                        Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                                </TextBlock>
+                                <TextBlock Text="{Binding PublicKeyHex}"
+                                    FontFamily="Consolas" FontSize="10"
+                                    TextTrimming="CharacterEllipsis"
+                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                            </StackPanel>
+                            <ui:Button Grid.Column="1"
+                                Content="{localization:Localize LEAFV_RemoveTestRoot}"
+                                Command="{Binding DataContext.RemoveTestRootCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                CommandParameter="{Binding}"
+                                Appearance="Secondary"
+                                VerticalAlignment="Center"
+                                Margin="8,0,0,0"
+                                Visibility="{Binding IsBuiltIn, Converter={StaticResource BoolToVisibility}, ConverterParameter=Invert}" />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <ui:Button
+                Content="{localization:Localize LEAFV_AddTestRoot}"
+                Icon="{ui:SymbolIcon Add24}"
+                Click="AddTestRoot_Click"
+                Appearance="Secondary" />
+
+            <TextBlock
+                Text="{Binding TrustStoreMessage}"
+                Margin="0,8,0,0"
+                TextWrapping="Wrap"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Visibility="{Binding TrustStoreMessage, Converter={StaticResource NullToVisibility}}" />
+        </StackPanel>
+</UserControl>

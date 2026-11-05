@@ -30,8 +30,11 @@ public static class ResultFormatter
         if (result.PKOCDetails is { } pkoc)
             WriteSection(writer, "PKOC", pkoc.GetFields());
 
+        if (result.LEAFVerifiedDetails is { } leafVerified)
+            WriteSection(writer, "LEAF Verified", leafVerified.GetFields());
+
         if (result.LEAFDetails is { } leaf)
-            WriteSection(writer, "LEAF", leaf.GetFields());
+            WriteSection(writer, "LEAF Universal", leaf.GetFields());
     }
 
     /// <summary>
@@ -113,6 +116,32 @@ public static class ResultFormatter
                 wiegand256 = pkoc.Credential256Bits,
                 wiegand75 = pkoc.Credential75Bits,
                 wiegand64 = pkoc.Credential64Bits
+            };
+        }
+
+        if (result.LEAFVerifiedDetails is { } leafVerified)
+        {
+            obj["leafVerified"] = new
+            {
+                verified = leafVerified.IsFullyVerified,
+                openId = leafVerified.OpenId,
+                w40Hex = leafVerified.W40Hex,
+                w40Bits = leafVerified.W40Bits,
+                trust = leafVerified.Trust.ToString(),
+                trustAnchor = leafVerified.TrustAnchorName,
+                cardSignatureValid = leafVerified.CardSignatureValid,
+                issuer = leafVerified.Issuer,
+                subject = leafVerified.Subject,
+                authorityKeyId = leafVerified.AuthorityKeyId,
+                certificateSerial = leafVerified.CertificateSerial,
+                cardPublicKey = leafVerified.CardPublicKeyHex,
+                certificate = leafVerified.Certificate is { } der ? Convert.ToBase64String(der) : null,
+                profileIssues = leafVerified.ProfileIssues.Count > 0 ? leafVerified.ProfileIssues : null,
+                error = leafVerified.Error,
+                statusWord = leafVerified.LastStatusWord,
+                tapUrl = leafVerified.TapUrl,
+                printedId = leafVerified.PrintedId,
+                printedIdNote = leafVerified.PrintedIdNote
             };
         }
 

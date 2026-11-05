@@ -1,9 +1,12 @@
+using System.Text;
 using System.Windows;
 using CredBench.Core.Services;
 using CredBench.Core.Services.CardDetectors;
+using CredBench.Core.Services.Leaf;
 using CredBench.Core.Services.Pkoc;
 using CredBench.Core.ViewModels;
 using CredBench.Windows.Services;
+using CredBench.Windows.Settings;
 using CredBench.Windows.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,8 +28,13 @@ public partial class App : Application
             .ConfigureServices((_, services) =>
             {
                 // Settings
-                services.AddSingleton<IUserSettingsService<UserSettings>>(
-                    new JsonUserSettingsService<UserSettings>("CredBench"));
+                var settingsService = new JsonUserSettingsService<CredBenchSettings>("CredBench");
+                services.AddSingleton<IUserSettingsService<CredBenchSettings>>(settingsService);
+                services.AddSingleton<IUserSettingsService<UserSettings>>(settingsService);
+
+                // LEAF Verified trust anchors: built-in NXP root plus persisted test roots
+                services.AddSingleton(CreateLeafTrustStore(settingsService));
+                services.AddSingleton<ILeafTrustStore>(sp => sp.GetRequiredService<LeafTrustStore>());
 
                 // Localization
                 services.AddSingleton<ILocalizationService, Core.Services.LocalizationService>();
@@ -36,7 +44,11 @@ public partial class App : Application
                 services.AddSingleton<ISmartCardService>(sp => sp.GetRequiredService<WindowsSmartCardService>());
                 services.AddSingleton<IReaderMonitorService, WindowsReaderMonitorService>();
 
-                // Card detectors
+                // Card detectors. LEAF Verified runs first: on a JavaCard emulation card the LEAF
+                // applet is only reachable while it is still the default-selected applet, before
+                // any ISO SELECT of another applet (e.g. PKOC) takes its place.
+                services.AddSingleton<ICardDetector>(sp =>
+                    new LEAFVerifiedDetector(sp.GetRequiredService<ILeafTrustStore>()));
                 services.AddSingleton<ICardDetector, PIVDetector>();
                 services.AddSingleton<ICardDetector, DESFireDetector>();
                 services.AddSingleton<ICardDetector, ISO14443Detector>();
@@ -46,17 +58,46 @@ public partial class App : Application
                 // Detection service
                 services.AddSingleton<CardDetectionService>();
 
+                // LEAF Verified Printed ID lookup (opt-in, online)
+                services.AddSingleton(_ => new LeafPrintedIdLookup());
+
                 // PKOC programming
                 services.AddSingleton<PkocCardProgrammer>();
 
                 // ViewModels
                 services.AddSingleton<PkocViewModel>();
+                services.AddSingleton<LeafVerifiedViewModel>();
                 services.AddSingleton<MainViewModel>();
 
                 // Views
                 services.AddSingleton<MainWindow>();
             })
             .Build();
+    }
+
+    private static LeafTrustStore CreateLeafTrustStore(IUserSettingsService<CredBenchSettings> settingsService)
+    {
+        var store = new LeafTrustStore();
+        foreach (var pem in settingsService.Settings.LeafTestRoots)
+        {
+            try
+            {
+                store.AddTestRoot(Encoding.ASCII.GetBytes(pem));
+            }
+            catch (ArgumentException)
+            {
+                // A corrupt entry is dropped; it is rewritten on the next change
+            }
+        }
+
+        store.Changed += async (_, _) =>
+        {
+            settingsService.Settings.LeafTestRoots =
+                [.. store.TestRoots.Select(a => a.CertificatePem).OfType<string>()];
+            await settingsService.SaveAsync();
+        };
+
+        return store;
     }
 
     protected override async void OnStartup(StartupEventArgs e)

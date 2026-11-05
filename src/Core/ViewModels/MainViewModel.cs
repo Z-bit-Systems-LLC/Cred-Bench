@@ -49,6 +49,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private bool _hasLEAF;
 
     [ObservableProperty]
+    private bool _hasLEAFVerified;
+
+    [ObservableProperty]
     private bool _hasResult;
 
     [ObservableProperty]
@@ -66,14 +69,20 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private bool _isScanningLEAF;
 
+    [ObservableProperty]
+    private bool _isScanningLEAFVerified;
+
     public PkocViewModel PkocViewModel { get; }
+
+    public LeafVerifiedViewModel LeafVerifiedViewModel { get; }
 
     public MainViewModel(
         ISmartCardService smartCardService,
         IReaderMonitorService readerMonitorService,
         CardDetectionService detectionService,
         ILocalizationService localizationService,
-        PkocViewModel pkocViewModel)
+        PkocViewModel pkocViewModel,
+        LeafVerifiedViewModel leafVerifiedViewModel)
     {
         _smartCardService = smartCardService;
         _readerMonitorService = readerMonitorService;
@@ -81,6 +90,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _localization = localizationService;
         _syncContext = SynchronizationContext.Current;
         PkocViewModel = pkocViewModel;
+        LeafVerifiedViewModel = leafVerifiedViewModel;
 
         _statusMessage = _localization.GetString("Status_Ready");
 
@@ -99,7 +109,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
         HasISO14443 = value?.HasTechnology(CardTechnology.ISO14443) ?? false;
         HasPKOC = value?.HasTechnology(CardTechnology.PKOC) ?? false;
         HasLEAF = value?.HasTechnology(CardTechnology.LEAF) ?? false;
+        HasLEAFVerified = value?.HasTechnology(CardTechnology.LEAFVerified) ?? false;
         PkocViewModel.DetectedDetails = value?.PKOCDetails;
+        LeafVerifiedViewModel.DetectedDetails = value?.LEAFVerifiedDetails;
     }
 
     partial void OnSelectedReaderChanged(string? value)
@@ -197,6 +209,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 case CardTechnology.LEAF:
                     IsScanningLEAF = true;
                     break;
+                case CardTechnology.LEAFVerified:
+                    IsScanningLEAFVerified = true;
+                    break;
             }
         });
     }
@@ -208,6 +223,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         IsScanningISO14443 = false;
         IsScanningPKOC = false;
         IsScanningLEAF = false;
+        IsScanningLEAFVerified = false;
     }
 
     [RelayCommand]
@@ -281,8 +297,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
             yield return "ISO14443";
         if (technologies.HasFlag(CardTechnology.PKOC))
             yield return "PKOC";
+        if (technologies.HasFlag(CardTechnology.LEAFVerified))
+            yield return "LEAF Verified";
         if (technologies.HasFlag(CardTechnology.LEAF))
-            yield return "LEAF";
+            yield return "LEAF Universal";
     }
 
     public void Dispose()

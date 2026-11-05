@@ -16,7 +16,6 @@
         <guidelinesConverters:NullToVisibilityConverter x:Key="NullToVisibility" />
     </UserControl.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="{StaticResource Padding.Card}">
 
             <!-- ═══════════════════════════════════════════ -->
@@ -323,5 +322,4 @@
             </Border>
 
         </StackPanel>
-    </ScrollViewer>
 </UserControl>
