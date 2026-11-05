@@ -454,6 +454,11 @@ both are present.
 
 ## 5. Getting `leaf.cap` into Cred-Bench — decision needed
 
+> **Decided (2026-11-05):** same as PKOC. The applet source is copied to
+> `src/Applet/src/com/zbitsystems/leaf/` (from AsymCred `bcbcb94`), `ant build-leaf` builds it,
+> and `src/Applet/build/leaf.cap` is committed and embedded in `Core.csproj`. The copies are
+> expected to stay static.
+
 `PkocViewModel` loads `pkoc.cap` from an embedded resource that is
 linked from `src/Applet/build/pkoc.cap` and committed. AsymCred does
 **not** commit `leaf.cap`. Choose one:

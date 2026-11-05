@@ -1,3 +1,17 @@
+# Cred-Bench JavaCard Applets
+
+| Applet | CAP | Package AID | Applet AID | Source |
+|---|---|---|---|---|
+| PKOC | `build/pkoc.cap` | `A000000898000002` | `A000000898000001` | AsymCred `card/`, byte-identical |
+| LEAF Verified emulation | `build/leaf.cap` | `F05A424C454146` | `F05A424C45414601` | AsymCred `card/` at `bcbcb94` (branch `feature/leaf-verified`) |
+
+Both sources are copies of [AsymCred](https://github.com/Z-bit-Systems-LLC/AsymCred) `card/`,
+kept here on purpose so Cred-Bench builds on its own. The applets are expected to stay static.
+If one changes, change it in AsymCred too and record the new source commit above.
+
+Both CAP files are committed and embedded in `Core.csproj`. A rebuild is not byte-identical
+(CAP files embed build metadata), so only rebuild when the applet source changes.
+
 # PKOC JavaCard Applet
 
 Open-source JavaCard applet implementing the PSIA PKOC NFC Card 1.1 specification. Generates a P-256 key pair on-card (private key never leaves the card) and supports the SELECT/AUTHENTICATE APDU flow for PKOC credential presentation.
@@ -96,6 +110,61 @@ gp --list
 ```
 
 Target hardware should support JavaCard 3.0.4+, ECC P-256, and NFC (ISO 14443-A). Recommended: NXP JCOP4 or Infineon SLE97 series.
+
+# LEAF Verified Emulation Applet
+
+`com.zbitsystems.leaf.LeafOpenApplet` answers a LEAF Verified reader the way a MIFARE DUOX
+carrying the LEAF Open Application does, so readers can be tested against cards issued under a
+**test root**. Production DUOX personalisation is under NDA; this is a test credential, not a DUOX.
+
+| Command | Behaviour |
+|---|---|
+| `90 5A` SelectApplication | `D6 1C F5` → `91 00` once locked; `000000` → `91 00`; anything else `91 A0` |
+| `90 AD` ReadData | File 2 (the certificate) in 59-byte frames with `91 AF` |
+| `90 AF` GetAdditionalFrame | Next frame |
+| `00 88` ISOInternalAuthenticate | Signs `F0 F0 ‖ 80 00 ‖ RndB ‖ RndA` with the on-card P-256 key |
+
+Personalisation, once, before LOCK (`00 A4 04 00 08 F05A424C45414601` first):
+
+| Command | Purpose |
+|---|---|
+| `80 10 00 00 00` | GET PUBLIC KEY → `04 ‖ X ‖ Y` |
+| `80 12 <offset> <Lc> <data>` | PUT CERTIFICATE chunk (P1P2 = byte offset) |
+| `80 14 00 00 02 <length>` | LOCK: checks the DER length and that the certificate holds this card's key |
+
+LEAF readers never send an ISO SELECT, so install it as the **default-selected** applet
+(privilege `0x04`, CardReset). The jCardSim tests stay in AsymCred: they depend on its `leaf-tool` classes.
+
+```bash
+ant build-leaf
+# Output: build/leaf.cap
+```
+
+### Installing on a card (tested 2026-11-05: NXP JCOP4, IC type D321, on an ACR122)
+
+GlobalPlatformPro 26.02.11 ignores `--default` and `--default-contactless` during `--install`:
+its INSTALL [for install] carries privileges `000000`. Give the privilege explicitly:
+
+```bash
+gp --install build/leaf.cap --privs CardReset
+gp --list    # APP F05A424C45414601 should show "Privs: CardReset"; the ISD loses CardReset
+```
+
+The tested card was installed with an additional GP Amendment C implicit-selection parameter
+(`EF 03 CF 01 C0`, contact and contactless), sent by hand with `gp -s`. It was not re-tested
+without it, so if `--privs CardReset` alone leaves native commands answering `6E00`, use:
+
+```bash
+gp --delete F05A424C45414601
+gp -s 80E60C002707F05A424C45414608F05A424C4541460108F05A424C454146010304000007C900EF03CF01C00000
+```
+
+Then personalise with AsymCred's `leaf-tool` (`init-ca`, then `provision --ca <dir> --open-id <n>`).
+
+**Testing on an ACR122:** the reader keeps the card powered between PC/SC connections, so
+whichever applet GPPro or a tool last selected stays selected (`6E00` from the ISD looks like a
+failed implicit selection). Lift the card, or turn the RF field off and on (`FF 00 00 00 04
+D4 32 01 00`, then `... 01 01`), and wait a moment before the next read.
 
 ## License
 

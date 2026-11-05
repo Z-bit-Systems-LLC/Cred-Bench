@@ -1,5 +1,6 @@
 build/*
 !build/pkoc.cap
+!build/leaf.cap
 sdks/
 lib/*.jar
 *.exp

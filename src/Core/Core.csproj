@@ -23,6 +23,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="..\Applet\build\pkoc.cap" Link="Resources\pkoc.cap" />
+    <EmbeddedResource Include="..\Applet\build\leaf.cap" Link="Resources\leaf.cap" />
   </ItemGroup>
 
   <ItemGroup>
