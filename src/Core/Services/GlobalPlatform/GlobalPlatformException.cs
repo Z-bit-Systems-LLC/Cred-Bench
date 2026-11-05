@@ -33,6 +33,13 @@ public class GlobalPlatformException : Exception
         return description;
     }
 
+    /// <summary>Optional diagnostic details (hex dumps, cryptogram values, etc.).</summary>
+    public string? DiagnosticDetails { get; }
+
     public GlobalPlatformException(string message) : base(message) { }
+    public GlobalPlatformException(string message, string diagnosticDetails) : base(message)
+    {
+        DiagnosticDetails = diagnosticDetails;
+    }
     public GlobalPlatformException(string message, Exception inner) : base(message, inner) { }
 }

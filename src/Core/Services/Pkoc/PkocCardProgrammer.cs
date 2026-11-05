@@ -76,4 +76,17 @@ public class PkocCardProgrammer
         var response = connection.Transmit(SelectPkocCommand);
         return response.Length >= 2 && response[^2] == 0x90 && response[^1] == 0x00;
     }
+
+    /// <summary>
+    /// Establishes SCP02 and queries card content (installed applets, packages, free memory).
+    /// </summary>
+    public CardContent QueryCardContent(
+        ICardConnection connection,
+        byte[]? gpKey = null,
+        IProgress<string>? statusProgress = null)
+    {
+        var session = _sessionFactory.Establish(connection, gpKey, statusProgress);
+        statusProgress?.Report("Reading card content...");
+        return _gpService.GetCardContent(connection, session);
+    }
 }

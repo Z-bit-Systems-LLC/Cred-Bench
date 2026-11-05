@@ -228,6 +228,38 @@
     <value>Wiegand Bits (64)</value>
   </data>
 
+  <!-- PKOC Card Info -->
+  <data name="PKOC_CardInfo_Header" xml:space="preserve">
+    <value>Card Content</value>
+  </data>
+  <data name="PKOC_CardInfo_QueryButton" xml:space="preserve">
+    <value>Query Card</value>
+  </data>
+  <data name="PKOC_CardInfo_FreeMemory" xml:space="preserve">
+    <value>Free Memory:</value>
+  </data>
+  <data name="PKOC_CardInfo_PkocInstalled" xml:space="preserve">
+    <value>PKOC applet is installed</value>
+  </data>
+  <data name="PKOC_CardInfo_PkocNotInstalled" xml:space="preserve">
+    <value>PKOC applet is not installed</value>
+  </data>
+  <data name="PKOC_CardInfo_Applets" xml:space="preserve">
+    <value>Installed Applets</value>
+  </data>
+  <data name="PKOC_CardInfo_Packages" xml:space="preserve">
+    <value>Loaded Packages</value>
+  </data>
+  <data name="PKOC_CardInfo_ShowDetails" xml:space="preserve">
+    <value>Show Details</value>
+  </data>
+  <data name="PKOC_CardInfo_HideDetails" xml:space="preserve">
+    <value>Hide Details</value>
+  </data>
+  <data name="PKOC_CardInfo_RefreshButton" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+
   <!-- PKOC Programming -->
   <data name="PKOC_Programming_DefaultKey" xml:space="preserve">
     <value>Default GP Key (404142...4F)</value>
@@ -504,5 +536,11 @@
   </data>
   <data name="Prog_Leaf_TestOnly" xml:space="preserve">
     <value>For testing only, not for production. This is a JavaCard emulation of a LEAF Verified card, certified by your own test root rather than the LEAF CA. Production LEAF Verified credentials are MIFARE DUOX cards issued through the LEAF program. Do not issue these cards to users or enrol them in a production access system.</value>
+  </data>
+  <data name="Prog_CardInfo_LeafInstalled" xml:space="preserve">
+    <value>LEAF Verified test applet is installed</value>
+  </data>
+  <data name="Prog_CardInfo_LeafNotInstalled" xml:space="preserve">
+    <value>LEAF Verified test applet is not installed</value>
   </data>
 </root>

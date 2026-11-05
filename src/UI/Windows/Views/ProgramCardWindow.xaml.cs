@@ -22,6 +22,14 @@ public partial class ProgramCardWindow
         InitializeComponent();
         DataContext = _viewModel = viewModel;
         Closing += OnClosing;
+        Loaded += OnLoaded;
+    }
+
+    /// <summary>Shows what is already on the card as soon as the dialog opens.</summary>
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        if (_viewModel.QueryCardContentCommand.CanExecute(null))
+            _viewModel.QueryCardContentCommand.Execute(null);
     }
 
     /// <summary>Closing mid-write would leave a half-programmed card, so wait for the run to finish.</summary>

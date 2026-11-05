@@ -121,14 +121,18 @@ public class GpSessionFactory
         var diagComputed = diagSession.ComputeExpectedCardCryptogram(
             initData.HostChallenge, initData.CardChallenge);
 
-        throw new GlobalPlatformException(
-            $"Key discovery failed. " +
+        var details =
             $"Raw INIT UPDATE ({initData.RawResponse.Length}B): {toHex(initData.RawResponse)}, " +
             $"Host challenge: {toHex(initData.HostChallenge)}, " +
             $"Seq: {toHex(initData.SequenceCounter)}, " +
             $"Card challenge: {toHex(initData.CardChallenge)}, " +
             $"Received cryptogram: {toHex(initData.CardCryptogram)}, " +
             $"Computed (GP default undiv): {toHex(diagComputed)}, " +
-            $"S-ENC: {toHex(diagSession.SessionEncKey)}");
+            $"S-ENC: {toHex(diagSession.SessionEncKey)}";
+
+        throw new GlobalPlatformException(
+            "Key discovery failed — the card does not use a known default key. " +
+            "Try entering the correct key under Custom GP Key.",
+            details);
     }
 }

@@ -26,6 +26,7 @@ public partial class ProgramCardViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ProgramCardCommand))]
+    [NotifyCanExecuteChangedFor(nameof(QueryCardContentCommand))]
     private string? _selectedReader;
 
     [ObservableProperty]
@@ -40,7 +41,26 @@ public partial class ProgramCardViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ProgramCardCommand))]
+    [NotifyCanExecuteChangedFor(nameof(QueryCardContentCommand))]
     private bool _isProgramming;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasCardContent))]
+    private CardContent? _cardContent;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ProgramCardCommand))]
+    [NotifyCanExecuteChangedFor(nameof(QueryCardContentCommand))]
+    private bool _isQuerying;
+
+    [ObservableProperty]
+    private string? _queryError;
+
+    [ObservableProperty]
+    private string? _queryErrorDetails;
+
+    [ObservableProperty]
+    private bool _showQueryErrorDetails;
 
     [ObservableProperty]
     private string? _programmingStatus;
@@ -93,6 +113,7 @@ public partial class ProgramCardViewModel : ObservableObject
     }
 
     public bool ProgramBoth => ProgramPkoc && ProgramLeaf;
+    public bool HasCardContent => CardContent is not null;
     public bool HasTestCa => TestCa is not null;
     public string? TestCaName => TestCa?.Name;
 
@@ -199,8 +220,65 @@ public partial class ProgramCardViewModel : ObservableObject
         _trustStore.AddTestRoot(ca.Certificate.RawData);
     }
 
+    private bool CanQueryCardContent() => !IsProgramming && !IsQuerying && !string.IsNullOrEmpty(SelectedReader);
+
+    /// <summary>
+    /// Lists the card's packages and applets and its free memory (GP GET STATUS), with the same key
+    /// choice as programming.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanQueryCardContent))]
+    private async Task QueryCardContentAsync()
+    {
+        if (SelectedReader is not { Length: > 0 } reader)
+            return;
+
+        try
+        {
+            IsQuerying = true;
+            QueryError = null;
+            QueryErrorDetails = null;
+            ShowQueryErrorDetails = false;
+            CardContent = null;
+
+            var gpKey = UseCustomKey ? GpSessionFactory.ParseKey(CustomKeyHex) : null;
+            var statusProgress = new Progress<string>(status => ProgrammingStatus = status);
+
+            CardContent = await Task.Run(() =>
+            {
+                using var connection = _smartCardService.Connect(reader);
+                return _pkocProgrammer.QueryCardContent(connection, gpKey, statusProgress);
+            });
+        }
+        catch (GlobalPlatformException ex)
+        {
+            QueryError = ex.Message;
+            QueryErrorDetails = ex.DiagnosticDetails;
+        }
+        catch (Exception ex)
+        {
+            QueryError = ex.Message;
+        }
+        finally
+        {
+            ProgrammingStatus = null;
+            IsQuerying = false;
+        }
+    }
+
+    [RelayCommand]
+    private void DismissQueryError()
+    {
+        QueryError = null;
+        QueryErrorDetails = null;
+        ShowQueryErrorDetails = false;
+    }
+
+    [RelayCommand]
+    private void ToggleQueryErrorDetails() => ShowQueryErrorDetails = !ShowQueryErrorDetails;
+
     private bool CanProgramCard() =>
         !IsProgramming
+        && !IsQuerying
         && !string.IsNullOrEmpty(SelectedReader)
         && (ProgramPkoc || ProgramLeaf)
         && (!ProgramLeaf || (TestCa is not null && ParsedOpenId is not null));
@@ -285,6 +363,10 @@ public partial class ProgramCardViewModel : ObservableObject
         {
             IsProgramming = false;
         }
+
+        // Show what is on the card now
+        if (QueryCardContentCommand.CanExecute(null))
+            await QueryCardContentCommand.ExecuteAsync(null);
     }
 
     [RelayCommand]

@@ -218,6 +218,9 @@ The CLI's `--json` output includes it as base64.
 credential, or both, on a blank JavaCard (tested on NXP JCOP4) with the default GP keys or a
 custom one. With both ticked it installs PKOC first, then LEAF, in one run.
 
+When it opens, and again after programming, the dialog lists what is on the card (GP GET STATUS:
+applets, packages and free memory) and whether the PKOC and LEAF applets are installed.
+
 LEAF programming (`LeafCardProgrammer`):
 
 1. SCP02 with the ISD (`GpSessionFactory`, shared with PKOC), DELETE the LEAF applet and package

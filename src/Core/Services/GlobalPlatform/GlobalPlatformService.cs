@@ -159,6 +159,129 @@ public class GlobalPlatformService
     }
 
     /// <summary>
+    /// Queries installed card content using GET STATUS.
+    /// Returns all packages and applets on the card.
+    /// </summary>
+    public CardContent GetCardContent(ICardConnection connection, Scp02Session session)
+    {
+        var packages = GetStatus(connection, session, CardContentType.ExecutableLoadFiles);
+        var applets = GetStatus(connection, session, CardContentType.Applications);
+        var memory = GetFreeMemory(connection, session);
+        return new CardContent
+        {
+            Packages = packages,
+            Applets = applets,
+            FreePersistentMemory = memory.Persistent,
+            FreeTransientResetMemory = memory.TransientReset,
+            FreeTransientDeselectMemory = memory.TransientDeselect,
+        };
+    }
+
+    /// <summary>
+    /// Queries free memory via GET DATA with the JCOP/GP tag 0xFF21 (free NVM),
+    /// 0xFF22 (free transient reset), 0xFF23 (free transient deselect).
+    /// Returns null for each value if the card doesn't support the query.
+    /// </summary>
+    public (int? Persistent, int? TransientReset, int? TransientDeselect) GetFreeMemory(
+        ICardConnection connection, Scp02Session session)
+    {
+        var persistent = TryGetDataValue(connection, session, 0xFF, 0x21);
+        var transientReset = TryGetDataValue(connection, session, 0xFF, 0x22);
+        var transientDeselect = TryGetDataValue(connection, session, 0xFF, 0x23);
+        return (persistent, transientReset, transientDeselect);
+    }
+
+    private int? TryGetDataValue(ICardConnection connection, Scp02Session session, byte p1, byte p2)
+    {
+        // GET DATA: 80 CA [P1] [P2] 00
+        var command = new byte[] { 0x80, 0xCA, p1, p2, 0x00 };
+        var wrapped = session.WrapCommand(command);
+        var response = connection.Transmit(wrapped);
+        var (sw1, sw2) = GetStatusWords(response);
+
+        if (sw1 != 0x90 || sw2 != 0x00)
+            return null;
+
+        // Response data is the bytes before SW, interpret as big-endian integer
+        var data = response[..^2];
+        if (data.Length == 0) return null;
+
+        int value = 0;
+        foreach (var b in data)
+            value = (value << 8) | b;
+        return value;
+    }
+
+    /// <summary>
+    /// Sends GET STATUS for the given content type. Handles multi-response chaining
+    /// (GET STATUS returns 0x6310 when more data is available).
+    /// </summary>
+    public List<CardContentEntry> GetStatus(
+        ICardConnection connection, Scp02Session session, CardContentType contentType)
+    {
+        var entries = new List<CardContentEntry>();
+        bool firstCommand = true;
+
+        while (true)
+        {
+            // P1 = content type, P2 = 0x00 first request / 0x01 next occurrence
+            byte p2 = firstCommand ? (byte)0x00 : (byte)0x01;
+            // Filter: tag 4F length 00 = return all AIDs
+            byte[] filter = [0x4F, 0x00];
+
+            var command = BuildCommand(0x80, 0xF2, (byte)contentType, p2, filter);
+            var wrapped = session.WrapCommand(command);
+            var response = connection.Transmit(wrapped);
+            var (sw1, sw2) = GetStatusWords(response);
+
+            // 6A88 = no data found (empty card) — not an error
+            if (sw1 == 0x6A && sw2 == 0x88)
+                break;
+
+            if (sw1 != 0x90 && sw1 != 0x63)
+                CheckStatus(sw1, sw2, "GET STATUS");
+
+            // Parse TLV entries from response data (everything before SW)
+            ParseGetStatusResponse(response[..^2], entries);
+
+            // 0x6310 means more data available
+            if (sw1 == 0x63 && sw2 == 0x10)
+            {
+                firstCommand = false;
+                continue;
+            }
+
+            break;
+        }
+
+        return entries;
+    }
+
+    private static void ParseGetStatusResponse(byte[] data, List<CardContentEntry> entries)
+    {
+        int pos = 0;
+        while (pos < data.Length)
+        {
+            // Each entry: [AID_length][AID][lifecycle][privileges]
+            if (pos >= data.Length) break;
+            int aidLen = data[pos++];
+            if (pos + aidLen + 2 > data.Length) break;
+
+            var aid = data[pos..(pos + aidLen)];
+            pos += aidLen;
+            byte lifecycle = data[pos++];
+            byte privileges = data[pos++];
+
+            entries.Add(new CardContentEntry
+            {
+                Aid = aid,
+                LifecycleState = lifecycle,
+                Privileges = privileges
+            });
+        }
+    }
+
+    /// <summary>
     /// Deletes an on-card entity (applet or package) by AID.
     /// Silently succeeds if the AID is not found (SW 6A88).
     /// </summary>

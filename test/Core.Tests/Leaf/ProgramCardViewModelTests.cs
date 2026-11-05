@@ -1,4 +1,5 @@
 using CredBench.Core.Services;
+using CredBench.Core.Services.GlobalPlatform;
 using CredBench.Core.Services.Leaf;
 using CredBench.Core.Services.Pkoc;
 using CredBench.Core.ViewModels;
@@ -41,6 +42,31 @@ public class ProgramCardViewModelTests
         vm.ProgramLeaf = false;
 
         Assert.That(vm.ProgramCardCommand.CanExecute(null), Is.False);
+    }
+
+    [Test]
+    public void QueryCardContent_NeedsReader()
+    {
+        var vm = CreateViewModel();
+        Assert.That(vm.QueryCardContentCommand.CanExecute(null), Is.False);
+
+        vm.SelectedReader = "Reader";
+        Assert.That(vm.QueryCardContentCommand.CanExecute(null), Is.True);
+    }
+
+    [Test]
+    public void CardContent_RecognisesPkocAndLeafApplets()
+    {
+        static CardContentEntry Entry(string aid) => new() { Aid = Convert.FromHexString(aid), LifecycleState = 0x07, Privileges = 0 };
+        var content = new CardContent
+        {
+            Packages = [],
+            Applets = [Entry("A000000898000001"), Entry("F05A424C45414601")],
+        };
+        var leafOnly = content with { Applets = [Entry("F05A424C45414601")] };
+
+        Assert.That(content.HasPkocApplet && content.HasLeafApplet, Is.True);
+        Assert.That(leafOnly.HasPkocApplet, Is.False);
     }
 
     [Test]
