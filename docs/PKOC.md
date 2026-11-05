@@ -127,3 +127,19 @@ Each credential size is converted to a binary bit string:
 | Credential Format  | User selection       | Dropdown: 256-bit, 75-bit, or 64-bit    |
 | Hex                | X component          | Credential hex for selected size, copyable |
 | Wiegand Bits       | Credential binary    | Binary bit string for selected size, copyable |
+
+## Programming a Test Card
+
+**Program Card…** (next to Scan Card, Windows) installs the PKOC applet from `src/Applet/` on a
+blank JavaCard (tested on NXP JCOP4), alone or together with a LEAF Verified test credential
+(see [LEAF.md](LEAF.md#programming-a-test-card)). `PkocCardProgrammer`:
+
+1. Opens SCP02 with the Issuer Security Domain (`GpSessionFactory`): the custom key if one is
+   entered, otherwise the GP default `404142…4F`, then its VISA2 and EMV diversifications. A
+   failure shows the INITIALIZE UPDATE and cryptogram values under **Show Details**.
+2. DELETEs the PKOC applet `A000000898000001` and package `A000000898000002`, if present.
+3. LOADs `pkoc.cap` and INSTALLs the applet, which generates its P-256 key pair on the card.
+   Reinstalling therefore gives the card a new key and a new credential.
+
+When the dialog opens, and again after programming, it lists the card's applets, packages and
+free memory (GP GET STATUS) and shows whether the PKOC applet is installed.

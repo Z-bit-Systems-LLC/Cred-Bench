@@ -99,7 +99,8 @@ src/Applet/
 
 ## Loading onto a Physical Card
 
-Use [GlobalPlatformPro](https://github.com/martinpaljak/GlobalPlatformPro) to load the `.cap` onto a blank JavaCard:
+Cred-Bench's **Program Card…** dialog installs it without other tools: see
+[docs/PKOC.md](../../docs/PKOC.md#programming-a-test-card). Otherwise use [GlobalPlatformPro](https://github.com/martinpaljak/GlobalPlatformPro) to load the `.cap` onto a blank JavaCard:
 
 ```bash
 # With default GP keys (404142...)

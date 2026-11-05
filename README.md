@@ -11,6 +11,10 @@ A cross-platform diagnostic tool for identifying smart card technologies and exa
 - **Reader hot-plug support**: Handles USB reader connection/disconnection
 - **Modern UI**: Fluent Design WPF interface using WPF-UI
 - **Cross-platform CLI**: Command-line interface with text and JSON output
+- **Test card programming** (Windows): **Program Card…** installs PKOC and/or a LEAF Verified
+  test credential on a blank JavaCard, and lists the card's applets, packages and free memory.
+  LEAF Verified cards made this way are for testing only, never production
+  (see [docs/LEAF.md](docs/LEAF.md#programming-a-test-card))
 
 ## Supported Card Technologies
 

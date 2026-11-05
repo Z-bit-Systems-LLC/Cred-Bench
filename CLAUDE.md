@@ -101,7 +101,7 @@ Each card technology has a dedicated UserControl for displaying its details. The
 | `GeneralDetailsControl`    | `GeneralCardDetails` | [docs/General.md](docs/General.md) |
 | `Iso14443DetailsControl`   | `ISO14443Details`    | [docs/ISO14443.md](docs/ISO14443.md) |
 | `PivDetailsControl`        | `PIVDetails`         | [docs/PIV.md](docs/PIV.md) |
-| `PkocDetailsControl`       | `PKOCDetails`        | [docs/PKOC.md](docs/PKOC.md) |
+| `PkocDetailsControl`       | `PkocViewModel` (wraps `PKOCDetails`) | [docs/PKOC.md](docs/PKOC.md) |
 | `DesfireDetailsControl`    | `DESFireDetails`     | [docs/DESFire.md](docs/DESFire.md) |
 | `LeafDetailsControl`       | `LEAFDetails` (LEAF Universal) | [docs/LEAF.md](docs/LEAF.md) |
 | `LeafVerifiedDetailsControl` | `LeafVerifiedViewModel` (wraps `LEAFVerifiedDetails`) | [docs/LEAF.md](docs/LEAF.md#leaf-verified) |
