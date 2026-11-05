@@ -547,7 +547,7 @@ Also record, from the first JavaCard programmed:
 
 ## 8. Order of work
 
-> **Status (2026-11-05):** steps 1â€“4 done (detection, trust store, CLI, WPF tab, tests).
+> **Status (2026-11-05):** steps 1–4 done (detection, trust store, CLI, WPF tab, tests).
 > Next: step 5, reading a Wavelynx card.
 
 1. `CardTechnology.LEAFVerified`, `LEAFVerifiedDetails` with W40, and its

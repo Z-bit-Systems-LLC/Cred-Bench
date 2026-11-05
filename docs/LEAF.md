@@ -208,6 +208,12 @@ The CLI's `--json` output includes it as base64.
 
 ## Field Observations
 
+> **Provenance.** Everything from here to the end of this document was found by probing **one**
+> production card (Wavelynx, 2026-11-05) and the responses of `d.leaf-community.com`. None of it
+> comes from a published LEAF, NXP or Wavelynx specification. The onboarding guide does not
+> mention the NDEF application, the tap URL or the Printed ID. Treat it as provisional until
+> confirmed with the LEAF Community / Wavelynx, and update this section when details arrive.
+
 First production card read on 2026-11-05 (Wavelynx DUOX, ACR122):
 
 1. The card certificate is signed **directly** by RootCAvE200 (issuer
@@ -226,13 +232,20 @@ First production card read on 2026-11-05 (Wavelynx DUOX, ACR122):
 | `F51CD6` | 2 | 512 bytes, free read | Certificate `CN=AppUniversal`, `serialNumber` = Open ID |
 | `F51CD7` (not in the guide) | 1 | 32 bytes, full encryption, read needs a key | Unknown |
 | `F51CD7` | 2 | backup file, 880 bytes, free read | `81 01 00` + certificate `CN=AppEnterprise`, signed by RootCAvE200, no `serialNumber` |
-| `F51CD5` NFC Forum NDEF (`D2760000850101`) | 1 / 2 | free read | Capability container / NDEF URI `https://d.leaf-community.com?uid=â€¦&bid=â€¦&cmac=â€¦` (SUN-style: encrypted uid, MAC) |
+| `F51CD5` NFC Forum NDEF (`D2760000850101`) | 1 / 2 | free read | Capability container / NDEF URI `https://d.leaf-community.com?uid=…&bid=…&cmac=…` (SUN-style: encrypted uid, MAC) |
 
 Both certificates carry `description=04A00001070001` and the UID as `x500UniqueIdentifier`.
 
 `ReadData` with length 0 ("to end of file") is refused with `91 7E` on DUOX; give an explicit length.
 
 ### Printed ID
+
+> **Undocumented service behaviour.** The Printed ID lookup relies on how `d.leaf-community.com`
+> answers today: the redirect, the `token` parameter, its `printed_id` / `open_id` claims and
+> the JWKS location were all observed, not specified. Any of them may change without notice,
+> and it is not yet confirmed that the tap service is meant to be used by tools other than a
+> phone's browser. The "Secure Unique NFC" label is an inference from the URL changing on every
+> read; it is not confirmed by the issuer.
 
 The number printed on the card (five letters, a dash and three digits, e.g. `ABCDE-001`) is not stored anywhere a reader can read
 freely. It comes from the LEAF Community tap service:
