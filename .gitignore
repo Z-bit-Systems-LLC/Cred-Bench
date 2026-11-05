@@ -110,3 +110,6 @@ $RECYCLE.BIN/
 
 # Azure Pipelines
 *.sarif
+
+# Local Visual Studio publish profiles
+**/Properties/PublishProfiles/

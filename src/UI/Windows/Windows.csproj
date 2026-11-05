@@ -7,6 +7,7 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <RootNamespace>CredBench.Windows</RootNamespace>
+    <AssemblyName>CredBench</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
