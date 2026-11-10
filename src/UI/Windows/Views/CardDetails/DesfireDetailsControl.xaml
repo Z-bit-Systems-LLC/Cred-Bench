@@ -5,18 +5,28 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:CredBench.Core.Models.TechnologyDetails;assembly=Core"
+    xmlns:guidelinesConverters="clr-namespace:ZBitSystems.Wpf.UI.Converters;assembly=ZBitSystems.Wpf.UI"
     xmlns:localization="clr-namespace:ZBitSystems.Wpf.UI.Localization;assembly=ZBitSystems.Wpf.UI"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance models:DESFireDetails}">
 
+    <UserControl.Resources>
+        <guidelinesConverters:NullToVisibilityConverter x:Key="NullToVisibility" />
+    </UserControl.Resources>
+
     <StackPanel Margin="{StaticResource Padding.Card}">
-        <Grid>
+        <Grid Margin="{StaticResource Margin.Section}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="{StaticResource Gutter.Medium}" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -33,21 +43,88 @@
 
             <TextBlock Grid.Row="1" Grid.Column="0"
                 Style="{StaticResource Field.Label}"
-                Text="{localization:Localize DESFire_Version}"
-                TextAlignment="Right" />
+                Text="{localization:Localize DESFire_Vendor}"
+                TextAlignment="Right"
+                Visibility="{Binding Vendor, Converter={StaticResource NullToVisibility}}" />
             <TextBlock Grid.Row="1" Grid.Column="2"
                 Style="{StaticResource Field.Value}"
-                Text="{Binding HardwareVersion, FallbackValue='N/A'}"
-                FontFamily="Consolas" />
+                Text="{Binding Vendor}"
+                Visibility="{Binding Vendor, Converter={StaticResource NullToVisibility}}" />
 
             <TextBlock Grid.Row="2" Grid.Column="0"
                 Style="{StaticResource Field.Label}"
-                Text="{localization:Localize DESFire_Storage}"
-                TextAlignment="Right" />
+                Text="{localization:Localize DESFire_HardwareVersion}"
+                TextAlignment="Right"
+                Visibility="{Binding HardwareVersion, Converter={StaticResource NullToVisibility}}" />
             <TextBlock Grid.Row="2" Grid.Column="2"
                 Style="{StaticResource Field.Value}"
-                Text="{Binding StorageSize, FallbackValue='N/A'}"
-                FontFamily="Consolas" />
+                Text="{Binding HardwareVersion}"
+                FontFamily="Consolas"
+                Visibility="{Binding HardwareVersion, Converter={StaticResource NullToVisibility}}" />
+
+            <TextBlock Grid.Row="3" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
+                Text="{localization:Localize DESFire_SoftwareVersion}"
+                TextAlignment="Right"
+                Visibility="{Binding SoftwareVersion, Converter={StaticResource NullToVisibility}}" />
+            <TextBlock Grid.Row="3" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
+                Text="{Binding SoftwareVersion}"
+                FontFamily="Consolas"
+                Visibility="{Binding SoftwareVersion, Converter={StaticResource NullToVisibility}}" />
+
+            <!-- Shown instead of the version rows when GetVersion could not be read -->
+            <TextBlock Grid.Row="4" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
+                Text="{localization:Localize DESFire_Version}"
+                TextAlignment="Right"
+                Visibility="{Binding VersionUnavailableReason, Converter={StaticResource NullToVisibility}}" />
+            <TextBlock Grid.Row="4" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
+                Text="{Binding VersionUnavailableReason, StringFormat='Unavailable ({0})'}"
+                TextWrapping="Wrap"
+                Visibility="{Binding VersionUnavailableReason, Converter={StaticResource NullToVisibility}}" />
+
+            <TextBlock Grid.Row="5" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
+                Text="{localization:Localize DESFire_Storage}"
+                TextAlignment="Right"
+                Visibility="{Binding StorageSize, Converter={StaticResource NullToVisibility}}" />
+            <TextBlock Grid.Row="5" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
+                Text="{Binding StorageSize}"
+                FontFamily="Consolas"
+                Visibility="{Binding StorageSize, Converter={StaticResource NullToVisibility}}" />
+
+            <TextBlock Grid.Row="6" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
+                Text="{localization:Localize DESFire_ProductionDate}"
+                TextAlignment="Right"
+                Visibility="{Binding ProductionDate, Converter={StaticResource NullToVisibility}}" />
+            <TextBlock Grid.Row="6" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
+                Text="{Binding ProductionDate}"
+                Visibility="{Binding ProductionDate, Converter={StaticResource NullToVisibility}}" />
+
+            <TextBlock Grid.Row="7" Grid.Column="0"
+                Style="{StaticResource Field.Label}"
+                Text="{localization:Localize DESFire_BatchNumber}"
+                TextAlignment="Right"
+                Visibility="{Binding BatchNumber, Converter={StaticResource NullToVisibility}}" />
+            <TextBlock Grid.Row="7" Grid.Column="2"
+                Style="{StaticResource Field.Value}"
+                Text="{Binding BatchNumber}"
+                FontFamily="Consolas"
+                Visibility="{Binding BatchNumber, Converter={StaticResource NullToVisibility}}" />
         </Grid>
+
+        <!-- Raw GetVersion payload, for reporting cards the decoder does not recognize -->
+        <StackPanel Visibility="{Binding VersionData, Converter={StaticResource NullToVisibility}}">
+            <TextBlock Text="{localization:Localize DESFire_VersionData}"
+                Style="{StaticResource Field.Label}"
+                FontSize="{StaticResource FontSize.Caption}" />
+            <TextBox Text="{Binding VersionData, Mode=OneWay}"
+                Style="{StaticResource TextBox.Copyable}" />
+        </StackPanel>
     </StackPanel>
 </UserControl>

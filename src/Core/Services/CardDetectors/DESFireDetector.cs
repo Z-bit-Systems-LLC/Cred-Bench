@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using CredBench.Core.Models;
-using CredBench.Core.Models.TechnologyDetails;
 
 namespace CredBench.Core.Services.CardDetectors;
 
@@ -52,8 +51,8 @@ public class DESFireDetector : ICardDetector
 
                 // Even if GetVersion failed, SELECT succeeded so it's likely DESFire
                 Debug.WriteLine("[DESFire] SELECT succeeded - reporting as DESFire");
-                var details = new DESFireDetails { CardType = "DESFire" };
-                return (true, "DESFire card detected (via SELECT)", details);
+                var details = DESFireVersionDecoder.VersionUnavailable("GetVersion not answered after SELECT");
+                return (true, "DESFire card detected (via SELECT), version unknown", details);
             }
         }
 
@@ -184,24 +183,29 @@ public class DESFireDetector : ICardDetector
         if (sw1 == 0x91)
         {
             // DESFire success with more frames: 91 AF
-            if (sw2 == 0xAF && response.Length >= 9)
+            if (sw2 == 0xAF)
             {
                 Debug.WriteLine("[DESFire] Got 91 AF (more frames)");
-                var (versionInfo, typedDetails) = ParseVersionInfo(response);
-                Debug.WriteLine($"[DESFire] Version: {versionInfo}");
+                if (response.Length < 9)
+                {
+                    var shortDetails = DESFireVersionDecoder.VersionUnavailable("GetVersion hardware frame too short");
+                    return (true, "DESFire card detected, version unknown", shortDetails);
+                }
 
-                // Get remaining frames
-                GetRemainingVersionFrames(connection, additionalFrameCmd);
+                var payload = ReadVersionPayload(response, connection, additionalFrameCmd);
+                var versionDetails = DESFireVersionDecoder.Decode(payload);
+                var versionInfo = $"{versionDetails.CardType}, {versionDetails.StorageSize} storage";
+                Debug.WriteLine($"[DESFire] Version: {versionInfo} (GetVersion data {versionDetails.VersionData})");
 
-                return (true, versionInfo, typedDetails);
+                return (true, versionInfo, versionDetails);
             }
 
             // DESFire success: 91 00
             if (sw2 == 0x00)
             {
                 Debug.WriteLine("[DESFire] Got 91 00 (success)");
-                var details = new DESFireDetails { CardType = "DESFire" };
-                return (true, "DESFire card detected", details);
+                var details = DESFireVersionDecoder.VersionUnavailable("GetVersion returned no data");
+                return (true, "DESFire card detected, version unknown", details);
             }
 
             // DESFire error codes - card is DESFire but operation denied
@@ -231,89 +235,53 @@ public class DESFireDetector : ICardDetector
             };
 
             Debug.WriteLine($"[DESFire] Got 91 {sw2:X2} ({errorDetail})");
-            var errorDetails = new DESFireDetails { CardType = "DESFire" };
-            return (true, $"DESFire card detected ({errorDetail})", errorDetails);
+            var errorDetails = DESFireVersionDecoder.VersionUnavailable($"GetVersion rejected: {errorDetail}");
+            return (true, $"DESFire card detected ({errorDetail}), version unknown", errorDetails);
         }
 
         // Some cards return 90 00 with data
         if (sw1 == 0x90 && sw2 == 0x00 && response.Length > 2)
         {
             Debug.WriteLine("[DESFire] Got 90 00 with data");
-            var details = new DESFireDetails { CardType = "DESFire" };
-            return (true, "DESFire card detected", details);
+            var details = DESFireVersionDecoder.VersionUnavailable("GetVersion answered with an ISO status word");
+            return (true, "DESFire card detected, version unknown", details);
         }
 
         return (false, null, null);
     }
 
-    private static void GetRemainingVersionFrames(ICardConnection connection, byte[] additionalFrameCmd)
+    /// <summary>
+    /// Collects the GetVersion payload: the first frame plus up to two AdditionalFrame responses,
+    /// with status words removed. Stops early if a frame fails, so a partial payload is still
+    /// decoded from what arrived.
+    /// </summary>
+    private static byte[] ReadVersionPayload(byte[] firstResponse, ICardConnection connection, byte[] additionalFrameCmd)
     {
-        try
-        {
-            Debug.WriteLine($"[DESFire] AdditionalFrame: {BitConverter.ToString(additionalFrameCmd)}");
-            var response2 = connection.Transmit(additionalFrameCmd);
-            Debug.WriteLine($"[DESFire] Frame 2: {BitConverter.ToString(response2)}");
+        List<byte> payload = [.. firstResponse[..^2]];
+        var response = firstResponse;
 
-            if (response2.Length >= 2 && response2[^2] == 0x91 && response2[^1] == 0xAF)
+        for (var frame = 2; frame <= 3 && response is [.., 0x91, 0xAF]; frame++)
+        {
+            try
             {
-                var response3 = connection.Transmit(additionalFrameCmd);
-                Debug.WriteLine($"[DESFire] Frame 3: {BitConverter.ToString(response3)}");
+                Debug.WriteLine($"[DESFire] AdditionalFrame: {BitConverter.ToString(additionalFrameCmd)}");
+                response = connection.Transmit(additionalFrameCmd);
+                Debug.WriteLine($"[DESFire] Frame {frame}: {BitConverter.ToString(response)}");
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[DESFire] Error getting frame {frame}: {ex.Message}");
+                break;
+            }
+
+            if (response is not [.., 0x91, 0xAF or 0x00])
+            {
+                break;
+            }
+
+            payload.AddRange(response[..^2]);
         }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"[DESFire] Error getting frames: {ex.Message}");
-        }
+
+        return [.. payload];
     }
-
-    private static (string Info, DESFireDetails Details) ParseVersionInfo(byte[] response)
-    {
-        if (response.Length < 9)
-        {
-            var defaultDetails = new DESFireDetails { CardType = "DESFire" };
-            return ("DESFire card detected", defaultDetails);
-        }
-
-        // GetVersion response frame 1 (hardware info):
-        // Byte 0: Vendor ID (0x04 = NXP)
-        // Byte 1: Type
-        // Byte 2: Subtype
-        // Byte 3: Major version
-        // Byte 4: Minor version
-        // Byte 5: Storage size
-        // Byte 6: Protocol
-        // Bytes 7-8: Status (91 AF)
-        var hwMajorVersion = response[3];
-        var hwMinorVersion = response[4];
-        var hwStorageSize = response[5];
-
-        var cardType = hwMajorVersion switch
-        {
-            0x00 => "DESFire",
-            0x01 => "DESFire EV1",
-            0x12 => "DESFire EV2",
-            0x33 => "DESFire EV3",
-            _ => $"DESFire (v{hwMajorVersion})"
-        };
-
-        var storageKb = hwStorageSize switch
-        {
-            0x16 => "2KB",
-            0x18 => "4KB",
-            0x1A => "8KB",
-            0x1C => "16KB",
-            0x1E => "32KB",
-            _ => "Unknown"
-        };
-
-        var details = new DESFireDetails
-        {
-            CardType = cardType,
-            HardwareVersion = $"{hwMajorVersion}.{hwMinorVersion}",
-            StorageSize = storageKb
-        };
-
-        return ($"{cardType}, {storageKb} storage", details);
-    }
-
 }

@@ -166,8 +166,26 @@
   <data name="DESFire_Version" xml:space="preserve">
     <value>Version:</value>
   </data>
+  <data name="DESFire_Vendor" xml:space="preserve">
+    <value>Vendor:</value>
+  </data>
+  <data name="DESFire_HardwareVersion" xml:space="preserve">
+    <value>Hardware:</value>
+  </data>
+  <data name="DESFire_SoftwareVersion" xml:space="preserve">
+    <value>Software:</value>
+  </data>
   <data name="DESFire_Storage" xml:space="preserve">
     <value>Storage:</value>
+  </data>
+  <data name="DESFire_ProductionDate" xml:space="preserve">
+    <value>Produced:</value>
+  </data>
+  <data name="DESFire_BatchNumber" xml:space="preserve">
+    <value>Batch:</value>
+  </data>
+  <data name="DESFire_VersionData" xml:space="preserve">
+    <value>GetVersion Data</value>
   </data>
 
   <!-- ISO14443 Details -->

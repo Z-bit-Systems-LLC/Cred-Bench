@@ -97,9 +97,14 @@ public static class ResultFormatter
             obj["desfire"] = new
             {
                 cardType = desfire.CardType,
+                vendor = desfire.Vendor,
                 hardwareVersion = desfire.HardwareVersion,
                 softwareVersion = desfire.SoftwareVersion,
+                versionUnavailableReason = desfire.VersionUnavailableReason,
                 storageSize = desfire.StorageSize,
+                productionDate = desfire.ProductionDate,
+                batchNumber = desfire.BatchNumber,
+                versionData = desfire.VersionData,
                 applications = desfire.Applications
             };
         }
