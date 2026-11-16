@@ -14,67 +14,89 @@ using ZBitSystems.Wpf.UI.Settings;
 
 namespace CredBench.Windows;
 
-public partial class App : Application
+public partial class App
 {
-    private readonly IHost _host;
+    /// <summary>
+    /// The folder under the local application data folder that holds the user's settings.
+    /// </summary>
+    private const string SettingsAppName = "CredBench";
 
-    public App()
+    private IHost? _host;
+
+    /// <summary>
+    /// Builds the application host.
+    /// </summary>
+    /// <param name="configureOverrides">
+    /// Runs after the application's own registrations, so a caller can replace any of them; the UI
+    /// tests use it to swap the PC/SC services for mocks.
+    /// </param>
+    protected static IHost BuildHost(Action<IServiceCollection>? configureOverrides = null)
     {
-        // Set up localization before DI so the provider is available for XAML
-        var localizationProvider = new ResourceLocalizationProvider();
-        ZBitSystems.Wpf.UI.Localization.LocalizationService.Provider = localizationProvider;
-
-        _host = Host.CreateDefaultBuilder()
+        return Host.CreateDefaultBuilder()
             .ConfigureServices((_, services) =>
             {
-                // Settings
-                var settingsService = new JsonUserSettingsService<CredBenchSettings>("CredBench");
-                services.AddSingleton<IUserSettingsService<CredBenchSettings>>(settingsService);
-                services.AddSingleton<IUserSettingsService<UserSettings>>(settingsService);
-
-                // LEAF Verified trust anchors: built-in NXP root plus persisted test roots
-                services.AddSingleton(CreateLeafTrustStore(settingsService));
-                services.AddSingleton<ILeafTrustStore>(sp => sp.GetRequiredService<LeafTrustStore>());
-
-                // Localization
-                services.AddSingleton<ILocalizationService, Core.Services.LocalizationService>();
-
-                // Smart card services
-                services.AddSingleton<WindowsSmartCardService>();
-                services.AddSingleton<ISmartCardService>(sp => sp.GetRequiredService<WindowsSmartCardService>());
-                services.AddSingleton<IReaderMonitorService, WindowsReaderMonitorService>();
-
-                // Card detectors. LEAF Verified runs first: on a JavaCard emulation card the LEAF
-                // applet is only reachable while it is still the default-selected applet, before
-                // any ISO SELECT of another applet (e.g. PKOC) takes its place.
-                services.AddSingleton<ICardDetector>(sp =>
-                    new LEAFVerifiedDetector(sp.GetRequiredService<ILeafTrustStore>()));
-                services.AddSingleton<ICardDetector, PIVDetector>();
-                services.AddSingleton<ICardDetector, DESFireDetector>();
-                services.AddSingleton<ICardDetector, ISO14443Detector>();
-                services.AddSingleton<ICardDetector, PKOCDetector>();
-                services.AddSingleton<ICardDetector, LEAFDetector>();
-
-                // Detection service
-                services.AddSingleton<CardDetectionService>();
-
-                // LEAF Verified Printed ID lookup (opt-in, online)
-                services.AddSingleton(_ => new LeafPrintedIdLookup());
-
-                // PKOC and LEAF Verified programming
-                services.AddSingleton<PkocCardProgrammer>();
-                services.AddSingleton<LeafCardProgrammer>();
-
-                // ViewModels
-                services.AddSingleton<PkocViewModel>();
-                services.AddSingleton<LeafVerifiedViewModel>();
-                services.AddSingleton(sp => CreateProgramCardViewModel(sp, settingsService));
-                services.AddSingleton<MainViewModel>();
-
-                // Views
-                services.AddSingleton<MainWindow>();
+                ConfigureServices(services);
+                configureOverrides?.Invoke(services);
             })
             .Build();
+    }
+
+    /// <summary>
+    /// Registers the application's services with the dependency injection container.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    protected static void ConfigureServices(IServiceCollection services)
+    {
+        // Settings
+        services.AddSingleton(_ => new JsonUserSettingsService<CredBenchSettings>(SettingsAppName));
+        services.AddSingleton<IUserSettingsService<CredBenchSettings>>(sp =>
+            sp.GetRequiredService<JsonUserSettingsService<CredBenchSettings>>());
+        services.AddSingleton<IUserSettingsService<UserSettings>>(sp =>
+            sp.GetRequiredService<JsonUserSettingsService<CredBenchSettings>>());
+
+        // LEAF Verified trust anchors: built-in NXP root plus persisted test roots
+        services.AddSingleton(sp =>
+            CreateLeafTrustStore(sp.GetRequiredService<IUserSettingsService<CredBenchSettings>>()));
+        services.AddSingleton<ILeafTrustStore>(sp => sp.GetRequiredService<LeafTrustStore>());
+
+        // Localization
+        services.AddSingleton<ILocalizationService, LocalizationService>();
+
+        // Smart card services
+        services.AddSingleton<WindowsSmartCardService>();
+        services.AddSingleton<ISmartCardService>(sp => sp.GetRequiredService<WindowsSmartCardService>());
+        services.AddSingleton<IReaderMonitorService, WindowsReaderMonitorService>();
+
+        // Card detectors. LEAF Verified runs first: on a JavaCard emulation card the LEAF
+        // applet is only reachable while it is still the default-selected applet, before
+        // any ISO SELECT of another applet (e.g. PKOC) takes its place.
+        services.AddSingleton<ICardDetector>(sp =>
+            new LEAFVerifiedDetector(sp.GetRequiredService<ILeafTrustStore>()));
+        services.AddSingleton<ICardDetector, PIVDetector>();
+        services.AddSingleton<ICardDetector, DESFireDetector>();
+        services.AddSingleton<ICardDetector, ISO14443Detector>();
+        services.AddSingleton<ICardDetector, PKOCDetector>();
+        services.AddSingleton<ICardDetector, LEAFDetector>();
+
+        // Detection service
+        services.AddSingleton<CardDetectionService>();
+
+        // LEAF Verified Printed ID lookup (opt-in, online)
+        services.AddSingleton(_ => new LeafPrintedIdLookup());
+
+        // PKOC and LEAF Verified programming
+        services.AddSingleton<PkocCardProgrammer>();
+        services.AddSingleton<LeafCardProgrammer>();
+
+        // ViewModels
+        services.AddSingleton<PkocViewModel>();
+        services.AddSingleton<LeafVerifiedViewModel>();
+        services.AddSingleton(sp =>
+            CreateProgramCardViewModel(sp, sp.GetRequiredService<IUserSettingsService<CredBenchSettings>>()));
+        services.AddSingleton<MainViewModel>();
+
+        // Views
+        services.AddSingleton<MainWindow>();
     }
 
     private static LeafTrustStore CreateLeafTrustStore(IUserSettingsService<CredBenchSettings> settingsService)
@@ -123,6 +145,10 @@ public partial class App : Application
 
     protected override async void OnStartup(StartupEventArgs e)
     {
+        // Set up localization before the host so the provider is available for XAML
+        ZBitSystems.Wpf.UI.Localization.LocalizationService.Provider = new ResourceLocalizationProvider();
+
+        _host = BuildHost();
         await _host.StartAsync();
 
         // Start reader monitoring
@@ -137,20 +163,23 @@ public partial class App : Application
 
     protected override async void OnExit(ExitEventArgs e)
     {
-        // Stop reader monitoring
-        var monitorService = _host.Services.GetService<IReaderMonitorService>();
-        monitorService?.Stop();
+        if (_host != null)
+        {
+            // Stop reader monitoring
+            var monitorService = _host.Services.GetService<IReaderMonitorService>();
+            monitorService?.Stop();
 
-        // Dispose smart card service
-        var smartCardService = _host.Services.GetService<ISmartCardService>();
-        smartCardService?.Dispose();
+            // Dispose smart card service
+            var smartCardService = _host.Services.GetService<ISmartCardService>();
+            smartCardService?.Dispose();
 
-        // Dispose view model
-        var viewModel = _host.Services.GetService<MainViewModel>();
-        viewModel?.Dispose();
+            // Dispose view model
+            var viewModel = _host.Services.GetService<MainViewModel>();
+            viewModel?.Dispose();
 
-        await _host.StopAsync();
-        _host.Dispose();
+            await _host.StopAsync();
+            _host.Dispose();
+        }
 
         base.OnExit(e);
     }

@@ -6,7 +6,7 @@ namespace CredBench.Core.Models.TechnologyDetails;
 public record LEAFDetails
 {
     public string ApplicationType { get; init; } = "Unknown";
-    public IReadOnlyList<string> DetectedAIDs { get; init; } = [];
+    public IReadOnlyList<string> DetectedAids { get; init; } = [];
 
     /// <summary>
     /// Returns non-null fields as labeled display pairs for text output.
@@ -17,7 +17,7 @@ public record LEAFDetails
         [
             ("Application Type", ApplicationType)
         ];
-        if (DetectedAIDs.Count > 0) fields.Add(("AIDs", string.Join(", ", DetectedAIDs)));
+        if (DetectedAids.Count > 0) fields.Add(("AIDs", string.Join(", ", DetectedAids)));
         return fields;
     }
 }

@@ -1,3 +1,4 @@
+using System.Globalization;
 using CredBench.Core.Models.TechnologyDetails;
 using CredBench.Core.Services.CardDetectors;
 using CredBench.Core.Services.GlobalPlatform;
@@ -8,8 +9,6 @@ namespace CredBench.Core.Services.Leaf;
 /// The outcome of programming a LEAF Verified test card.
 /// </summary>
 /// <param name="OpenId">The Open ID written into the card certificate.</param>
-/// <param name="CardPublicKey">The key the card generated on-card (04 || X || Y).</param>
-/// <param name="Certificate">The card certificate (DER) issued by the test root.</param>
 /// <param name="ReadBack">The card read back over the same connection with the test root trusted.</param>
 /// <param name="ImplicitSelectionParameterAccepted">
 /// False when the card rejected the contactless implicit-selection install parameter and the applet was
@@ -17,8 +16,6 @@ namespace CredBench.Core.Services.Leaf;
 /// </param>
 public record LeafProgrammingResult(
     long OpenId,
-    byte[] CardPublicKey,
-    byte[] Certificate,
     LEAFVerifiedDetails ReadBack,
     bool ImplicitSelectionParameterAccepted);
 
@@ -64,7 +61,7 @@ public class LeafCardProgrammer
         IProgress<string>? statusProgress = null)
     {
         if (openId is < 0 or > LEAFVerifiedDetails.OpenIdMax)
-            throw new ArgumentOutOfRangeException(nameof(openId), $"Open ID must be 0 to {LEAFVerifiedDetails.OpenIdMax}.");
+            throw new ArgumentOutOfRangeException(nameof(openId), string.Format(CultureInfo.CurrentCulture, Resources.Resources.GetString("LEAFV_Error_OpenIdRange"), LEAFVerifiedDetails.OpenIdMax));
 
         var session = _sessionFactory.Establish(connection, gpKey, statusProgress);
 
@@ -79,12 +76,12 @@ public class LeafCardProgrammer
         var implicitSelectionAccepted = InstallAsDefault(connection, session);
 
         statusProgress?.Report("Personalising...");
-        var (cardKey, certificate) = Personalise(connection, testCa, openId);
+        Personalise(connection, testCa, openId);
 
         statusProgress?.Report("Reading the card back...");
         var readBack = ReadBack(connection, testCa);
 
-        return new LeafProgrammingResult(openId, cardKey, certificate, readBack, implicitSelectionAccepted);
+        return new LeafProgrammingResult(openId, readBack, implicitSelectionAccepted);
     }
 
     /// <summary>

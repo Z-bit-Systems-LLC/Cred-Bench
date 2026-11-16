@@ -561,4 +561,28 @@
   <data name="Prog_CardInfo_LeafNotInstalled" xml:space="preserve">
     <value>LEAF Verified test applet is not installed</value>
   </data>
+  <data name="LEAFV_Error_NotACertificate" xml:space="preserve">
+    <value>Not a certificate: {0}</value>
+  </data>
+  <data name="LEAFV_Error_CertificateNotEc" xml:space="preserve">
+    <value>The certificate does not hold an EC public key.</value>
+  </data>
+  <data name="LEAFV_Error_CertificateNotP256" xml:space="preserve">
+    <value>The certificate's key is not P-256.</value>
+  </data>
+  <data name="LEAFV_Error_TestRootNeedsName" xml:space="preserve">
+    <value>The test root needs a name.</value>
+  </data>
+  <data name="LEAFV_Error_OpenIdRange" xml:space="preserve">
+    <value>Open ID must be 0 to {0}.</value>
+  </data>
+  <data name="LEAFV_Error_OpenIdTooLarge" xml:space="preserve">
+    <value>Open ID does not fit 38 bits.</value>
+  </data>
+  <data name="LEAFV_Error_CardKeyNotUncompressed" xml:space="preserve">
+    <value>The card public key is not an uncompressed P-256 point.</value>
+  </data>
+  <data name="LEAFV_Error_CardKeyNotOnCurve" xml:space="preserve">
+    <value>The card public key is not a point on P-256.</value>
+  </data>
 </root>

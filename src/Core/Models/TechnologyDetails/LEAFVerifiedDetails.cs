@@ -46,6 +46,8 @@ public record LEAFVerifiedDetails
     public string? CertificateSerial { get; init; }
 
     /// <summary>The certificate as read from file 2 (DER), kept even when it does not parse.</summary>
+    // Detection results are never compared by value, so reference equality on the bytes is fine
+    // ReSharper disable once TypeWithSuspiciousEqualityIsUsedInRecord.Global
     public byte[]? Certificate { get; init; }
 
     public LeafTrust Trust { get; init; } = LeafTrust.Unreadable;
@@ -99,7 +101,7 @@ public record LEAFVerifiedDetails
     public static long ToW40(long openId)
     {
         if (openId is < 0 or > OpenIdMax)
-            throw new ArgumentOutOfRangeException(nameof(openId), "Open ID does not fit 38 bits");
+            throw new ArgumentOutOfRangeException(nameof(openId), Resources.Resources.GetString("LEAFV_Error_OpenIdTooLarge"));
 
         var even = (long)(System.Numerics.BitOperations.PopCount((ulong)(openId >> 19)) & 1);
         var odd = ((even + System.Numerics.BitOperations.PopCount((ulong)openId)) & 1) ^ 1;

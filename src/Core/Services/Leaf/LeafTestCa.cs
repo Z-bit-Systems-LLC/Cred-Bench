@@ -1,4 +1,5 @@
 using System.Formats.Asn1;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
@@ -61,7 +62,7 @@ public sealed class LeafTestCa : IDisposable
     public static LeafTestCa Create(string commonName = DefaultName)
     {
         if (string.IsNullOrWhiteSpace(commonName))
-            throw new ArgumentException("The test root needs a name.", nameof(commonName));
+            throw new ArgumentException(Resources.Resources.GetString("LEAFV_Error_TestRootNeedsName"), nameof(commonName));
 
         var key = ECDsa.Create(ECCurve.NamedCurves.nistP256);
         // The builder encodes in reverse order of addition: this encodes O then CN, as leaf-tool does
@@ -148,9 +149,10 @@ public sealed class LeafTestCa : IDisposable
     {
         if (openId is < 0 or > Models.TechnologyDetails.LEAFVerifiedDetails.OpenIdMax)
             throw new ArgumentOutOfRangeException(nameof(openId),
-                $"Open ID must be 0 to {Models.TechnologyDetails.LEAFVerifiedDetails.OpenIdMax}.");
+                string.Format(CultureInfo.CurrentCulture, Resources.Resources.GetString("LEAFV_Error_OpenIdRange"),
+                    Models.TechnologyDetails.LEAFVerifiedDetails.OpenIdMax));
         if (cardPublicKey is not { Length: 65 } || cardPublicKey[0] != 0x04)
-            throw new ArgumentException("The card public key is not an uncompressed P-256 point.", nameof(cardPublicKey));
+            throw new ArgumentException(Resources.Resources.GetString("LEAFV_Error_CardKeyNotUncompressed"), nameof(cardPublicKey));
 
         using var cardKey = ImportCardKey(cardPublicKey);
 
@@ -195,7 +197,7 @@ public sealed class LeafTestCa : IDisposable
         catch (Exception ex) when (ex is CryptographicException or PlatformNotSupportedException)
         {
             // Windows reports an off-curve point as an unsupported curve
-            throw new ArgumentException("The card public key is not a point on P-256.", nameof(point), ex);
+            throw new ArgumentException(Resources.Resources.GetString("LEAFV_Error_CardKeyNotOnCurve"), nameof(point), ex);
         }
     }
 

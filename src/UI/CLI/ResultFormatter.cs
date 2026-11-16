@@ -1,7 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CredBench.Core.Models;
-using CredBench.Core.Models.TechnologyDetails;
 
 namespace CredBench.CLI;
 
@@ -155,7 +154,7 @@ public static class ResultFormatter
             obj["leaf"] = new
             {
                 applicationType = leaf.ApplicationType,
-                aids = leaf.DetectedAIDs
+                aids = leaf.DetectedAids
             };
         }
 

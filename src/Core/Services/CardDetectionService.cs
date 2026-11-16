@@ -35,9 +35,9 @@ public class CardDetectionService
             var technologies = CardTechnology.Unknown;
             var detectedAids = new List<string>();
             var details = new Dictionary<CardTechnology, string>();
-            string? atr = null;
-            string? uid = null;
-            string? protocol = null;
+            string? atr;
+            string? uid;
+            string? protocol;
 
             // Typed details
             PIVDetails? pivDetails = null;
@@ -120,7 +120,7 @@ public class CardDetectionService
                 Technologies = technologies,
                 ATR = atr,
                 UID = uid,
-                DetectedAIDs = detectedAids,
+                DetectedAids = detectedAids,
                 Details = details,
                 GeneralDetails = generalDetails,
                 PIVDetails = pivDetails,

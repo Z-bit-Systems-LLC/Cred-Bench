@@ -56,6 +56,11 @@ public class AppletLoader
     /// <summary>
     /// INSTALL [for install and make selectable]: creates the applet instance from a loaded package.
     /// </summary>
+    /// <param name="connection">The card connection.</param>
+    /// <param name="session">The authenticated SCP02 session that wraps each command.</param>
+    /// <param name="packageAid">AID of the loaded package.</param>
+    /// <param name="appletAid">AID of the applet class within the package.</param>
+    /// <param name="instanceAid">AID to give the new applet instance.</param>
     /// <param name="privileges">Privilege byte, e.g. <see cref="PrivilegeCardReset"/>.</param>
     /// <param name="systemParameters">Contents of the EF system-specific parameters, or null for none.</param>
     public void Install(

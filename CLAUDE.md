@@ -53,6 +53,27 @@ For APDU commands, TLV parsing, and credential extraction details per technology
 - Test success, failure, and exception scenarios
 - Use Moq for service mocking
 
+### UI Tests
+
+`test/UI.Tests` drives the WPF app with FlaUI, following OSDP-Bench's UI tests. They run only on Windows, take over the desktop while they run, and need an interactive session (not a service account).
+
+- `TestApp` derives from `App` and builds the host through `App.BuildHost(overrides)`: `ISmartCardService`, `IReaderMonitorService` and the card connection are Moq mocks, and every `ICardDetector` is replaced by a `ScriptedCardDetector` whose answer each test sets (`TestApp.Detectors[CardTechnology.DESFire].Detects(...)`). Settings go to `%LOCALAPPDATA%\CredBench.UITests`, cleared on each start.
+- Every fixture starts from a fresh host, mocks and main window; `CardScanTests` restarts before each test because a scan leaves its result on screen.
+- Find controls by `AutomationProperties.AutomationId`. Give any control a test needs an id in the XAML rather than searching by text or position.
+- Press buttons with `Press(id)` (the UIA Invoke pattern), not mouse clicks, and compare against strings from `Core.Resources` via `Text(key, args)` so tests follow resource edits.
+- Tests in the `Smoke` category run on every CI build; the rest run on the daily schedule, on manual runs and on release tags.
+
+## CI and Code Inspection
+
+CI builds, tests and inspects on a self-hosted Linux agent (`ci/build.yml`, `ci/inspect.yml`); the UI tests and packaging run on hosted Windows agents. The inspection fails the build on any ReSharper warning, and CI installs the latest ReSharper, so a new release can add warnings to code that hasn't changed. To reproduce the CI inspection on Linux (e.g. WSL):
+```bash
+dotnet build Cred-Bench.slnx -c Release -p:EnableWindowsTargeting=true
+jb inspectcode Cred-Bench.slnx --no-build --properties:EnableWindowsTargeting=true -o=results.sarif
+```
+Without `EnableWindowsTargeting` the WPF projects don't resolve on Linux and inspection reports thousands of errors. After changing `Cred-Bench.sln.DotSettings`, delete the inspection cache (`--caches-home`) first: results for unchanged files come from the cache and still follow the old settings.
+
+Card-technology acronyms (ATR, UID, PIV, FASCN, …) are registered as abbreviations in `Cred-Bench.sln.DotSettings`; add new ones there rather than renaming members.
+
 ## Build Commands
 
 ```bash
@@ -61,6 +82,10 @@ dotnet build Cred-Bench.slnx
 
 # Test
 dotnet test test/Core.Tests/Core.Tests.csproj
+
+# UI tests (Windows only; drives the app on the desktop)
+dotnet test test/UI.Tests/UI.Tests.csproj
+dotnet test test/UI.Tests/UI.Tests.csproj --filter TestCategory=Smoke
 
 # Run (Windows WPF)
 dotnet run --project src/UI/Windows/Windows.csproj
@@ -92,8 +117,9 @@ pwsh scripts/generate-icons.ps1
 5. Register detector in DI container (`App.xaml.cs`) and in CLI detector array (`Program.cs`). Order matters on JavaCard: keep `LEAFVerifiedDetector` first, because an ISO SELECT of another applet hides the default-selected LEAF applet
 6. Create detail UserControl in `Windows/Views/CardDetails/`
 7. Add DataTemplate in `MainWindow.xaml` Resources
-8. Add TabItem with visibility binding in `MainWindow.xaml`
+8. Add TabItem with visibility binding and an `AutomationProperties.AutomationId` of `Tab_<Technology>` in `MainWindow.xaml`
 9. Add formatting for the new technology in `CLI/ResultFormatter.cs`
+10. Add the technology to `DetectorOrder` in `test/UI.Tests/TestApp.cs`, in the same position as in `App.ConfigureServices`
 
 ## UI Card Detail Tabs
 

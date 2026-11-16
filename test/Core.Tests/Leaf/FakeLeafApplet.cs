@@ -34,7 +34,7 @@ internal sealed class FakeLeafApplet : ICardConnection
     public string ReaderName => "Fake applet";
     public string? GetATR() => null;
     public string? GetUID() => null;
-    public string? GetProtocol() => "T1";
+    public string GetProtocol() => "T1";
 
     public byte[] Transmit(byte[] command)
     {

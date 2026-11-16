@@ -39,7 +39,7 @@ internal sealed class FakeLeafCard : ICardConnection
     public string ReaderName => "Fake";
     public string? GetATR() => null;
     public string? GetUID() => null;
-    public string? GetProtocol() => "T1";
+    public string GetProtocol() => "T1";
 
     public IEnumerable<byte[]> ReadDataCommands => Commands.TakeWhile(c => !IsNdefSelect(c))
         .Where(c => c[0] == 0x90 && c[1] == 0xAD);

@@ -266,6 +266,7 @@
                                 Text="{localization:Localize Reader_Header}"
                                 Style="{StaticResource Section.Header}" />
                             <ComboBox
+                                AutomationProperties.AutomationId="ReaderComboBox"
                                 ItemsSource="{Binding AvailableReaders}"
                                 SelectedItem="{Binding SelectedReader}"
                                 IsEnabled="{Binding IsScanning, Converter={StaticResource BoolToVisibility}, ConverterParameter=Invert}"
@@ -275,11 +276,13 @@
                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom">
                             <ui:Button
                                 Icon="{ui:SymbolIcon ArrowSync24}"
+                                AutomationProperties.AutomationId="RefreshReadersButton"
                                 Command="{Binding RefreshReadersCommand}"
                                 ToolTip="{localization:Localize Reader_RefreshTooltip}"
                                 Margin="12,0,0,0" />
                             <ui:Button
                                 Icon="{ui:SymbolIcon ArrowReset24}"
+                                AutomationProperties.AutomationId="ResetReaderButton"
                                 Command="{Binding ResetReaderCommand}"
                                 ToolTip="{localization:Localize Reader_ResetTooltip}"
                                 Margin="4,0,0,0" />
@@ -317,11 +320,13 @@
                                             <ui:Button
                                                 Content="{localization:Localize Card_ScanButton}"
                                                 Icon="{ui:SymbolIcon ScanDash24}"
+                                                AutomationProperties.AutomationId="ScanCardButton"
                                                 Command="{Binding ScanCardCommand}"
                                                 Appearance="Primary" />
                                             <ui:Button
                                                 Content="{localization:Localize Prog_OpenButton}"
                                                 Icon="{ui:SymbolIcon ArrowDownload24}"
+                                                AutomationProperties.AutomationId="ProgramCardButton"
                                                 Click="ProgramCard_Click"
                                                 Appearance="Secondary"
                                                 Margin="8,0,0,0" />
@@ -405,6 +410,7 @@
 
                                 <!-- Status Message -->
                                 <TextBlock
+                                    AutomationProperties.AutomationId="StatusMessageText"
                                     Text="{Binding StatusMessage}"
                                     HorizontalAlignment="Center"
                                     Margin="0,16,0,0"
@@ -475,25 +481,27 @@
 
                             <!-- Placeholder when no card scanned -->
                             <TextBlock Grid.Row="1"
+                                AutomationProperties.AutomationId="NoCardScannedText"
                                 Text="{localization:Localize Card_NoCardScanned}"
                                 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                 Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}, ConverterParameter=Invert}" />
 
                             <!-- Tabbed card details when available -->
                             <TabControl Grid.Row="2"
+                                AutomationProperties.AutomationId="DetailsTabControl"
                                 Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}}"
                                 Padding="0"
                                 ItemContainerStyle="{StaticResource DetailTabItemStyle}">
 
                                 <!-- General Tab - Always shown when card detected -->
-                                <TabItem Header="{localization:Localize Tab_General}">
+                                <TabItem Header="{localization:Localize Tab_General}" AutomationProperties.AutomationId="Tab_General">
                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                                         <ContentControl Content="{Binding CurrentResult.GeneralDetails}" />
                                     </ScrollViewer>
                                 </TabItem>
 
                                 <!-- PIV Tab - Shown only when PIV detected -->
-                                <TabItem Header="{localization:Localize Tab_PIV}"
+                                <TabItem Header="{localization:Localize Tab_PIV}" AutomationProperties.AutomationId="Tab_PIV"
                                     Visibility="{Binding HasPIV, Converter={StaticResource BoolToVisibility}}">
                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                                         <ContentControl Content="{Binding CurrentResult.PIVDetails}" />
@@ -501,7 +509,7 @@
                                 </TabItem>
 
                                 <!-- DESFire Tab - Shown only when DESFire detected -->
-                                <TabItem Header="{localization:Localize Tab_DESFire}"
+                                <TabItem Header="{localization:Localize Tab_DESFire}" AutomationProperties.AutomationId="Tab_DESFire"
                                     Visibility="{Binding HasDESFire, Converter={StaticResource BoolToVisibility}}">
                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                                         <ContentControl Content="{Binding CurrentResult.DESFireDetails}" />
@@ -509,7 +517,7 @@
                                 </TabItem>
 
                                 <!-- ISO14443 Tab - Shown only when ISO14443 detected -->
-                                <TabItem Header="{localization:Localize Tab_ISO14443}"
+                                <TabItem Header="{localization:Localize Tab_ISO14443}" AutomationProperties.AutomationId="Tab_ISO14443"
                                     Visibility="{Binding HasISO14443, Converter={StaticResource BoolToVisibility}}">
                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                                         <ContentControl Content="{Binding CurrentResult.ISO14443Details}" />
@@ -517,7 +525,7 @@
                                 </TabItem>
 
                                 <!-- PKOC Tab - Shown only when PKOC detected -->
-                                <TabItem Header="{localization:Localize Tab_PKOC}"
+                                <TabItem Header="{localization:Localize Tab_PKOC}" AutomationProperties.AutomationId="Tab_PKOC"
                                     Visibility="{Binding HasPKOC, Converter={StaticResource BoolToVisibility}}">
                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                                         <ContentControl Content="{Binding PkocViewModel}" />
@@ -525,7 +533,7 @@
                                 </TabItem>
 
                                 <!-- LEAF Verified Tab - Shown only when LEAF Verified detected -->
-                                <TabItem Header="{localization:Localize Tab_LEAFVerified}"
+                                <TabItem Header="{localization:Localize Tab_LEAFVerified}" AutomationProperties.AutomationId="Tab_LEAFVerified"
                                     Visibility="{Binding HasLEAFVerified, Converter={StaticResource BoolToVisibility}}">
                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                                         <ContentControl Content="{Binding LeafVerifiedViewModel}" />
@@ -533,7 +541,7 @@
                                 </TabItem>
 
                                 <!-- LEAF Universal Tab - Shown only when LEAF Universal detected -->
-                                <TabItem Header="{localization:Localize Tab_LEAF}"
+                                <TabItem Header="{localization:Localize Tab_LEAF}" AutomationProperties.AutomationId="Tab_LEAF"
                                     Visibility="{Binding HasLEAF, Converter={StaticResource BoolToVisibility}}">
                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                                         <ContentControl Content="{Binding CurrentResult.LEAFDetails}" />

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -61,10 +62,13 @@ public class LeafTrustStore : ILeafTrustStore
     /// <summary>Raised after a test root is added or removed.</summary>
     public event EventHandler? Changed;
 
-    public IReadOnlyList<LeafTrustAnchor> Anchors => _anchors;
+    public IReadOnlyList<LeafTrustAnchor> Anchors
+    {
+        get { lock (_lock) return _anchors; }
+    }
 
     /// <summary>The test roots only, in the order added.</summary>
-    public IReadOnlyList<LeafTrustAnchor> TestRoots => _anchors.Where(a => !a.IsBuiltIn).ToList();
+    public IReadOnlyList<LeafTrustAnchor> TestRoots => Anchors.Where(a => !a.IsBuiltIn).ToList();
 
     /// <summary>
     /// Adds a test root from a certificate file (PEM or DER), such as the <c>ca.crt</c>
@@ -123,17 +127,17 @@ public class LeafTrustStore : ILeafTrustStore
         }
         catch (Exception ex) when (ex is CryptographicException or ArgumentException)
         {
-            throw new ArgumentException($"Not a certificate: {ex.Message}", nameof(certificateFile), ex);
+            throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.Resources.GetString("LEAFV_Error_NotACertificate"), ex.Message), nameof(certificateFile), ex);
         }
 
         using (cert)
         {
             using var key = cert.GetECDsaPublicKey()
-                ?? throw new ArgumentException("The certificate does not hold an EC public key.", nameof(certificateFile));
+                ?? throw new ArgumentException(Resources.Resources.GetString("LEAFV_Error_CertificateNotEc"), nameof(certificateFile));
 
             var parameters = key.ExportParameters(false);
             if (parameters.Curve.Oid?.Value != P256Oid)
-                throw new ArgumentException("The certificate's key is not P-256.", nameof(certificateFile));
+                throw new ArgumentException(Resources.Resources.GetString("LEAFV_Error_CertificateNotP256"), nameof(certificateFile));
 
             byte[] point = [0x04, .. parameters.Q.X!, .. parameters.Q.Y!];
 

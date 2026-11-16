@@ -123,14 +123,7 @@ public class AppletLoaderTests
         loader.LoadAndInstall(mock.Object, session, new byte[100],
             PackageAid, AppletAid, AppletAid);
 
-        // Last command: INSTALL [for install] — INS=E6, P1=0C
-        var lastE6 = commands.Last(c => c[1] == 0xE6);
-        // P1=0x0C is in the original command, but after wrapping CLA changes.
-        // Check the P1 in the wrapped command (position 2)
-        // Actually, P1 doesn't change during wrapping — only CLA and Lc change
-        // But we capture the wrapped command, so P1 is still at index 2
-        // However, the first INSTALL has P1=0x02 and last has P1=0x0C
-        // Let's check the last command that has INS=0xE6
+        // Wrapping changes CLA and Lc but not P1: INSTALL [for load] has P1=02, [for install] P1=0C
         var installCommands = commands.Where(c => c[1] == 0xE6).ToList();
         Assert.That(installCommands.Count, Is.EqualTo(2));
         Assert.That(installCommands[^1][2], Is.EqualTo(0x0C),

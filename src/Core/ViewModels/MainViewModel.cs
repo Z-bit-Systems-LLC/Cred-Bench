@@ -31,7 +31,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private bool _isScanning;
 
     [ObservableProperty]
-    private string _statusMessage = string.Empty;
+    private string _statusMessage;
 
     [ObservableProperty]
     private bool _hasPIV;

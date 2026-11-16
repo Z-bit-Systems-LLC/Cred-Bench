@@ -48,6 +48,8 @@ public sealed partial class LeafCertificate
     }
 
     /// <summary>The certificate exactly as given (DER).</summary>
+    // Kept so a parsed certificate can be exported as read
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public byte[] Encoded { get; }
 
     /// <summary>The card's key, 04 || X || Y, or null if the key is not an uncompressed P-256 point.</summary>

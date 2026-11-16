@@ -17,7 +17,7 @@ public class TechnologyToColorConverter : IValueConverter
         _inactiveBrush ??= Application.Current.TryFindResource("TextFillColorSecondaryBrush") as SolidColorBrush
             ?? new SolidColorBrush(Color.FromRgb(0x6B, 0x72, 0x80));
 
-        return value is bool isDetected && isDetected ? _successBrush : _inactiveBrush!;
+        return value is bool isDetected && isDetected ? _successBrush : _inactiveBrush;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

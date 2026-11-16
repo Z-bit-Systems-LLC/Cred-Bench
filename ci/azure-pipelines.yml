@@ -6,22 +6,77 @@ trigger:
     include:
     - v*
 
+pr: none
+
+schedules:
+- cron: '0 6 * * *'
+  displayName: 'Daily full UI test run'
+  branches:
+    include:
+    - main
+  always: true
+
+# Self-hosted agents; the SDK, NuGet and ReSharper caches persist between runs.
+# The UI tests drive the WPF app and packaging publishes a win-x64 app, so both stay on hosted Windows agents.
 pool:
-  vmImage: 'windows-latest'
+  name: Default
+  demands:
+  - Agent.OS -equals Linux
 
 variables:
   solution: 'Cred-Bench.slnx'
   buildConfiguration: 'Release'
 
-jobs:
-  - job: build
-    displayName: 'Build and Test'
-    steps:
-      - template: build.yml
+stages:
+  - stage: Build
+    displayName: 'Build, Test, and Inspect'
+    jobs:
+      - job: build
+        displayName: 'Build and Test'
+        steps:
+          - checkout: self
+            submodules: true
+          - template: build.yml
 
-  - job: package
+      - job: inspect
+        displayName: 'Inspect'
+        steps:
+          - checkout: self
+            submodules: true
+          - template: inspect.yml
+
+  - stage: Test
+    displayName: 'UI Tests'
+    dependsOn: Build
+    pool:
+      vmImage: 'windows-latest'
+    jobs:
+      - job: ui_tests_smoke
+        displayName: 'UI Smoke Tests'
+        continueOnError: true
+        steps:
+          - checkout: self
+            submodules: true
+          - template: ui-tests-smoke.yml
+
+      - job: ui_tests_full
+        displayName: 'UI Tests (Full)'
+        condition: or(eq(variables['Build.Reason'], 'Schedule'), eq(variables['Build.Reason'], 'Manual'), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+        steps:
+          - checkout: self
+            submodules: true
+          - template: ui-tests.yml
+
+  - stage: Package
     displayName: 'Package'
+    dependsOn:
+      - Build
+      - Test
     condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
-    dependsOn: build
-    steps:
-      - template: package.yml
+    pool:
+      vmImage: 'windows-latest'
+    jobs:
+      - job: package
+        displayName: 'Package'
+        steps:
+          - template: package.yml

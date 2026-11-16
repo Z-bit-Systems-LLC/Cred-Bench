@@ -8,6 +8,7 @@
   </Folder>
   <Folder Name="/test/">
     <Project Path="test/Core.Tests/Core.Tests.csproj" />
+    <Project Path="test/UI.Tests/UI.Tests.csproj" />
   </Folder>
   <Folder Name="/lib/Guidelines/src/">
     <Project Path="lib/Guidelines/src/ZBitSystems.Wpf.UI/ZBitSystems.Wpf.UI.csproj" />

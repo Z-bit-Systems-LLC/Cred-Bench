@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using CredBench.Core.Services.GlobalPlatform;
 using NUnit.Framework;
 
@@ -102,37 +101,9 @@ public class Scp02SessionTests
         var session = new Scp02Session();
         session.DeriveSessionKeys(TestKey, TestKey, TestKey, seq);
 
-        // Compute the expected cryptogram manually via the same path
-        var data = new byte[16];
-        Buffer.BlockCopy(hostChallenge, 0, data, 0, 8);
-        Buffer.BlockCopy(seq, 0, data, 8, 2);
-        Buffer.BlockCopy(cardChallenge, 0, data, 10, 6);
-        var expected = Scp02Session.FullTripleDesCbcMac(data, session.SessionDekKey);
-        // Use the real S-ENC by going through the public API
-        // We verify roundtrip: what the card would compute should match what we verify
-
-        // Instead, just verify that the method returns true for its own computation
-        // (this tests internal consistency)
-        var hostCrypto = session.ComputeHostCryptogram(cardChallenge, hostChallenge);
-        Assert.That(hostCrypto, Has.Length.EqualTo(8));
-
-        // Build card cryptogram the same way the card would
-        var cardCryptoData = new byte[16];
-        Buffer.BlockCopy(hostChallenge, 0, cardCryptoData, 0, 8);
-        Buffer.BlockCopy(seq, 0, cardCryptoData, 8, 2);
-        Buffer.BlockCopy(cardChallenge, 0, cardCryptoData, 10, 6);
-
-        // We can't easily get S-ENC externally, so test via roundtrip
-        // Derive the same session, compute card cryptogram, verify it
-        var session2 = new Scp02Session();
-        session2.DeriveSessionKeys(TestKey, TestKey, TestKey, seq);
-        var cardCryptogram = session2.ComputeHostCryptogram(cardChallenge, hostChallenge);
-        // ComputeHostCryptogram uses different data order than card cryptogram, so we
-        // can't directly reuse it. Instead test Verify with a known-good value.
-
-        // The real test: verify returns true for correctly computed cryptogram
+        // The card computes its cryptogram over host_challenge || seq || card_challenge with S-ENC
         Assert.That(session.VerifyCardCryptogram(hostChallenge, cardChallenge,
-            ComputeCardCryptogramDirectly(session, hostChallenge, seq, cardChallenge)),
+            ComputeCardCryptogramDirectly(hostChallenge, seq, cardChallenge)),
             Is.True);
     }
 
@@ -162,7 +133,7 @@ public class Scp02SessionTests
         session.DeriveSessionKeys(TestKey, TestKey, TestKey, seq);
 
         var hostCrypto = session.ComputeHostCryptogram(cardChallenge, hostChallenge);
-        var cardCrypto = ComputeCardCryptogramDirectly(session, hostChallenge, seq, cardChallenge);
+        var cardCrypto = ComputeCardCryptogramDirectly(hostChallenge, seq, cardChallenge);
 
         // They should differ because the data order is different
         Assert.That(hostCrypto, Is.Not.EqualTo(cardCrypto));
@@ -295,7 +266,7 @@ public class Scp02SessionTests
     /// We access internal state indirectly through a parallel session.
     /// </summary>
     private static byte[] ComputeCardCryptogramDirectly(
-        Scp02Session session, byte[] hostChallenge, byte[] seq, byte[] cardChallenge)
+        byte[] hostChallenge, byte[] seq, byte[] cardChallenge)
     {
         // Reconstruct S-ENC by deriving from the same inputs
         // We use a parallel session with the same keys to get deterministic output

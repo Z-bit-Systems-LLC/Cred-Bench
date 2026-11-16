@@ -1,12 +1,11 @@
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
 using CredBench.Core.ViewModels;
 using Microsoft.Win32;
 
 namespace CredBench.Windows.Views.CardDetails;
 
-public partial class LeafVerifiedDetailsControl : UserControl
+public partial class LeafVerifiedDetailsControl
 {
     private const string CertificateFilter = "Certificates (*.crt;*.pem;*.cer;*.der)|*.crt;*.pem;*.cer;*.der|All files (*.*)|*.*";
 

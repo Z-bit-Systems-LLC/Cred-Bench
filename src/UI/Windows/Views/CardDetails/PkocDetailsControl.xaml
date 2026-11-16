@@ -13,7 +13,6 @@
 
     <UserControl.Resources>
         <guidelinesConverters:BooleanToVisibilityConverter x:Key="BoolToVisibility" />
-        <guidelinesConverters:NullToVisibilityConverter x:Key="NullToVisibility" />
     </UserControl.Resources>
 
         <StackPanel Margin="{StaticResource Padding.Card}">

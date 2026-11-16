@@ -16,9 +16,6 @@ public class DESFireDetectorTests
     // SELECT failure response
     private static readonly byte[] SelectFailResponse = [0x6A, 0x82];
 
-    // GetVersion native wrapped command
-    private static readonly byte[] GetVersionCommand = [0x90, 0x60, 0x00, 0x00, 0x00];
-
     [SetUp]
     public void Setup()
     {

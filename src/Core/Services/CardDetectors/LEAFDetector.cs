@@ -59,7 +59,7 @@ public class LEAFDetector : ICardDetector
             var details = new LEAFDetails
             {
                 ApplicationType = applicationType ?? "Unknown",
-                DetectedAIDs = detectedAids
+                DetectedAids = detectedAids
             };
             return (true, $"LEAF Universal credential ({applicationType})", details);
         }

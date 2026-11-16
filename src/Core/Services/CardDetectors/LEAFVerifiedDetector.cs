@@ -127,7 +127,7 @@ public class LEAFVerifiedDetector(ILeafTrustStore trustStore, Func<byte[]>? chal
                 Trust = LeafTrust.Unreadable,
                 Certificate = ex.PartialData,
                 Error = ex.Message,
-                LastStatusWord = ex.StatusWord is { } sw ? $"{sw:X4}" : null
+                LastStatusWord = ex.ResponseStatus is { } sw ? $"{sw:X4}" : null
             };
         }
 
@@ -148,7 +148,7 @@ public class LEAFVerifiedDetector(ILeafTrustStore trustStore, Func<byte[]>? chal
             return details with
             {
                 Error = ex.Message,
-                LastStatusWord = ex.StatusWord is { } sw ? $"{sw:X4}" : null
+                LastStatusWord = ex.ResponseStatus is { } sw ? $"{sw:X4}" : null
             };
         }
     }
@@ -190,7 +190,7 @@ public class LEAFVerifiedDetector(ILeafTrustStore trustStore, Func<byte[]>? chal
 
     private static byte[] ReadCertificate(ICardConnection connection)
     {
-        var header = ReadData(connection, 0, HeaderRead);
+        var header = ReadData(connection, 0, HeaderRead, CertificateFile);
 
         // Certificate length from its DER header: 30 82 HH LL -> 4 + HHLL
         if (header[0] != 0x30 || header[1] != 0x82)
@@ -210,11 +210,11 @@ public class LEAFVerifiedDetector(ILeafTrustStore trustStore, Func<byte[]>? chal
             byte[] chunk;
             try
             {
-                chunk = ReadData(connection, read, Math.Min(total - read, ReadChunk));
+                chunk = ReadData(connection, read, Math.Min(total - read, ReadChunk), CertificateFile);
             }
             catch (LeafReadException ex)
             {
-                throw new LeafReadException(ex.Message, ex.StatusWord, certificate[..read]);
+                throw new LeafReadException(ex.Message, ex.ResponseStatus, certificate[..read]);
             }
 
             chunk.CopyTo(certificate, read);
@@ -225,7 +225,7 @@ public class LEAFVerifiedDetector(ILeafTrustStore trustStore, Func<byte[]>? chal
     }
 
     /// <summary>ReadData of exactly <paramref name="length"/> bytes, following 91 AF continuation frames.</summary>
-    private static byte[] ReadData(ICardConnection connection, int offset, int length, byte file = CertificateFile)
+    private static byte[] ReadData(ICardConnection connection, int offset, int length, byte file)
     {
         byte[] command =
         [
@@ -334,7 +334,7 @@ public class LEAFVerifiedDetector(ILeafTrustStore trustStore, Func<byte[]>? chal
     private sealed class LeafReadException(string message, ushort? statusWord = null, byte[]? partialData = null)
         : Exception(message)
     {
-        public ushort? StatusWord { get; } = statusWord;
+        public ushort? ResponseStatus { get; } = statusWord;
         public byte[]? PartialData { get; } = partialData;
     }
 }

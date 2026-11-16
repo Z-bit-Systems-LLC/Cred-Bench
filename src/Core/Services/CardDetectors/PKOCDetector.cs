@@ -8,9 +8,6 @@ public class PKOCDetector : ICardDetector
 {
     public CardTechnology Technology => CardTechnology.PKOC;
 
-    // PSIA PKOC AID: A000000898000001
-    private static readonly byte[] PkocAid = [0xA0, 0x00, 0x00, 0x08, 0x98, 0x00, 0x00, 0x01];
-
     // SELECT command: 00 A4 04 00 08 A000000898000001 00
     private static readonly byte[] SelectPkocCommand =
     [

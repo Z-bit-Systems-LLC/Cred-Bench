@@ -55,6 +55,9 @@ dotnet build src/UI/CLI/CLI.csproj
 # Run tests
 dotnet test test/Core.Tests/Core.Tests.csproj
 
+# Run the UI tests (Windows only; they drive the app on the desktop)
+dotnet test test/UI.Tests/UI.Tests.csproj
+
 # Run the WPF application (Windows only)
 dotnet run --project src/UI/Windows/Windows.csproj
 
@@ -108,7 +111,8 @@ Cred-Bench/
 │   │       └── Views/      # XAML views
 │   └── Applet/         # PKOC and LEAF Verified emulation JavaCard applets (Java, built with Ant)
 └── test/
-    └── Core.Tests/     # Unit tests
+    ├── Core.Tests/     # Unit tests
+    └── UI.Tests/       # FlaUI tests of the WPF app with mocked PC/SC services
 ```
 
 ## JavaCard Applets
@@ -134,7 +138,7 @@ Both applets are copies of the sources in [AsymCred](https://github.com/Z-bit-Sy
 - **MVVM**: CommunityToolkit.Mvvm
 - **PC/SC**: PCSC-Sharp
 - **DI**: Microsoft.Extensions.Hosting
-- **Testing**: NUnit, Moq
+- **Testing**: NUnit, Moq, FlaUI
 
 ## License
 

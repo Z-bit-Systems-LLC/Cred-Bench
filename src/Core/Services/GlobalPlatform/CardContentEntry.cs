@@ -7,6 +7,8 @@ public record CardContentEntry
 {
     public required byte[] Aid { get; init; }
     public required byte LifecycleState { get; init; }
+    // Parsed from GET STATUS for diagnostics
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public required byte Privileges { get; init; }
 
     /// <summary>AID formatted as hex string (e.g. "A0000001510000").</summary>
@@ -55,9 +57,13 @@ public record CardContent
     public int? FreePersistentMemory { get; init; }
 
     /// <summary>Free transient reset memory in bytes, if available.</summary>
+    // Parsed from GET DATA for diagnostics
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public int? FreeTransientResetMemory { get; init; }
 
     /// <summary>Free transient deselect memory in bytes, if available.</summary>
+    // Parsed from GET DATA for diagnostics
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public int? FreeTransientDeselectMemory { get; init; }
 
     /// <summary>Whether the PKOC applet (A000000898000001) is installed.</summary>

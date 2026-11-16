@@ -10,6 +10,7 @@
     xmlns:localization="clr-namespace:ZBitSystems.Wpf.UI.Localization;assembly=ZBitSystems.Wpf.UI"
     mc:Ignorable="d"
     Title="{localization:Localize Prog_Title}"
+    AutomationProperties.AutomationId="ProgramCardWindow"
     Width="600"
     Height="760"
     MinWidth="480"
@@ -62,6 +63,7 @@
                         Content="{localization:Localize PKOC_CardInfo_RefreshButton}"
                         Icon="{ui:SymbolIcon ArrowSync24}"
                         Command="{Binding QueryCardContentCommand}"
+                        AutomationProperties.AutomationId="ProgramCardQueryButton"
                         Appearance="Secondary" />
                 </Grid>
 
@@ -79,6 +81,8 @@
                                 <ui:Button Command="{Binding ToggleQueryErrorDetailsCommand}"
                                     Margin="0,6,0,0" Appearance="Secondary" Padding="8,2">
                                     <ui:Button.Style>
+                                        <!-- WPF-UI registers its button style from code, so ReSharper cannot see the key -->
+                                        <!-- ReSharper disable once Xaml.StaticResourceNotResolved -->
                                         <Style TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
                                             <Setter Property="Content" Value="{localization:Localize PKOC_CardInfo_ShowDetails}" />
                                             <Style.Triggers>
@@ -421,11 +425,13 @@
                     Content="{localization:Localize Prog_Run}"
                     Icon="{ui:SymbolIcon ArrowDownload24}"
                     Command="{Binding ProgramCardCommand}"
+                    AutomationProperties.AutomationId="ProgramCardRunButton"
                     Appearance="Primary"
                     MinWidth="120" />
                 <ui:Button
                     Content="{localization:Localize Prog_Close}"
                     Click="Close_Click"
+                    AutomationProperties.AutomationId="ProgramCardCloseButton"
                     Appearance="Secondary"
                     MinWidth="100"
                     Margin="8,0,0,0" />

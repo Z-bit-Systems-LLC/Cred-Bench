@@ -58,7 +58,7 @@ public class DetectionResultTests
         Assert.That(result.Technologies, Is.EqualTo(CardTechnology.Unknown));
         Assert.That(result.ATR, Is.Null);
         Assert.That(result.UID, Is.Null);
-        Assert.That(result.DetectedAIDs, Is.Empty);
+        Assert.That(result.DetectedAids, Is.Empty);
         Assert.That(result.Details, Is.Empty);
     }
 
@@ -76,7 +76,7 @@ public class DetectionResultTests
             Technologies = CardTechnology.PIV,
             ATR = "3B 8F 80 01",
             UID = "04 A2 B3 C4",
-            DetectedAIDs = ["A0000003080000100001"],
+            DetectedAids = ["A0000003080000100001"],
             Details = details
         };
 
@@ -84,7 +84,7 @@ public class DetectionResultTests
         Assert.That(result.Technologies, Is.EqualTo(CardTechnology.PIV));
         Assert.That(result.ATR, Is.EqualTo("3B 8F 80 01"));
         Assert.That(result.UID, Is.EqualTo("04 A2 B3 C4"));
-        Assert.That(result.DetectedAIDs, Has.Count.EqualTo(1));
+        Assert.That(result.DetectedAids, Has.Count.EqualTo(1));
         Assert.That(result.Details[CardTechnology.PIV], Is.EqualTo("PIV found"));
     }
 }

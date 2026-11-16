@@ -36,7 +36,7 @@
                 TextAlignment="Right"
                 VerticalAlignment="Top" />
             <ItemsControl Grid.Row="1" Grid.Column="2"
-                ItemsSource="{Binding DetectedAIDs}"
+                ItemsSource="{Binding DetectedAids}"
                 Margin="0,0,0,4">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

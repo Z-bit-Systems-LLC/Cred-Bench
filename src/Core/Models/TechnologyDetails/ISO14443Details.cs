@@ -8,6 +8,8 @@ public record ISO14443Details
     public string? UID { get; init; }
     public string? CSN { get; init; }
     public string? Manufacturer { get; init; }
+    // No detector reads the SAK yet; the field, CLI output and UI are ready for one that does
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public byte? SAK { get; init; }
     public string? CardType { get; init; }
     public string? UIDLength { get; init; }

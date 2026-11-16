@@ -6,6 +6,8 @@ public record InitializeUpdateResult
 {
     public required byte[] HostChallenge { get; init; }
     public required byte[] KeyDiversification { get; init; }
+    // Parsed from INITIALIZE UPDATE for diagnostics
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public required byte[] KeyInfo { get; init; }
     public required byte[] SequenceCounter { get; init; }
     public required byte[] CardChallenge { get; init; }
