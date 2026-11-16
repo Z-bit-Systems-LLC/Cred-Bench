@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Cred Bench logo: a smart card with a contact chip and the app name, drawn in the
+  same style as the OSDP Bench logo (black outline, Arial Rounded MT Bold).
+  scripts/generate-icons.ps1 renders the app icon (src/UI/Windows/Logo.ico) from this
+  file. The text uses an installed font, so render it on Windows.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="chipGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F6DA8B" />
+      <stop offset="1" stop-color="#C99A2E" />
+    </linearGradient>
+  </defs>
+
+  <!-- Card body -->
+  <rect x="5" y="51" width="246" height="154" rx="18" ry="18"
+        fill="#FFFFFF" stroke="#000000" stroke-width="6" stroke-linejoin="round" />
+
+  <!-- Contact chip -->
+  <g stroke="#7A5A12" stroke-width="2.5" stroke-linecap="round" fill="none">
+    <rect x="22" y="103" width="62" height="50" rx="9" ry="9" fill="url(#chipGold)" />
+    <rect x="43" y="114" width="20" height="28" rx="4" ry="4" />
+    <line x1="22" y1="120" x2="43" y2="120" />
+    <line x1="22" y1="136" x2="43" y2="136" />
+    <line x1="63" y1="120" x2="84" y2="120" />
+    <line x1="63" y1="136" x2="84" y2="136" />
+    <line x1="53" y1="103" x2="53" y2="114" />
+    <line x1="53" y1="142" x2="53" y2="153" />
+  </g>
+
+  <!-- Name -->
+  <g font-family="'Arial Rounded MT', 'Arial Rounded MT Bold', Arial, sans-serif" font-weight="bold"
+     font-size="44" fill="#000000" text-anchor="middle">
+    <text x="166" y="120">Cred</text>
+    <text x="166" y="171">Bench</text>
+  </g>
+</svg>

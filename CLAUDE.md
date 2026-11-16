@@ -78,6 +78,9 @@ dotnet publish src/UI/Windows/Windows.csproj -c Release -r win-x64 --self-contai
 
 # Publish (CLI — macOS)
 dotnet publish src/UI/CLI/CLI.csproj -c Release -r osx-arm64 --self-contained
+
+# Regenerate src/UI/Windows/Logo.ico from src/Assets/Logo.svg
+pwsh scripts/generate-icons.ps1
 ```
 
 ## Adding New Card Technologies
@@ -122,3 +125,4 @@ Controls are in `Windows/Views/CardDetails/`, models in `Core/Models/TechnologyD
 - Converters in `Windows/Converters/`
 - CLI entry point and output formatting in `UI/CLI/`
 - PKOC JavaCard applet in `src/Applet/` (Java, built with Ant — separate from .NET solution)
+- App logo source in `src/Assets/Logo.svg`; `src/UI/Windows/Logo.ico` is generated from it by `scripts/generate-icons.ps1`
