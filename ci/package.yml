@@ -1,4 +1,7 @@
 steps:
+  - checkout: self
+    submodules: true
+
   - task: UseDotNet@2
     displayName: 'Install .NET 10.0'
     inputs:
@@ -36,7 +39,7 @@ steps:
   - task: GitHubRelease@1
     displayName: 'Create GitHub Release'
     inputs:
-      gitHubConnection: 'GitHub'
+      gitHubConnection: 'github.com_Z-bit-Systems-LLC'
       repositoryName: 'Z-bit-Systems-LLC/Cred-Bench'
       action: 'create'
       target: '$(Build.SourceVersion)'

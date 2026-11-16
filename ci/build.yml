@@ -1,4 +1,7 @@
 steps:
+  - checkout: self
+    submodules: true
+
   - task: UseDotNet@2
     displayName: 'Install .NET 10.0'
     inputs:
@@ -44,7 +47,8 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
-        jb inspectcode Cred-Bench.sln -o=inspectcode-results.sarif --format=Sarif
+        # Quoted, or Windows PowerShell splits the argument at the dot and inspectcode sees ".sarif" as a second solution
+        jb inspectcode Cred-Bench.slnx "--output=inspectcode-results.sarif" --format=Sarif
     continueOnError: true
 
   - task: PublishBuildArtifacts@1
