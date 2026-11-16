@@ -22,7 +22,17 @@ steps:
       projects: 'test/Core.Tests/Core.Tests.csproj'
       arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage"'
 
-  - task: PublishCodeCoverageResults@2
-    displayName: 'Publish Code Coverage'
+  - task: reportgenerator@5
+    displayName: 'Generate Code Coverage Report'
     inputs:
-      summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+      reports: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+      targetdir: '$(Build.SourcesDirectory)/coveragereport'
+      reporttypes: 'Cobertura;HtmlInline_AzurePipelines'
+
+  - task: PublishCodeCoverageResults@2
+    displayName: 'Publish Code Coverage Results'
+    inputs:
+      codeCoverageTool: 'Cobertura'
+      summaryFileLocation: '$(Build.SourcesDirectory)/coveragereport/Cobertura.xml'
+      reportDirectory: '$(Build.SourcesDirectory)/coveragereport'
+      failIfCoverageEmpty: true
