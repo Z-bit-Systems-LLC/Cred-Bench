@@ -49,6 +49,7 @@ stages:
     displayName: 'UI Tests'
     dependsOn: Build
     pool:
+      name: 'Azure Pipelines'
       vmImage: 'windows-latest'
     jobs:
       - job: ui_tests_smoke
@@ -74,6 +75,7 @@ stages:
       - Test
     condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
     pool:
+      name: 'Azure Pipelines'
       vmImage: 'windows-latest'
     jobs:
       - job: package

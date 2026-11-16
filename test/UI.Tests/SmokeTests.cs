@@ -1,5 +1,6 @@
 using FlaUI.Core.AutomationElements;
 using NUnit.Framework;
+using AppMainWindow = CredBench.Windows.Views.MainWindow;
 
 namespace CredBench.UI.Tests;
 
@@ -12,6 +13,15 @@ public class SmokeTests : UiTestBase
     {
         Assert.That(MainWindow, Is.Not.Null, "Main window should exist.");
         Assert.That(MainWindow!.IsAvailable, Is.True, "Main window should be available.");
+    }
+
+    [Test]
+    public void OnlyTheTestAppsMainWindowIsOpen()
+    {
+        // The real App startup builds its own host with the PC/SC services; it must not run here
+        var mainWindows = InvokeOnUI(() => TestApp.Windows.OfType<AppMainWindow>().Count());
+
+        Assert.That(mainWindows, Is.EqualTo(1), "Only the test app's main window should be open.");
     }
 
     [Test]

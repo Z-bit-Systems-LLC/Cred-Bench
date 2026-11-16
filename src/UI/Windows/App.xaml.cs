@@ -143,7 +143,12 @@ public partial class App
         return viewModel;
     }
 
-    protected override async void OnStartup(StartupEventArgs e)
+    /// <summary>
+    /// Starts the host and shows the main window. Wired in App.xaml rather than overriding
+    /// OnStartup, so the UI tests' TestApp, which never calls InitializeComponent, does not start
+    /// the real PC/SC services alongside its mocks.
+    /// </summary>
+    private async void OnStartup(object sender, StartupEventArgs e)
     {
         // Set up localization before the host so the provider is available for XAML
         ZBitSystems.Wpf.UI.Localization.LocalizationService.Provider = new ResourceLocalizationProvider();
@@ -157,11 +162,9 @@ public partial class App
 
         var mainWindow = _host.Services.GetRequiredService<MainWindow>();
         mainWindow.Show();
-
-        base.OnStartup(e);
     }
 
-    protected override async void OnExit(ExitEventArgs e)
+    private async void OnExit(object sender, ExitEventArgs e)
     {
         if (_host != null)
         {
@@ -180,7 +183,5 @@ public partial class App
             await _host.StopAsync();
             _host.Dispose();
         }
-
-        base.OnExit(e);
     }
 }
