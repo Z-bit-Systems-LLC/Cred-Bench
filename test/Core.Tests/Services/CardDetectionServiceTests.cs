@@ -162,9 +162,11 @@ public class CardDetectionServiceTests
     [Test]
     public async Task DetectAsync_CancelledWhileAReaderCallIsStuck_StopsWaiting()
     {
-        // Arrange - the connection blocks like a PC/SC call on a hung reader, ignoring the token
-        using var release = new ManualResetEventSlim(false);
-        using var connecting = new ManualResetEventSlim(false);
+        // Arrange - the connection blocks like a PC/SC call on a hung reader, ignoring the token.
+        // The events aren't disposed: the stuck call may still be waking from release.Wait after
+        // the test ends, and these events never allocate a kernel handle that would need freeing.
+        var release = new ManualResetEventSlim(false);
+        var connecting = new ManualResetEventSlim(false);
         _smartCardServiceMock
             .Setup(x => x.Connect(It.IsAny<string>()))
             .Returns(() =>

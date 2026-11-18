@@ -46,7 +46,7 @@ public record PKOCDetails
         (PkocCredentialSize.Bits64, CredentialFormat.WiegandBits) => Credential64Bits,
         (PkocCredentialSize.Bits64, CredentialFormat.Hex) => Credential64Hex,
         (PkocCredentialSize.Bits64, CredentialFormat.Decimal) => Credential64Decimal,
-        _ => throw new ArgumentOutOfRangeException(nameof(size), (size, format), "Unknown credential size or format.")
+        _ => throw new ArgumentOutOfRangeException(nameof(size), (size, format), null)
     };
 
     /// <summary>

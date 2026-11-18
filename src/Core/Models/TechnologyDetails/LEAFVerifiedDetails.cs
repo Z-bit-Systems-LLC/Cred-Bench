@@ -104,7 +104,7 @@ public record LEAFVerifiedDetails
         CredentialFormat.WiegandBits => W40Bits,
         CredentialFormat.Hex => W40Hex,
         CredentialFormat.Decimal => W40Decimal,
-        _ => throw new ArgumentOutOfRangeException(nameof(format), format, "Unknown credential format.")
+        _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
     };
 
     /// <summary>
