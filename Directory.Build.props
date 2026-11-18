@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionPrefix>1.1.0</VersionPrefix>
     <Authors>Jonathan Horvath</Authors>
     <Company>Z-bit Systems LLC</Company>
     <Copyright>Copyright © Z-bit Systems LLC $([System.DateTime]::Now.Year)</Copyright>
