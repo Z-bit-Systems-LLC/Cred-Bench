@@ -405,6 +405,14 @@
                                             FontSize="{StaticResource FontSize.BodyLarge}"
                                             FontWeight="Medium"
                                             Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                                        <ui:Button
+                                            Content="{localization:Localize Card_CancelScanButton}"
+                                            Icon="{ui:SymbolIcon Dismiss24}"
+                                            AutomationProperties.AutomationId="CancelScanButton"
+                                            Command="{Binding CancelScanCommand}"
+                                            Appearance="Secondary"
+                                            HorizontalAlignment="Center"
+                                            Margin="0,16,0,0" />
                                     </StackPanel>
                                 </Grid>
 

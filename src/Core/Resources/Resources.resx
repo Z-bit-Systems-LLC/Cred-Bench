@@ -77,6 +77,9 @@
   <data name="Card_Scanning" xml:space="preserve">
     <value>Scanning Card...</value>
   </data>
+  <data name="Card_CancelScanButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="Card_DetectedTechnologies" xml:space="preserve">
     <value>Detected Technologies</value>
   </data>
@@ -449,6 +452,9 @@
   </data>
   <data name="Status_ScanCancelled" xml:space="preserve">
     <value>Scan cancelled</value>
+  </data>
+  <data name="Status_ScanCancelledByUser" xml:space="preserve">
+    <value>Scan cancelled. If the reader stays stuck, unplug it and plug it back in.</value>
   </data>
   <data name="Status_Error" xml:space="preserve">
     <value>Error: {0}</value>

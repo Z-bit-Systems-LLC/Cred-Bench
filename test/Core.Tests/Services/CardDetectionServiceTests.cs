@@ -158,4 +158,41 @@ public class CardDetectionServiceTests
             async () => await service.DetectAsync("TestReader", cts.Token),
             Throws.InstanceOf<OperationCanceledException>());
     }
+
+    [Test]
+    public async Task DetectAsync_CancelledWhileAReaderCallIsStuck_StopsWaiting()
+    {
+        // Arrange - the connection blocks like a PC/SC call on a hung reader, ignoring the token
+        using var release = new ManualResetEventSlim(false);
+        using var connecting = new ManualResetEventSlim(false);
+        _smartCardServiceMock
+            .Setup(x => x.Connect(It.IsAny<string>()))
+            .Returns(() =>
+            {
+                connecting.Set();
+                release.Wait(TimeSpan.FromSeconds(30));
+                return _connectionMock.Object;
+            });
+
+        var service = new CardDetectionService(_smartCardServiceMock.Object, []);
+        using var cts = new CancellationTokenSource();
+
+        try
+        {
+            var scan = service.DetectAsync("TestReader", cts.Token);
+            Assert.That(connecting.Wait(TimeSpan.FromSeconds(5)), Is.True, "The scan should start connecting.");
+
+            // Act
+            await cts.CancelAsync();
+
+            // Assert
+            var finished = await Task.WhenAny(scan, Task.Delay(TimeSpan.FromSeconds(5)));
+            Assert.That(finished, Is.SameAs(scan), "Cancelling should end the scan without waiting for the reader.");
+            Assert.That(async () => await scan, Throws.InstanceOf<OperationCanceledException>());
+        }
+        finally
+        {
+            release.Set();
+        }
+    }
 }

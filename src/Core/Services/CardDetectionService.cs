@@ -27,7 +27,9 @@ public class CardDetectionService
         IProgress<CardTechnology>? progress,
         CancellationToken cancellationToken = default)
     {
-        // Run all PC/SC operations on a background thread to avoid blocking UI
+        // Run all PC/SC operations on a background thread to avoid blocking UI. A stuck reader can
+        // block a PC/SC call indefinitely, so cancelling stops waiting for the scan rather than
+        // waiting for that call to return; the abandoned scan finishes or fails on its own.
         return await Task.Run(() =>
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -108,6 +110,8 @@ public class CardDetectionService
                     }
                 }
 
+                cancellationToken.ThrowIfCancellationRequested();
+
                 // Report completion (Unknown means done scanning)
                 progress?.Report(CardTechnology.Unknown);
             }
@@ -130,7 +134,7 @@ public class CardDetectionService
                 LEAFDetails = leafDetails,
                 LEAFVerifiedDetails = leafVerifiedDetails
             };
-        }, cancellationToken);
+        }, cancellationToken).WaitAsync(cancellationToken);
     }
 
     private static GeneralCardDetails BuildGeneralDetails(

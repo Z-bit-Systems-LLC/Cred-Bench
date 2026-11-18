@@ -14,6 +14,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private readonly ILocalizationService _localization;
     private readonly SynchronizationContext? _syncContext;
     private CancellationTokenSource? _scanCts;
+    private bool _scanCancelledByUser;
     private bool _disposed;
 
     [ObservableProperty]
@@ -28,6 +29,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ScanCardCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CancelScanCommand))]
     private bool _isScanning;
 
     [ObservableProperty]
@@ -154,6 +156,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
         _scanCts?.Cancel();
         _scanCts = new CancellationTokenSource();
+        _scanCancelledByUser = false;
+        var token = _scanCts.Token;
 
         try
         {
@@ -162,8 +166,13 @@ public partial class MainViewModel : ObservableObject, IDisposable
             CurrentResult = null;
             ClearScanningStates();
 
-            var progress = new Progress<CardTechnology>(OnDetectionProgress);
-            var result = await _detectionService.DetectAsync(SelectedReader, progress, _scanCts.Token);
+            // A cancelled scan can still be running on a stuck reader; ignore anything it reports
+            var progress = new Progress<CardTechnology>(technology =>
+            {
+                if (!token.IsCancellationRequested)
+                    OnDetectionProgress(technology);
+            });
+            var result = await _detectionService.DetectAsync(SelectedReader, progress, token);
             CurrentResult = result;
 
             if (result.Technologies == CardTechnology.Unknown)
@@ -178,7 +187,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
         catch (OperationCanceledException)
         {
-            StatusMessage = _localization.GetString("Status_ScanCancelled");
+            StatusMessage = _localization.GetString(
+                _scanCancelledByUser ? "Status_ScanCancelledByUser" : "Status_ScanCancelled");
         }
         catch (Exception ex)
         {
@@ -189,6 +199,17 @@ public partial class MainViewModel : ObservableObject, IDisposable
             IsScanning = false;
             ClearScanningStates();
         }
+    }
+
+    /// <summary>
+    /// Stops waiting for the running scan, so a reader stuck in a PC/SC call doesn't hold the
+    /// app in the scanning state.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(IsScanning))]
+    private void CancelScan()
+    {
+        _scanCancelledByUser = true;
+        _scanCts?.Cancel();
     }
 
     private void OnDetectionProgress(CardTechnology technology)

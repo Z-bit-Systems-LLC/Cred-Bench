@@ -130,6 +130,32 @@ public class CardScanTests : UiTestBase
     }
 
     [Test]
+    public void CancellingAStuckScanReturnsToIdle()
+    {
+        using var release = new ManualResetEventSlim(false);
+        TestApp.Detectors[CardTechnology.PIV].BlocksUntil(release);
+
+        Press("ScanCardButton");
+
+        try
+        {
+            WaitForStatus(Text("Status_ScanningCard"));
+            Assert.That(IsShown("CancelScanButton"), Is.True, "Cancel should be shown while a scan runs.");
+
+            // The detector is still blocked, as a stuck reader would be, when Cancel is pressed
+            Press("CancelScanButton");
+
+            WaitForStatus(Text("Status_ScanCancelledByUser"));
+            WaitUntil(() => IsShown("ScanCardButton"), "Scan should come back once the scan is cancelled.");
+            Assert.That(IsShown("CancelScanButton"), Is.False, "Cancel should be hidden once the scan is cancelled.");
+        }
+        finally
+        {
+            release.Set();
+        }
+    }
+
+    [Test]
     public void InsertingACardScansIt()
     {
         TestApp.Detectors[CardTechnology.PIV].Detects(new PIVDetails());
