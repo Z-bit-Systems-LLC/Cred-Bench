@@ -37,8 +37,14 @@ public partial class LeafVerifiedViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(HasPrintedIdNote))]
     [NotifyPropertyChangedFor(nameof(HasPrintedId))]
     [NotifyPropertyChangedFor(nameof(ShowLookUpPrintedId))]
+    [NotifyPropertyChangedFor(nameof(W40Value))]
     [NotifyCanExecuteChangedFor(nameof(LookUpPrintedIdCommand))]
     private LEAFVerifiedDetails? _detectedDetails;
+
+    /// <summary>How to write out the W40-2 frame.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(W40Value))]
+    private CredentialFormat _selectedCredentialFormat = CredentialFormat.WiegandBits;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(LookUpPrintedIdCommand))]
@@ -59,6 +65,9 @@ public partial class LeafVerifiedViewModel : ObservableObject
     public bool HasTapUrl => DetectedDetails?.TapUrl is not null;
     public bool HasPrintedIdNote => DetectedDetails?.PrintedIdNote is not null;
     public bool HasPrintedId => DetectedDetails?.PrintedId is not null;
+
+    /// <summary>The detected W40-2 frame in the selected format.</summary>
+    public string? W40Value => DetectedDetails?.GetW40(SelectedCredentialFormat);
 
     /// <summary>
     /// The lookup is offered once per scan: the tap URL is single-use, so after any attempt

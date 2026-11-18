@@ -93,6 +93,20 @@ public record LEAFVerifiedDetails
         ? Convert.ToString(ToW40(id), 2).PadLeft(40, '0')
         : null;
 
+    /// <summary>W40-2 frame as an unsigned decimal number, parity bits included.</summary>
+    public string? W40Decimal => OpenId is { } id and >= 0 and <= OpenIdMax
+        ? ToW40(id).ToString(System.Globalization.CultureInfo.InvariantCulture)
+        : null;
+
+    /// <summary>Returns the W40-2 frame written in the given format, or null when there is no valid Open ID.</summary>
+    public string? GetW40(CredentialFormat format) => format switch
+    {
+        CredentialFormat.WiegandBits => W40Bits,
+        CredentialFormat.Hex => W40Hex,
+        CredentialFormat.Decimal => W40Decimal,
+        _ => throw new ArgumentOutOfRangeException(nameof(format), format, "Unknown credential format.")
+    };
+
     /// <summary>
     /// Encodes an Open ID as a W40-2 frame: bit 0 is even parity over bits 1-19, bits 1-38
     /// are the Open ID MSB first, bit 39 is odd parity over bits 0-38.

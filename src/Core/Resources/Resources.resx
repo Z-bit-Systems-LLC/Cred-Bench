@@ -236,16 +236,18 @@
   <data name="PKOC_Size" xml:space="preserve">
     <value>Size</value>
   </data>
-  <data name="PKOC_Format" xml:space="preserve">
+
+  <!-- Credential format selection (PKOC and LEAF Verified) -->
+  <data name="Credential_Format" xml:space="preserve">
     <value>Format</value>
   </data>
-  <data name="PKOC_FormatWiegandBits" xml:space="preserve">
+  <data name="Credential_FormatWiegandBits" xml:space="preserve">
     <value>Wiegand Bits</value>
   </data>
-  <data name="PKOC_FormatHex" xml:space="preserve">
+  <data name="Credential_FormatHex" xml:space="preserve">
     <value>Hex</value>
   </data>
-  <data name="PKOC_FormatDecimal" xml:space="preserve">
+  <data name="Credential_FormatDecimal" xml:space="preserve">
     <value>Decimal</value>
   </data>
 
@@ -313,11 +315,8 @@
   <data name="LEAFV_OpenId" xml:space="preserve">
     <value>Open ID:</value>
   </data>
-  <data name="LEAFV_W40Hex" xml:space="preserve">
-    <value>W40-2 Hex:</value>
-  </data>
-  <data name="LEAFV_W40Bits" xml:space="preserve">
-    <value>W40-2 Wiegand Bits:</value>
+  <data name="LEAFV_W40Format" xml:space="preserve">
+    <value>W40-2 Format:</value>
   </data>
   <data name="LEAFV_PrintedId" xml:space="preserve">
     <value>Printed ID:</value>

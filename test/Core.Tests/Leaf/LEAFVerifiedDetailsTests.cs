@@ -19,6 +19,28 @@ public class LEAFVerifiedDetailsTests
         Assert.That(Convert.ToInt64(details.W40Bits, 2).ToString("X10"), Is.EqualTo(expected));
     }
 
+    // The whole frame, parity bits included: 0x4A817C8000, 0x02, 0xFFFFFFFFFE
+    [TestCase(160000000000L, "320000000000")]
+    [TestCase(1L, "2")]
+    [TestCase(274877906943L, "1099511627774")]
+    public void W40Decimal_IsTheFrameValue(long openId, string expected)
+    {
+        var details = new LEAFVerifiedDetails { OpenId = openId };
+
+        Assert.That(details.W40Decimal, Is.EqualTo(expected));
+    }
+
+    [TestCase(CredentialFormat.WiegandBits, nameof(LEAFVerifiedDetails.W40Bits))]
+    [TestCase(CredentialFormat.Hex, nameof(LEAFVerifiedDetails.W40Hex))]
+    [TestCase(CredentialFormat.Decimal, nameof(LEAFVerifiedDetails.W40Decimal))]
+    public void GetW40_ReturnsMatchingProperty(CredentialFormat format, string property)
+    {
+        var details = new LEAFVerifiedDetails { OpenId = 160000000000L };
+
+        var expected = (string?)typeof(LEAFVerifiedDetails).GetProperty(property)!.GetValue(details);
+        Assert.That(details.GetW40(format), Is.EqualTo(expected).And.Not.Null);
+    }
+
     [Test]
     public void W40_OutOfRange_IsNull()
     {
@@ -26,6 +48,7 @@ public class LEAFVerifiedDetailsTests
 
         Assert.That(details.W40Hex, Is.Null);
         Assert.That(details.W40Bits, Is.Null);
+        Assert.That(details.W40Decimal, Is.Null);
         Assert.Throws<ArgumentOutOfRangeException>(() => LEAFVerifiedDetails.ToW40(LEAFVerifiedDetails.OpenIdMax + 1));
     }
 

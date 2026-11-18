@@ -102,18 +102,18 @@
                         </ComboBox>
                     </StackPanel>
                     <StackPanel Margin="0,0,0,8">
-                        <TextBlock Text="{localization:Localize PKOC_Format}"
+                        <TextBlock Text="{localization:Localize Credential_Format}"
                             Style="{StaticResource Field.Label}"
                             FontSize="{StaticResource FontSize.Caption}" />
                         <ComboBox AutomationProperties.AutomationId="PKOC_CredentialFormat"
                             Style="{StaticResource ComboBox.Standard}"
                             SelectedValuePath="Tag"
                             SelectedValue="{Binding SelectedCredentialFormat}">
-                            <ComboBoxItem Content="{localization:Localize PKOC_FormatWiegandBits}"
+                            <ComboBoxItem Content="{localization:Localize Credential_FormatWiegandBits}"
                                 Tag="{x:Static models:CredentialFormat.WiegandBits}" />
-                            <ComboBoxItem Content="{localization:Localize PKOC_FormatHex}"
+                            <ComboBoxItem Content="{localization:Localize Credential_FormatHex}"
                                 Tag="{x:Static models:CredentialFormat.Hex}" />
-                            <ComboBoxItem Content="{localization:Localize PKOC_FormatDecimal}"
+                            <ComboBoxItem Content="{localization:Localize Credential_FormatDecimal}"
                                 Tag="{x:Static models:CredentialFormat.Decimal}" />
                         </ComboBox>
                     </StackPanel>

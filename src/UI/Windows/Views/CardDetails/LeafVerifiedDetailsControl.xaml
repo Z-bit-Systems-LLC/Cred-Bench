@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:viewmodels="clr-namespace:CredBench.Core.ViewModels;assembly=Core"
+    xmlns:models="clr-namespace:CredBench.Core.Models.TechnologyDetails;assembly=Core"
     xmlns:guidelinesConverters="clr-namespace:ZBitSystems.Wpf.UI.Converters;assembly=ZBitSystems.Wpf.UI"
     xmlns:localization="clr-namespace:ZBitSystems.Wpf.UI.Localization;assembly=ZBitSystems.Wpf.UI"
     mc:Ignorable="d"
@@ -63,17 +64,25 @@
                     FontWeight="SemiBold"
                     Margin="0,0,0,8" />
 
-                <TextBlock Text="{localization:Localize LEAFV_W40Hex}"
+                <!-- W40-2 frame in the selected format -->
+                <TextBlock Text="{localization:Localize LEAFV_W40Format}"
                     Style="{StaticResource Field.Label}"
                     FontSize="{StaticResource FontSize.Caption}" />
-                <TextBox Text="{Binding DetectedDetails.W40Hex, Mode=OneWay, FallbackValue='N/A', TargetNullValue='N/A'}"
-                    Style="{StaticResource TextBox.Copyable}"
-                    Margin="0,0,0,8" />
-
-                <TextBlock Text="{localization:Localize LEAFV_W40Bits}"
-                    Style="{StaticResource Field.Label}"
-                    FontSize="{StaticResource FontSize.Caption}" />
-                <TextBox Text="{Binding DetectedDetails.W40Bits, Mode=OneWay, FallbackValue='N/A', TargetNullValue='N/A'}"
+                <ComboBox AutomationProperties.AutomationId="LEAFV_CredentialFormat"
+                    Style="{StaticResource ComboBox.Standard}"
+                    HorizontalAlignment="Left"
+                    Margin="0,0,0,8"
+                    SelectedValuePath="Tag"
+                    SelectedValue="{Binding SelectedCredentialFormat}">
+                    <ComboBoxItem Content="{localization:Localize Credential_FormatWiegandBits}"
+                        Tag="{x:Static models:CredentialFormat.WiegandBits}" />
+                    <ComboBoxItem Content="{localization:Localize Credential_FormatHex}"
+                        Tag="{x:Static models:CredentialFormat.Hex}" />
+                    <ComboBoxItem Content="{localization:Localize Credential_FormatDecimal}"
+                        Tag="{x:Static models:CredentialFormat.Decimal}" />
+                </ComboBox>
+                <TextBox AutomationProperties.AutomationId="LEAFV_CredentialValue"
+                    Text="{Binding W40Value, Mode=OneWay, FallbackValue='N/A', TargetNullValue='N/A'}"
                     Style="{StaticResource TextBox.Copyable}"
                     TextWrapping="Wrap"
                     Margin="0,0,0,8" />

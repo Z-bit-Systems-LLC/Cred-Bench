@@ -77,4 +77,38 @@ public class LeafVerifiedViewModelTests
 
         Assert.That(vm.ShowLookUpPrintedId, Is.True);
     }
+
+    [Test]
+    public void W40Value_DefaultsToWiegandBits()
+    {
+        var vm = CreateViewModel();
+
+        vm.DetectedDetails = new LEAFVerifiedDetails { OpenId = 1 };
+
+        Assert.That(vm.W40Value, Is.EqualTo(new string('0', 38) + "10"));
+    }
+
+    [Test]
+    public void W40Value_FollowsSelectedFormat()
+    {
+        var vm = CreateViewModel();
+        vm.DetectedDetails = new LEAFVerifiedDetails { OpenId = 160000000000L };
+        List<string?> changed = [];
+        ((System.ComponentModel.INotifyPropertyChanged)vm).PropertyChanged += (_, e) => changed.Add(e.PropertyName);
+
+        vm.SelectedCredentialFormat = CredentialFormat.Hex;
+
+        Assert.That(vm.W40Value, Is.EqualTo("4A817C8000"));
+        Assert.That(changed, Does.Contain(nameof(LeafVerifiedViewModel.W40Value)));
+    }
+
+    [Test]
+    public void W40Value_IsNull_WithoutOpenId()
+    {
+        var vm = CreateViewModel();
+
+        vm.DetectedDetails = new LEAFVerifiedDetails();
+
+        Assert.That(vm.W40Value, Is.Null);
+    }
 }

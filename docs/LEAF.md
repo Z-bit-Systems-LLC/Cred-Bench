@@ -183,7 +183,7 @@ Numbering bit 0 as the first transmitted bit:
 | Field | Source |
 |---|---|
 | Open ID | Certificate subject `serialNumber` |
-| W40-2 Hex / Bits | Computed from the Open ID |
+| W40-2 | Computed from the Open ID; a dropdown picks Wiegand Bits (default), Hex or Decimal. Decimal is the whole 40-bit frame, parity bits included |
 | Certificate | Trust verdict and the anchor that signed it |
 | Card Signature | ISOInternalAuthenticate result |
 | Issuer | Certificate issuer DN |
