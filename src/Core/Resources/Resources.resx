@@ -233,17 +233,20 @@
   <data name="PKOC_64BitOption" xml:space="preserve">
     <value>64-bit</value>
   </data>
-  <data name="PKOC_Hex" xml:space="preserve">
+  <data name="PKOC_Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="PKOC_Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="PKOC_FormatWiegandBits" xml:space="preserve">
+    <value>Wiegand Bits</value>
+  </data>
+  <data name="PKOC_FormatHex" xml:space="preserve">
     <value>Hex</value>
   </data>
-  <data name="PKOC_WiegandBits256" xml:space="preserve">
-    <value>Wiegand Bits (256)</value>
-  </data>
-  <data name="PKOC_WiegandBits75" xml:space="preserve">
-    <value>Wiegand Bits (75)</value>
-  </data>
-  <data name="PKOC_WiegandBits64" xml:space="preserve">
-    <value>Wiegand Bits (64)</value>
+  <data name="PKOC_FormatDecimal" xml:space="preserve">
+    <value>Decimal</value>
   </data>
 
   <!-- PKOC Card Info -->

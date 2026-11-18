@@ -241,6 +241,62 @@ public class PKOCDetailsTests
         Assert.That(details.Credential75Bits, Is.EqualTo(new string('1', 75)));
     }
 
+    // --- Decimal ---
+
+    [Test]
+    public void CredentialDecimal_IsUnsignedValueOfHex()
+    {
+        // X with the top bit set, so a signed conversion would go negative
+        var x = "80" + new string('0', 58) + "01FF";
+        var details = new PKOCDetails { PublicKeyHex = "04" + x + new string('0', 64) };
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(details.Credential256Decimal, Is.EqualTo(
+                (System.Numerics.BigInteger.Pow(2, 255) + 0x01FF).ToString()));
+            Assert.That(details.Credential64Decimal, Is.EqualTo("511"));
+            Assert.That(details.Credential75Decimal, Is.EqualTo("511"));
+        });
+    }
+
+    [Test]
+    public void Credential75Decimal_IgnoresBitsAbove75()
+    {
+        var details = new PKOCDetails { PublicKeyHex = "04" + new string('F', 64) + new string('0', 64) };
+
+        var expected = System.Numerics.BigInteger.Pow(2, 75) - 1;
+        Assert.That(details.Credential75Decimal, Is.EqualTo(expected.ToString()));
+    }
+
+    [Test]
+    public void CredentialDecimal_IsNull_WhenPublicKeyHexIsNull()
+    {
+        var details = new PKOCDetails { PublicKeyHex = null };
+
+        Assert.That(details.Credential256Decimal, Is.Null);
+        Assert.That(details.Credential75Decimal, Is.Null);
+        Assert.That(details.Credential64Decimal, Is.Null);
+    }
+
+    // --- GetCredential ---
+
+    [TestCase(PkocCredentialSize.Bits256, CredentialFormat.WiegandBits, nameof(PKOCDetails.Credential256Bits))]
+    [TestCase(PkocCredentialSize.Bits256, CredentialFormat.Hex, nameof(PKOCDetails.Credential256Hex))]
+    [TestCase(PkocCredentialSize.Bits256, CredentialFormat.Decimal, nameof(PKOCDetails.Credential256Decimal))]
+    [TestCase(PkocCredentialSize.Bits75, CredentialFormat.WiegandBits, nameof(PKOCDetails.Credential75Bits))]
+    [TestCase(PkocCredentialSize.Bits75, CredentialFormat.Hex, nameof(PKOCDetails.Credential75Hex))]
+    [TestCase(PkocCredentialSize.Bits75, CredentialFormat.Decimal, nameof(PKOCDetails.Credential75Decimal))]
+    [TestCase(PkocCredentialSize.Bits64, CredentialFormat.WiegandBits, nameof(PKOCDetails.Credential64Bits))]
+    [TestCase(PkocCredentialSize.Bits64, CredentialFormat.Hex, nameof(PKOCDetails.Credential64Hex))]
+    [TestCase(PkocCredentialSize.Bits64, CredentialFormat.Decimal, nameof(PKOCDetails.Credential64Decimal))]
+    public void GetCredential_ReturnsMatchingProperty(PkocCredentialSize size, CredentialFormat format, string property)
+    {
+        var details = new PKOCDetails { PublicKeyHex = TestPublicKeyHex };
+
+        var expected = (string?)typeof(PKOCDetails).GetProperty(property)!.GetValue(details);
+        Assert.That(details.GetCredential(size, format), Is.EqualTo(expected).And.Not.Null);
+    }
+
     // Helper to convert hex to binary string (mirrors the model's logic)
     private static string HexToBinary(string hex)
     {

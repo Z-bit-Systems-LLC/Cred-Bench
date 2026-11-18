@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:viewmodels="clr-namespace:CredBench.Core.ViewModels;assembly=Core"
+    xmlns:models="clr-namespace:CredBench.Core.Models.TechnologyDetails;assembly=Core"
     xmlns:guidelinesConverters="clr-namespace:ZBitSystems.Wpf.UI.Converters;assembly=ZBitSystems.Wpf.UI"
     xmlns:localization="clr-namespace:ZBitSystems.Wpf.UI.Localization;assembly=ZBitSystems.Wpf.UI"
     mc:Ignorable="d"
@@ -78,107 +79,51 @@
                     </StackPanel>
                 </Grid>
 
-                <!-- Credential Size Selector -->
+                <!-- Credential size and format -->
                 <TextBlock Text="{localization:Localize PKOC_Credential}"
                     Style="{StaticResource Section.Header}" />
-                <ComboBox x:Name="BitSizeSelector"
-                    Style="{StaticResource ComboBox.Standard}"
-                    SelectedIndex="0"
-                    Margin="0,0,0,12"
-                    Width="280"
-                    HorizontalAlignment="Left">
-                    <ComboBoxItem Content="{localization:Localize PKOC_256BitOption}" />
-                    <ComboBoxItem Content="{localization:Localize PKOC_75BitOption}" />
-                    <ComboBoxItem Content="{localization:Localize PKOC_64BitOption}" />
-                </ComboBox>
+                <!-- Wraps so the format drops below the size on a narrow window -->
+                <WrapPanel Margin="0,0,0,4">
+                    <StackPanel Margin="0,0,0,8">
+                        <TextBlock Text="{localization:Localize PKOC_Size}"
+                            Style="{StaticResource Field.Label}"
+                            FontSize="{StaticResource FontSize.Caption}" />
+                        <ComboBox AutomationProperties.AutomationId="PKOC_CredentialSize"
+                            Style="{StaticResource ComboBox.Standard}"
+                            MinWidth="{StaticResource Control.Width.Large}"
+                            SelectedValuePath="Tag"
+                            SelectedValue="{Binding SelectedCredentialSize}">
+                            <ComboBoxItem Content="{localization:Localize PKOC_256BitOption}"
+                                Tag="{x:Static models:PkocCredentialSize.Bits256}" />
+                            <ComboBoxItem Content="{localization:Localize PKOC_75BitOption}"
+                                Tag="{x:Static models:PkocCredentialSize.Bits75}" />
+                            <ComboBoxItem Content="{localization:Localize PKOC_64BitOption}"
+                                Tag="{x:Static models:PkocCredentialSize.Bits64}" />
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Margin="0,0,0,8">
+                        <TextBlock Text="{localization:Localize PKOC_Format}"
+                            Style="{StaticResource Field.Label}"
+                            FontSize="{StaticResource FontSize.Caption}" />
+                        <ComboBox AutomationProperties.AutomationId="PKOC_CredentialFormat"
+                            Style="{StaticResource ComboBox.Standard}"
+                            SelectedValuePath="Tag"
+                            SelectedValue="{Binding SelectedCredentialFormat}">
+                            <ComboBoxItem Content="{localization:Localize PKOC_FormatWiegandBits}"
+                                Tag="{x:Static models:CredentialFormat.WiegandBits}" />
+                            <ComboBoxItem Content="{localization:Localize PKOC_FormatHex}"
+                                Tag="{x:Static models:CredentialFormat.Hex}" />
+                            <ComboBoxItem Content="{localization:Localize PKOC_FormatDecimal}"
+                                Tag="{x:Static models:CredentialFormat.Decimal}" />
+                        </ComboBox>
+                    </StackPanel>
+                </WrapPanel>
 
-                <!-- 256-bit Credential -->
-                <StackPanel>
-                    <StackPanel.Style>
-                        <Style TargetType="StackPanel">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=BitSizeSelector}" Value="0">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </StackPanel.Style>
-
-                    <TextBlock Text="{localization:Localize PKOC_Hex}"
-                        Style="{StaticResource Field.Label}"
-                        FontSize="{StaticResource FontSize.Caption}" />
-                    <TextBox Text="{Binding DetectedDetails.Credential256Hex, Mode=OneWay, FallbackValue='N/A'}"
-                        Style="{StaticResource TextBox.Copyable}"
-                        FontSize="10"
-                        Margin="0,0,0,8" />
-
-                    <TextBlock Text="{localization:Localize PKOC_WiegandBits256}"
-                        Style="{StaticResource Field.Label}"
-                        FontSize="{StaticResource FontSize.Caption}" />
-                    <TextBox Text="{Binding DetectedDetails.Credential256Bits, Mode=OneWay, FallbackValue='N/A'}"
-                        Style="{StaticResource TextBox.Copyable}"
-                        FontSize="10"
-                        TextWrapping="Wrap" />
-                </StackPanel>
-
-                <!-- 75-bit Credential -->
-                <StackPanel>
-                    <StackPanel.Style>
-                        <Style TargetType="StackPanel">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=BitSizeSelector}" Value="1">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </StackPanel.Style>
-
-                    <TextBlock Text="{localization:Localize PKOC_Hex}"
-                        Style="{StaticResource Field.Label}"
-                        FontSize="{StaticResource FontSize.Caption}" />
-                    <TextBox Text="{Binding DetectedDetails.Credential75Hex, Mode=OneWay, FallbackValue='N/A'}"
-                        Style="{StaticResource TextBox.Copyable}"
-                        FontSize="10"
-                        Margin="0,0,0,8" />
-
-                    <TextBlock Text="{localization:Localize PKOC_WiegandBits75}"
-                        Style="{StaticResource Field.Label}"
-                        FontSize="{StaticResource FontSize.Caption}" />
-                    <TextBox Text="{Binding DetectedDetails.Credential75Bits, Mode=OneWay, FallbackValue='N/A'}"
-                        Style="{StaticResource TextBox.Copyable}"
-                        FontSize="10" />
-                </StackPanel>
-
-                <!-- 64-bit Credential -->
-                <StackPanel>
-                    <StackPanel.Style>
-                        <Style TargetType="StackPanel">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=BitSizeSelector}" Value="2">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </StackPanel.Style>
-
-                    <TextBlock Text="{localization:Localize PKOC_Hex}"
-                        Style="{StaticResource Field.Label}"
-                        FontSize="{StaticResource FontSize.Caption}" />
-                    <TextBox Text="{Binding DetectedDetails.Credential64Hex, Mode=OneWay, FallbackValue='N/A'}"
-                        Style="{StaticResource TextBox.Copyable}"
-                        FontSize="10"
-                        Margin="0,0,0,8" />
-
-                    <TextBlock Text="{localization:Localize PKOC_WiegandBits64}"
-                        Style="{StaticResource Field.Label}"
-                        FontSize="{StaticResource FontSize.Caption}" />
-                    <TextBox Text="{Binding DetectedDetails.Credential64Bits, Mode=OneWay, FallbackValue='N/A'}"
-                        Style="{StaticResource TextBox.Copyable}"
-                        FontSize="10" />
-                </StackPanel>
+                <TextBox AutomationProperties.AutomationId="PKOC_CredentialValue"
+                    Text="{Binding CredentialValue, Mode=OneWay, FallbackValue='N/A'}"
+                    Style="{StaticResource TextBox.Copyable}"
+                    FontSize="10"
+                    TextWrapping="Wrap" />
             </StackPanel>
 
         </StackPanel>

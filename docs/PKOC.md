@@ -124,9 +124,13 @@ Each credential size is converted to a binary bit string:
 | Field              | Source               | Description                             |
 |--------------------|----------------------|-----------------------------------------|
 | Protocol Version   | SELECT response      | PKOC protocol version (e.g., `01.01`)   |
-| Credential Format  | User selection       | Dropdown: 256-bit, 75-bit, or 64-bit    |
-| Hex                | X component          | Credential hex for selected size, copyable |
-| Wiegand Bits       | Credential binary    | Binary bit string for selected size, copyable |
+| Size               | User selection       | Dropdown: 256-bit, 75-bit, or 64-bit    |
+| Format             | User selection       | Dropdown: Wiegand Bits (default), Hex, or Decimal |
+| Credential         | X component          | Credential in the selected size and format, copyable |
+
+Decimal is the unsigned value of the credential's hex. For 75-bit, the bits above 75 are masked
+off first, so it matches the 75-bit Wiegand value. The size and format dropdowns wrap onto separate
+lines when the window is too narrow to fit both.
 
 ## Programming a Test Card
 

@@ -1,3 +1,6 @@
+using System.Globalization;
+using System.Numerics;
+
 namespace CredBench.Core.Models.TechnologyDetails;
 
 /// <summary>
@@ -24,6 +27,27 @@ public record PKOCDetails
     public string? Credential256Bits => HexToBinary(Credential256Hex);
     public string? Credential75Bits => Credential256Bits is { Length: >= 256 } ? Credential256Bits[181..] : null;
     public string? Credential64Bits => Credential256Bits is { Length: >= 256 } ? Credential256Bits[192..] : null;
+
+    public string? Credential256Decimal => HexToDecimal(Credential256Hex);
+    public string? Credential75Decimal => HexToDecimal(Credential75Hex);
+    public string? Credential64Decimal => HexToDecimal(Credential64Hex);
+
+    /// <summary>
+    /// Returns the credential of the given size written in the given format, or null when the key is missing.
+    /// </summary>
+    public string? GetCredential(PkocCredentialSize size, CredentialFormat format) => (size, format) switch
+    {
+        (PkocCredentialSize.Bits256, CredentialFormat.WiegandBits) => Credential256Bits,
+        (PkocCredentialSize.Bits256, CredentialFormat.Hex) => Credential256Hex,
+        (PkocCredentialSize.Bits256, CredentialFormat.Decimal) => Credential256Decimal,
+        (PkocCredentialSize.Bits75, CredentialFormat.WiegandBits) => Credential75Bits,
+        (PkocCredentialSize.Bits75, CredentialFormat.Hex) => Credential75Hex,
+        (PkocCredentialSize.Bits75, CredentialFormat.Decimal) => Credential75Decimal,
+        (PkocCredentialSize.Bits64, CredentialFormat.WiegandBits) => Credential64Bits,
+        (PkocCredentialSize.Bits64, CredentialFormat.Hex) => Credential64Hex,
+        (PkocCredentialSize.Bits64, CredentialFormat.Decimal) => Credential64Decimal,
+        _ => throw new ArgumentOutOfRangeException(nameof(size), (size, format), "Unknown credential size or format.")
+    };
 
     /// <summary>
     /// Returns non-null fields as labeled display pairs for text output.
@@ -74,6 +98,11 @@ public record PKOCDetails
 
         return BitConverter.ToString(result).Replace("-", "");
     }
+
+    private static string? HexToDecimal(string? hex) =>
+        string.IsNullOrEmpty(hex)
+            ? null
+            : new BigInteger(Convert.FromHexString(hex), isUnsigned: true, isBigEndian: true).ToString(CultureInfo.InvariantCulture);
 
     private static string? HexToBinary(string? hex)
     {
