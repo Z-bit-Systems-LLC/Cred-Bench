@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:CredBench.Core.Models.TechnologyDetails;assembly=Core"
     xmlns:localization="clr-namespace:ZBitSystems.Wpf.UI.Localization;assembly=ZBitSystems.Wpf.UI"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance models:ISO14443Details}">
 
@@ -49,21 +50,17 @@
                 FontFamily="Consolas" />
         </Grid>
 
-        <!-- CSN Credential -->
-        <TextBlock Text="{localization:Localize ISO14443_CSN}"
-            Style="{StaticResource Section.Header}" />
-
-        <TextBlock Text="{localization:Localize ISO14443_Hex}"
-            Style="{StaticResource Field.Label}"
-            FontSize="{StaticResource FontSize.Caption}" />
-        <TextBox Text="{Binding CSN, Mode=OneWay, FallbackValue='N/A'}"
-            Style="{StaticResource TextBox.Copyable}"
-            Margin="0,0,0,8" />
-
-        <TextBlock Text="{Binding WiegandBitsLabel, FallbackValue='Wiegand Bits'}"
-            Style="{StaticResource Field.Label}"
-            FontSize="{StaticResource FontSize.Caption}" />
-        <TextBox Text="{Binding CSNWiegandBits, Mode=OneWay, FallbackValue='N/A'}"
-            Style="{StaticResource TextBox.Copyable}" />
+        <!-- CSN disclaimer -->
+        <Border Padding="12,8"
+            CornerRadius="{StaticResource CornerRadius.Small}"
+            Background="{StaticResource Brush.Warning}"
+            AutomationProperties.AutomationId="ISO14443_CSNDisclaimer">
+            <DockPanel>
+                <ui:SymbolIcon DockPanel.Dock="Left" Symbol="Warning24" Foreground="White"
+                    Margin="0,0,8,0" VerticalAlignment="Top" />
+                <TextBlock Text="{localization:Localize ISO14443_CSNDisclaimer}"
+                    Foreground="White" FontWeight="Medium" TextWrapping="Wrap" />
+            </DockPanel>
+        </Border>
     </StackPanel>
 </UserControl>
