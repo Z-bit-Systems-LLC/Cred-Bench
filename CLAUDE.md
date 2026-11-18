@@ -72,6 +72,12 @@ jb inspectcode Cred-Bench.slnx --no-build --properties:EnableWindowsTargeting=tr
 ```
 Without `EnableWindowsTargeting` the WPF projects don't resolve on Linux and inspection reports thousands of errors. After changing `Cred-Bench.sln.DotSettings`, delete the inspection cache (`--caches-home`) first: results for unchanged files come from the cache and still follow the old settings.
 
+## Releasing
+
+1. Bump `VersionPrefix` in `Directory.Build.props`.
+2. Write `docs/release-notes/vX.Y.Z.md` in the same format as OSDP-Bench's releases: a `## Cred-Bench X.Y.Z` heading, a one-paragraph summary, `### New` / `### Fixes` / `### Changes` bullets in user terms, and a closing `**Full changelog:**` compare link to the previous tag.
+3. Make sure main's CI build passes, then push a `vX.Y.Z` tag. The Package stage builds the win-x64 zip and creates the GitHub release with that file as its body; it fails early if the notes file is missing.
+
 Card-technology acronyms (ATR, UID, PIV, FASCN, …) are registered as abbreviations in `Cred-Bench.sln.DotSettings`; add new ones there rather than renaming members.
 
 ## Build Commands

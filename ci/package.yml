@@ -2,6 +2,15 @@ steps:
   - checkout: self
     submodules: true
 
+  # The GitHub release body comes from docs/release-notes/<tag>.md; fail before building if it's missing
+  - pwsh: |
+      $notes = "docs/release-notes/$(Build.SourceBranchName).md"
+      if (-not (Test-Path $notes)) {
+        Write-Host "##vso[task.logissue type=error]Release notes $notes not found. Add them before tagging."
+        exit 1
+      }
+    displayName: 'Check release notes'
+
   - task: UseDotNet@2
     displayName: 'Install .NET 10.0'
     inputs:
@@ -45,6 +54,9 @@ steps:
       target: '$(Build.SourceVersion)'
       tagSource: 'gitTag'
       assets: '$(Build.ArtifactStagingDirectory)/Cred-Bench-*.zip'
+      releaseNotesSource: 'filePath'
+      releaseNotesFilePath: 'docs/release-notes/$(Build.SourceBranchName).md'
+      addChangeLog: false
       isDraft: false
       isPreRelease: false
     condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
