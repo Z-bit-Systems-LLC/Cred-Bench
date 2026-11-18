@@ -2,9 +2,8 @@
 
 A diagnostic tool that identifies smart card technologies and shows the credential data a card presents to a PC/SC reader.
 
-[![.NET](https://img.shields.io/badge/.NET-10.0-blue)](https://dotnet.microsoft.com/)
-[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/Z-bit-Systems-LLC/Cred-Bench)](https://github.com/Z-bit-Systems-LLC/Cred-Bench/releases/latest)
+[![Build Status](https://dev.azure.com/Z-bitSystems/Cred%20Bench/_apis/build/status/Z-bit-Systems-LLC.Cred-Bench?branchName=main)](https://dev.azure.com/Z-bitSystems/Cred%20Bench/_build/latest?definitionId=11&branchName=main)
 
 ## About
 
