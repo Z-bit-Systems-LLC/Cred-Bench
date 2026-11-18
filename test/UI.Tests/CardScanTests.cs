@@ -1,6 +1,7 @@
 using CredBench.Core.Models;
 using CredBench.Core.Models.TechnologyDetails;
 using CredBench.Core.Services;
+using FlaUI.Core.AutomationElements;
 using Moq;
 using NUnit.Framework;
 
@@ -76,6 +77,39 @@ public class CardScanTests : UiTestBase
         SelectTab("Tab_DESFire");
         WaitUntil(() => ShowsText("DESFire EV3"), "The DESFire tab should show the card type.");
         WaitUntil(() => ShowsText("NXP"), "The DESFire tab should show the vendor.");
+    }
+
+    [Test]
+    public void ScanOfACardWithoutTheSelectedTabFallsBackToGeneral()
+    {
+        TestApp.Detectors[CardTechnology.DESFire].Detects(new DESFireDetails { CardType = "DESFire EV3" });
+        Press("ScanCardButton");
+        WaitForStatus(Text("Status_Detected", "DESFire"));
+        SelectTab("Tab_DESFire");
+
+        TestApp.Detectors[CardTechnology.DESFire].DoesNotDetect();
+        TestApp.Detectors[CardTechnology.PIV].Detects(new PIVDetails());
+        Press("ScanCardButton");
+        WaitForStatus(Text("Status_Detected", "PIV"));
+
+        WaitUntil(() => FindByAutomationId("Tab_General")!.AsTabItem().IsSelected,
+            "The General tab should be selected once the DESFire tab is gone.");
+    }
+
+    [Test]
+    public void ScanOfACardWithTheSelectedTabKeepsIt()
+    {
+        TestApp.Detectors[CardTechnology.DESFire].Detects(new DESFireDetails { CardType = "DESFire EV3" });
+        Press("ScanCardButton");
+        WaitForStatus(Text("Status_Detected", "DESFire"));
+        SelectTab("Tab_DESFire");
+
+        TestApp.Detectors[CardTechnology.PIV].Detects(new PIVDetails());
+        Press("ScanCardButton");
+        WaitForStatus(Text("Status_Detected", "PIV, DESFire"));
+
+        Assert.That(FindByAutomationId("Tab_DESFire")!.AsTabItem().IsSelected, Is.True,
+            "The DESFire tab should stay selected while the new card has it.");
     }
 
     [Test]

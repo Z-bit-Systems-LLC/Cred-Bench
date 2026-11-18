@@ -28,6 +28,11 @@ public sealed class ScriptedCardDetector(CardTechnology technology) : ICardDetec
         _detect = _ => (true, details, typedDetails);
 
     /// <summary>
+    /// Reports the technology as absent, as it is before a test sets an answer.
+    /// </summary>
+    public void DoesNotDetect() => _detect = NotDetected;
+
+    /// <summary>
     /// Waits for <paramref name="release"/> before reporting the technology as absent, which holds
     /// the scan open so a test can look at the app while it is scanning.
     /// </summary>

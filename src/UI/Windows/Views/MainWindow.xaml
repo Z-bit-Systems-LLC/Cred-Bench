@@ -496,6 +496,7 @@
 
                             <!-- Tabbed card details when available -->
                             <TabControl Grid.Row="2"
+                                x:Name="DetailsTabControl"
                                 AutomationProperties.AutomationId="DetailsTabControl"
                                 Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}}"
                                 Padding="0"
