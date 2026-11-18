@@ -15,7 +15,7 @@
     Title="Cred Bench"
     MinWidth="500"
     MinHeight="500"
-    
+    Width="1200"
     Height="800"
     ResizeMode="CanResize"
     ExtendsContentIntoTitleBar="True"
