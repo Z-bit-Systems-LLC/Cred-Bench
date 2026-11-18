@@ -35,6 +35,7 @@ public class SmokeTests : UiTestBase
             Assert.That(FindByAutomationId("ScanCardButton"), Is.Not.Null, "Scan button should exist.");
             Assert.That(FindByAutomationId("ProgramCardButton"), Is.Not.Null, "Program Card button should exist.");
             Assert.That(FindByAutomationId("StatusMessageText"), Is.Not.Null, "Status line should exist.");
+            Assert.That(FindByAutomationId("AboutButton"), Is.Not.Null, "About button should exist.");
         });
     }
 

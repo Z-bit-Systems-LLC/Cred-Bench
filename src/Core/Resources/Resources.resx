@@ -590,4 +590,37 @@
   <data name="LEAFV_Error_CardKeyNotOnCurve" xml:space="preserve">
     <value>The card public key is not a point on P-256.</value>
   </data>
+  <data name="About_Title" xml:space="preserve">
+    <value>About Cred Bench</value>
+  </data>
+  <data name="About_Button" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="About_OpenTooltip" xml:space="preserve">
+    <value>About Cred Bench</value>
+  </data>
+  <data name="About_ApplicationName" xml:space="preserve">
+    <value>Cred Bench</value>
+  </data>
+  <data name="About_Description" xml:space="preserve">
+    <value>Identifies PIV, DESFire, ISO 14443, PKOC and LEAF credentials on cards presented to a PC/SC reader.</value>
+  </data>
+  <data name="About_Logo" xml:space="preserve">
+    <value>Cred Bench logo</value>
+  </data>
+  <data name="About_LicenseInfo" xml:space="preserve">
+    <value>License Info</value>
+  </data>
+  <data name="About_ApacheLicense" xml:space="preserve">
+    <value>Apache 2.0</value>
+  </data>
+  <data name="About_MITLicense" xml:space="preserve">
+    <value>MIT</value>
+  </data>
+  <data name="About_BSDLicense" xml:space="preserve">
+    <value>BSD 2-Clause</value>
+  </data>
+  <data name="About_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
 </root>

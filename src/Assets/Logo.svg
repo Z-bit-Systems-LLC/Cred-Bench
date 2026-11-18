@@ -2,8 +2,9 @@
 <!--
   Cred Bench logo: a smart card with a contact chip and the app name, drawn in the
   same style as the OSDP Bench logo (black outline, Arial Rounded MT Bold).
-  scripts/generate-icons.ps1 renders the app icon (src/UI/Windows/Logo.ico) from this
-  file. The text uses an installed font, so render it on Windows.
+  scripts/generate-icons.ps1 renders the app icon (src/UI/Windows/Logo.ico) and the About
+  dialog logo (src/UI/Windows/Assets/Logo.png) from this file. The text uses an installed
+  font, so render it on Windows.
 -->
 <svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
   <defs>

@@ -42,7 +42,12 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ui:TitleBar Grid.Row="0" Title="{localization:Localize Prog_Title}" ShowMaximize="False" ShowMinimize="False" />
+        <ui:TitleBar Grid.Row="0" Title="{localization:Localize Prog_Title}" ShowMaximize="False" ShowMinimize="False">
+            <ui:TitleBar.Icon>
+                <ui:ImageIcon Source="pack://application:,,,/CredBench;component/Assets/Logo.png"
+                    RenderOptions.BitmapScalingMode="HighQuality" />
+            </ui:TitleBar.Icon>
+        </ui:TitleBar>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="24,8,24,16">

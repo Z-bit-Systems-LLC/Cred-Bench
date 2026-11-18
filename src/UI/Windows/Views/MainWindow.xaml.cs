@@ -44,6 +44,11 @@ public partial class MainWindow
         new ProgramCardWindow(_viewModel.ProgramCardViewModel) { Owner = this }.ShowDialog();
     }
 
+    private void About_Click(object sender, RoutedEventArgs e)
+    {
+        new AboutWindow { Owner = this }.ShowDialog();
+    }
+
     private async void OnClosing(object? sender, CancelEventArgs e)
     {
         _viewModel.PropertyChanged -= OnViewModelPropertyChanged;

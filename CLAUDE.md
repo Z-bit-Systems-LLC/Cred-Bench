@@ -104,7 +104,7 @@ dotnet publish src/UI/Windows/Windows.csproj -c Release -r win-x64 --self-contai
 # Publish (CLI — macOS)
 dotnet publish src/UI/CLI/CLI.csproj -c Release -r osx-arm64 --self-contained
 
-# Regenerate src/UI/Windows/Logo.ico from src/Assets/Logo.svg
+# Regenerate src/UI/Windows/Logo.ico and src/UI/Windows/Assets/Logo.png from src/Assets/Logo.svg
 pwsh scripts/generate-icons.ps1
 ```
 
@@ -151,4 +151,5 @@ Controls are in `Windows/Views/CardDetails/`, models in `Core/Models/TechnologyD
 - Converters in `Windows/Converters/`
 - CLI entry point and output formatting in `UI/CLI/`
 - PKOC JavaCard applet in `src/Applet/` (Java, built with Ant — separate from .NET solution)
-- App logo source in `src/Assets/Logo.svg`; `src/UI/Windows/Logo.ico` is generated from it by `scripts/generate-icons.ps1`
+- App logo source in `src/Assets/Logo.svg`; `src/UI/Windows/Logo.ico` and the About dialog's `src/UI/Windows/Assets/Logo.png` are generated from it by `scripts/generate-icons.ps1`
+- About dialog in `Windows/Views/AboutWindow.xaml`, opened from the About button in the top-right of the main window's card scan panel; the license texts it shows are `Windows/Assets/*.txt`. Add a new third-party dependency's license there

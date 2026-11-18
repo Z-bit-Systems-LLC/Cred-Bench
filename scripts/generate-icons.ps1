@@ -1,7 +1,8 @@
 #!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-    Renders the app icon, src/UI/Windows/Logo.ico, from src/Assets/Logo.svg.
+    Renders the app icon, src/UI/Windows/Logo.ico, and the About dialog logo, src/UI/Windows/Assets/Logo.png,
+    from src/Assets/Logo.svg.
 .DESCRIPTION
     Each size is rendered straight from the SVG by headless Microsoft Edge (or Chrome), so every size is
     drawn from the vectors and the text uses the installed Arial Rounded MT Bold font. Run it on Windows.
@@ -11,6 +12,7 @@
 param(
     [string]$Svg = (Join-Path $PSScriptRoot '..\src\Assets\Logo.svg'),
     [string]$IconPath = (Join-Path $PSScriptRoot '..\src\UI\Windows\Logo.ico'),
+    [string]$PngPath = (Join-Path $PSScriptRoot '..\src\UI\Windows\Assets\Logo.png'),
     # Path to msedge.exe or chrome.exe; found automatically when left out
     [string]$Browser
 )
@@ -19,6 +21,7 @@ $ErrorActionPreference = 'Stop'
 
 $Svg = (Resolve-Path $Svg).Path
 $IconPath = [System.IO.Path]::GetFullPath($IconPath)
+$PngPath = [System.IO.Path]::GetFullPath($PngPath)
 
 if (-not $Browser) {
     $Browser = @(
@@ -104,6 +107,11 @@ try {
     }
     Write-Icon $pngs $sizes $IconPath
     Write-Host "Wrote $IconPath"
+
+    # Large enough to stay sharp on the About dialog at 200% scaling
+    New-Item -ItemType Directory -Force -Path (Split-Path $PngPath) | Out-Null
+    Render-Logo 512 $PngPath
+    Write-Host "Wrote $PngPath"
 } finally {
     Remove-Item -Recurse -Force $work -ErrorAction SilentlyContinue
 }

@@ -248,7 +248,12 @@
             Grid.Row="0"
             Title="Cred-Bench"
             ShowMaximize="True"
-            ShowMinimize="True" />
+            ShowMinimize="True">
+            <ui:TitleBar.Icon>
+                <ui:ImageIcon Source="pack://application:,,,/CredBench;component/Assets/Logo.png"
+                    RenderOptions.BitmapScalingMode="HighQuality" />
+            </ui:TitleBar.Icon>
+        </ui:TitleBar>
 
         <!-- Main Content -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
@@ -300,132 +305,145 @@
                     <!-- Left Column: Card Status and Technologies -->
                     <StackPanel x:Name="LeftColumn" Grid.Column="0" Margin="{StaticResource Margin.Control}" VerticalAlignment="Top">
                         <!-- Card Status Area -->
-                        <ui:Card Margin="{StaticResource Margin.Section}" MinWidth="200" Height="280">
-                            <StackPanel Margin="{StaticResource Thickness.Large}" VerticalAlignment="Center">
-                                <Grid HorizontalAlignment="Center" MinHeight="160">
-                                    <!-- Idle State: Present Card to Reader -->
-                                    <StackPanel
-                                        Visibility="{Binding IsScanning, Converter={StaticResource BoolToVisibility}, ConverterParameter=Invert}">
-                                        <ui:SymbolIcon
-                                            Symbol="ContactCardGeneric24"
-                                            FontSize="64"
-                                            Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                                        <TextBlock
-                                            Text="{localization:Localize Card_PresentToReader}"
-                                            HorizontalAlignment="Center"
-                                            Margin="0,16,0,0"
-                                            FontSize="{StaticResource FontSize.BodyLarge}"
-                                            Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
-                                            <ui:Button
-                                                Content="{localization:Localize Card_ScanButton}"
-                                                Icon="{ui:SymbolIcon ScanDash24}"
-                                                AutomationProperties.AutomationId="ScanCardButton"
-                                                Command="{Binding ScanCardCommand}"
-                                                Appearance="Primary" />
-                                            <ui:Button
-                                                Content="{localization:Localize Prog_OpenButton}"
-                                                Icon="{ui:SymbolIcon ArrowDownload24}"
-                                                AutomationProperties.AutomationId="ProgramCardButton"
-                                                Click="ProgramCard_Click"
-                                                Appearance="Secondary"
-                                                Margin="8,0,0,0" />
+                        <ui:Card Margin="{StaticResource Margin.Section}" MinWidth="200" Height="280"
+                            VerticalContentAlignment="Stretch">
+                            <Grid>
+                                <ui:Button
+                                    Content="{localization:Localize About_Button}"
+                                    Icon="{ui:SymbolIcon Info24}"
+                                    AutomationProperties.AutomationId="AboutButton"
+                                    ToolTip="{localization:Localize About_OpenTooltip}"
+                                    Click="About_Click"
+                                    Appearance="Secondary"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Panel.ZIndex="1" />
+                                <StackPanel Margin="{StaticResource Thickness.Large}" VerticalAlignment="Center">
+                                    <Grid HorizontalAlignment="Center" MinHeight="160">
+                                        <!-- Idle State: Present Card to Reader -->
+                                        <StackPanel
+                                            Visibility="{Binding IsScanning, Converter={StaticResource BoolToVisibility}, ConverterParameter=Invert}">
+                                            <ui:SymbolIcon
+                                                Symbol="ContactCardGeneric24"
+                                                FontSize="64"
+                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                            <TextBlock
+                                                Text="{localization:Localize Card_PresentToReader}"
+                                                HorizontalAlignment="Center"
+                                                Margin="0,16,0,0"
+                                                FontSize="{StaticResource FontSize.BodyLarge}"
+                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
+                                                <ui:Button
+                                                    Content="{localization:Localize Card_ScanButton}"
+                                                    Icon="{ui:SymbolIcon ScanDash24}"
+                                                    AutomationProperties.AutomationId="ScanCardButton"
+                                                    Command="{Binding ScanCardCommand}"
+                                                    Appearance="Primary" />
+                                                <ui:Button
+                                                    Content="{localization:Localize Prog_OpenButton}"
+                                                    Icon="{ui:SymbolIcon ArrowDownload24}"
+                                                    AutomationProperties.AutomationId="ProgramCardButton"
+                                                    Click="ProgramCard_Click"
+                                                    Appearance="Secondary"
+                                                    Margin="8,0,0,0" />
+                                            </StackPanel>
                                         </StackPanel>
-                                    </StackPanel>
-
-                                    <!-- Scanning State: Card Being Scanned Animation -->
-                                    <StackPanel
-                                        x:Name="ScanningPanel"
-                                        Visibility="{Binding IsScanning, Converter={StaticResource BoolToVisibility}}">
-                                        <StackPanel.Triggers>
-                                            <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-                                                <BeginStoryboard>
-                                                    <Storyboard RepeatBehavior="Forever">
-                                                        <!-- Scan line moving down the card -->
-                                                        <DoubleAnimation
-                                                            Storyboard.TargetName="ScanLine"
-                                                            Storyboard.TargetProperty="(Canvas.Top)"
-                                                            From="8"
-                                                            To="55"
-                                                            Duration="0:0:1.2"
-                                                            AutoReverse="True" />
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </EventTrigger>
-                                        </StackPanel.Triggers>
-
-                                        <Canvas Width="100" Height="70" HorizontalAlignment="Center">
-                                            <!-- Card Shape -->
-                                            <Border Canvas.Left="10" Canvas.Top="8"
-                                                    Width="80" Height="54"
-                                                    Background="{DynamicResource ControlFillColorDefaultBrush}"
-                                                    BorderBrush="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                                                    BorderThickness="2"
-                                                    CornerRadius="6">
-                                                <Grid>
-                                                    <!-- Chip on card -->
-                                                    <Border
-                                                        Width="16" Height="12"
-                                                        Background="{DynamicResource AccentFillColorDefaultBrush}"
-                                                        CornerRadius="2"
-                                                        HorizontalAlignment="Left"
-                                                        VerticalAlignment="Top"
-                                                        Margin="8,10,0,0" />
-                                                    <!-- Magnetic stripe line -->
-                                                    <Rectangle
-                                                        Width="50" Height="4"
-                                                        Fill="{DynamicResource TextFillColorSecondaryBrush}"
-                                                        HorizontalAlignment="Right"
-                                                        VerticalAlignment="Bottom"
-                                                        Margin="0,0,8,10"
-                                                        RadiusX="2" RadiusY="2" />
-                                                </Grid>
-                                            </Border>
-
-                                            <!-- Scanning Line -->
-                                            <Rectangle x:Name="ScanLine"
-                                                       Canvas.Left="12" Canvas.Top="10"
-                                                       Width="76" Height="6"
-                                                       RadiusX="1.5" RadiusY="1.5">
-                                                <Rectangle.Fill>
-                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                        <GradientStop Color="Transparent" Offset="0" />
-                                                        <GradientStop Color="{Binding Color, Source={StaticResource Brush.Info}}" Offset="0.4" />
-                                                        <GradientStop Color="{Binding Color, Source={StaticResource Brush.Info}}" Offset="0.6" />
-                                                        <GradientStop Color="Transparent" Offset="1" />
-                                                    </LinearGradientBrush>
-                                                </Rectangle.Fill>
-                                            </Rectangle>
-                                        </Canvas>
-
-                                        <TextBlock
-                                            Text="{localization:Localize Card_Scanning}"
-                                            HorizontalAlignment="Center"
-                                            Margin="0,12,0,0"
-                                            FontSize="{StaticResource FontSize.BodyLarge}"
-                                            FontWeight="Medium"
-                                            Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
-                                        <ui:Button
-                                            Content="{localization:Localize Card_CancelScanButton}"
-                                            Icon="{ui:SymbolIcon Dismiss24}"
-                                            AutomationProperties.AutomationId="CancelScanButton"
-                                            Command="{Binding CancelScanCommand}"
-                                            Appearance="Secondary"
-                                            HorizontalAlignment="Center"
-                                            Margin="0,16,0,0" />
-                                    </StackPanel>
-                                </Grid>
-
-                                <!-- Status Message -->
-                                <TextBlock
-                                    AutomationProperties.AutomationId="StatusMessageText"
-                                    Text="{Binding StatusMessage}"
-                                    HorizontalAlignment="Center"
-                                    Margin="0,16,0,0"
-                                    TextWrapping="Wrap"
-                                    TextAlignment="Center"
-                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                            </StackPanel>
+    
+                                        <!-- Scanning State: Card Being Scanned Animation -->
+                                        <StackPanel
+                                            x:Name="ScanningPanel"
+                                            Visibility="{Binding IsScanning, Converter={StaticResource BoolToVisibility}}">
+                                            <StackPanel.Triggers>
+                                                <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                                                    <BeginStoryboard>
+                                                        <Storyboard RepeatBehavior="Forever">
+                                                            <!-- Scan line moving down the card -->
+                                                            <DoubleAnimation
+                                                                Storyboard.TargetName="ScanLine"
+                                                                Storyboard.TargetProperty="(Canvas.Top)"
+                                                                From="8"
+                                                                To="55"
+                                                                Duration="0:0:1.2"
+                                                                AutoReverse="True" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                            </StackPanel.Triggers>
+    
+                                            <Canvas Width="100" Height="70" HorizontalAlignment="Center">
+                                                <!-- Card Shape -->
+                                                <Border Canvas.Left="10" Canvas.Top="8"
+                                                        Width="80" Height="54"
+                                                        Background="{DynamicResource ControlFillColorDefaultBrush}"
+                                                        BorderBrush="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                                        BorderThickness="2"
+                                                        CornerRadius="6">
+                                                    <Grid>
+                                                        <!-- Chip on card -->
+                                                        <Border
+                                                            Width="16" Height="12"
+                                                            Background="{DynamicResource AccentFillColorDefaultBrush}"
+                                                            CornerRadius="2"
+                                                            HorizontalAlignment="Left"
+                                                            VerticalAlignment="Top"
+                                                            Margin="8,10,0,0" />
+                                                        <!-- Magnetic stripe line -->
+                                                        <Rectangle
+                                                            Width="50" Height="4"
+                                                            Fill="{DynamicResource TextFillColorSecondaryBrush}"
+                                                            HorizontalAlignment="Right"
+                                                            VerticalAlignment="Bottom"
+                                                            Margin="0,0,8,10"
+                                                            RadiusX="2" RadiusY="2" />
+                                                    </Grid>
+                                                </Border>
+    
+                                                <!-- Scanning Line -->
+                                                <Rectangle x:Name="ScanLine"
+                                                           Canvas.Left="12" Canvas.Top="10"
+                                                           Width="76" Height="6"
+                                                           RadiusX="1.5" RadiusY="1.5">
+                                                    <Rectangle.Fill>
+                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                            <GradientStop Color="Transparent" Offset="0" />
+                                                            <GradientStop Color="{Binding Color, Source={StaticResource Brush.Info}}" Offset="0.4" />
+                                                            <GradientStop Color="{Binding Color, Source={StaticResource Brush.Info}}" Offset="0.6" />
+                                                            <GradientStop Color="Transparent" Offset="1" />
+                                                        </LinearGradientBrush>
+                                                    </Rectangle.Fill>
+                                                </Rectangle>
+                                            </Canvas>
+    
+                                            <TextBlock
+                                                Text="{localization:Localize Card_Scanning}"
+                                                HorizontalAlignment="Center"
+                                                Margin="0,12,0,0"
+                                                FontSize="{StaticResource FontSize.BodyLarge}"
+                                                FontWeight="Medium"
+                                                Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                                            <ui:Button
+                                                Content="{localization:Localize Card_CancelScanButton}"
+                                                Icon="{ui:SymbolIcon Dismiss24}"
+                                                AutomationProperties.AutomationId="CancelScanButton"
+                                                Command="{Binding CancelScanCommand}"
+                                                Appearance="Secondary"
+                                                HorizontalAlignment="Center"
+                                                Margin="0,16,0,0" />
+                                        </StackPanel>
+                                    </Grid>
+    
+                                    <!-- Status Message -->
+                                    <TextBlock
+                                        AutomationProperties.AutomationId="StatusMessageText"
+                                        Text="{Binding StatusMessage}"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,16,0,0"
+                                        TextWrapping="Wrap"
+                                        TextAlignment="Center"
+                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                </StackPanel>
+                            </Grid>
                         </ui:Card>
 
                         <!-- Detected Technologies -->

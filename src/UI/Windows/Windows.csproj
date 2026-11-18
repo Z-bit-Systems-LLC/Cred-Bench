@@ -19,6 +19,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Logo.png" />
+    <Resource Include="Assets\Apache.txt" />
+    <Resource Include="Assets\MIT.txt" />
+    <Resource Include="Assets\BSD.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Core\Core.csproj" />
     <ProjectReference Include="..\..\..\lib\Guidelines\src\ZBitSystems.Wpf.UI\ZBitSystems.Wpf.UI.csproj" />
   </ItemGroup>
