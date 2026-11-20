@@ -1,8 +1,7 @@
 steps:
   - checkout: self
-    submodules: true
 
-  # The GitHub release body comes from docs/release-notes/<tag>.md; fail before building if it's missing
+  # The GitHub release body comes from docs/release-notes/<tag>.md; fail if it's missing
   - pwsh: |
       $notes = "docs/release-notes/$(Build.SourceBranchName).md"
       if (-not (Test-Path $notes)) {
@@ -10,40 +9,6 @@ steps:
         exit 1
       }
     displayName: 'Check release notes'
-
-  - task: UseDotNet@2
-    displayName: 'Install .NET 10.0'
-    inputs:
-      version: '10.0.x'
-      includePreviewVersions: true
-
-  - task: DotNetCoreCLI@2
-    displayName: 'Restore'
-    inputs:
-      command: 'restore'
-      projects: '$(solution)'
-
-  - task: DotNetCoreCLI@2
-    displayName: 'Publish Windows App'
-    inputs:
-      command: 'publish'
-      projects: 'src/UI/Windows/Windows.csproj'
-      arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/Windows --self-contained true -r win-x64'
-      publishWebProjects: false
-
-  - task: ArchiveFiles@2
-    displayName: 'Archive Windows App'
-    inputs:
-      rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/Windows'
-      includeRootFolder: false
-      archiveType: 'zip'
-      archiveFile: '$(Build.ArtifactStagingDirectory)/Cred-Bench-$(Build.SourceBranchName)-win-x64.zip'
-
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifacts'
-    inputs:
-      pathToPublish: '$(Build.ArtifactStagingDirectory)/Cred-Bench-$(Build.SourceBranchName)-win-x64.zip'
-      artifactName: 'Release'
 
   # The release carries only the notes; the Windows app ships through the Microsoft Store
   - task: GitHubRelease@1
