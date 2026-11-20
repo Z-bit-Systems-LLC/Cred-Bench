@@ -1,4 +1,4 @@
-# Cred-Bench
+# Cred Bench
 
 A diagnostic tool that identifies smart card technologies and shows the credential data a card presents to a PC/SC reader.
 
@@ -24,6 +24,12 @@ Core functionality is under an open source license, so a fully functional Cred-B
 - **Reader hot-plug support** - Handles USB readers being connected and disconnected
 - **Test card programming** (Windows) - **Program Card…** installs PKOC and/or a LEAF Verified test credential on a blank JavaCard and lists the card's applets, packages and free memory
 - **Cross-platform CLI** - Text or JSON output for scripting, on Windows, macOS, Linux and Raspberry Pi
+
+## Get Cred Bench
+
+The Windows app is available on the Microsoft Store:
+
+[![Microsoft Store](https://get.microsoft.com/images/en-us%20dark.svg)](https://apps.microsoft.com/detail/9nj16v3kf7m2?hl=en-US&gl=US)
 
 ## Supported Card Technologies
 
@@ -133,7 +139,7 @@ Cards signed by the NXP LEAF root verify without options. Add `--leaf-anchor` on
 
 ## JavaCard Applets
 
-The `src/Applet/` directory contains two open-source JavaCard applets. Their CAP files are committed and embedded in Cred-Bench, so the Windows app's **Program Card…** dialog can install either or both on a blank JavaCard (tested on NXP JCOP4) without other tools.
+The `src/Applet/` directory contains two open-source JavaCard applets. Their CAP files are committed and embedded in Cred Bench, so the Windows app's **Program Card…** dialog can install either or both on a blank JavaCard (tested on NXP JCOP4) without other tools.
 
 | Applet | Package AID | Applet AID | Purpose |
 |---|---|---|---|
@@ -141,7 +147,7 @@ The `src/Applet/` directory contains two open-source JavaCard applets. Their CAP
 | LEAF Verified emulation | `F05A424C454146` | `F05A424C45414601` | Test credential for LEAF Verified readers |
 
 - **PKOC** generates a P-256 key pair on the card and supports the SELECT/AUTHENTICATE APDU flow, creating a PKOC credential. See [docs/PKOC.md](docs/PKOC.md#programming-a-test-card).
-- **LEAF Verified emulation** answers a LEAF Verified reader the way a MIFARE DUOX carrying the LEAF Open Application does: the reader reads the card certificate and challenges the card's on-card P-256 key. It installs as the default-selected applet, because LEAF readers never send an ISO SELECT, and is personalised with a certificate from a **test root** that Cred-Bench creates or loads (compatible with AsymCred's `leaf-tool`). See [docs/LEAF.md](docs/LEAF.md#programming-a-test-card).
+- **LEAF Verified emulation** answers a LEAF Verified reader the way a MIFARE DUOX carrying the LEAF Open Application does: the reader reads the card certificate and challenges the card's on-card P-256 key. It installs as the default-selected applet, because LEAF readers never send an ISO SELECT, and is personalised with a certificate from a **test root** that Cred Bench creates or loads (compatible with AsymCred's `leaf-tool`). See [docs/LEAF.md](docs/LEAF.md#programming-a-test-card).
 
 > **LEAF Verified emulation is for testing only, not for production.** Its certificates come from your own test root, not the LEAF CA, and readers that trust only the NXP root reject it. Production LEAF Verified credentials are MIFARE DUOX cards issued through the LEAF program. Do not issue emulated cards to users or enrol them in a production access system.
 
