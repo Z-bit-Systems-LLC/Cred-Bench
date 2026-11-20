@@ -9,9 +9,9 @@ A diagnostic tool that identifies smart card technologies and shows the credenti
 
 Access control credentials come in many technologies, and a card's label rarely tells you which ones it carries or what identifier a reader will take from it. Integrators, reader vendors and technicians need a quick way to see what is on a card before enrolling it or troubleshooting a reader that won't accept it.
 
-Cred-Bench talks to any PC/SC smart card reader, runs a set of detectors against the presented card and shows what each one finds: the technology, the identifier an access control system would use, and the supporting data (ATR, UID, version info, certificates and signatures). It is available as a Windows desktop app and a cross-platform command-line tool.
+Cred Bench talks to any PC/SC smart card reader, runs a set of detectors against the presented card and shows what each one finds: the technology, the identifier an access control system would use, and the supporting data (ATR, UID, version info, certificates and signatures). It is available as a Windows desktop app and a cross-platform command-line tool.
 
-Core functionality is under an open source license, so a fully functional Cred-Bench can be built at no cost. We encourage credential and reader vendors to use this project to speed up development of their own tools.
+Core functionality is under an open source license, so a fully functional Cred Bench can be built at no cost. We encourage credential and reader vendors to use this project to speed up development of their own tools.
 
 ## Features
 
@@ -25,12 +25,6 @@ Core functionality is under an open source license, so a fully functional Cred-B
 - **Test card programming** (Windows) - **Program Card…** installs PKOC and/or a LEAF Verified test credential on a blank JavaCard and lists the card's applets, packages and free memory
 - **Cross-platform CLI** - Text or JSON output for scripting, on Windows, macOS, Linux and Raspberry Pi
 
-## Get Cred Bench
-
-The Windows app is available on the Microsoft Store:
-
-[![Microsoft Store](https://get.microsoft.com/images/en-us%20dark.svg)](https://apps.microsoft.com/detail/9nj16v3kf7m2?hl=en-US&gl=US)
-
 ## Supported Card Technologies
 
 | Technology | Standard | Documentation |
@@ -42,11 +36,15 @@ The Windows app is available on the Microsoft Store:
 | LEAF Universal / LEAF Verified | LEAF symmetric (AES-128) and asymmetric (ECC P-256) credentials | [docs/LEAF.md](docs/LEAF.md) |
 | General | ATR, protocol and reader information common to all cards | [docs/General.md](docs/General.md) |
 
-## Get Cred-Bench
+## Get Cred Bench
 
 ### Download the App
 
-Download the latest Windows release from [GitHub Releases](https://github.com/Z-bit-Systems-LLC/Cred-Bench/releases/latest). The `Cred-Bench-vX.Y.Z-win-x64.zip` package is self-contained: unzip it and run `CredBench.exe`; no .NET runtime is needed.
+The Windows app is available on the Microsoft Store:
+
+[![Microsoft Store](https://get.microsoft.com/images/en-us%20dark.svg)](https://apps.microsoft.com/detail/9nj16v3kf7m2?hl=en-US&gl=US)
+
+Or download the latest Windows release from [GitHub Releases](https://github.com/Z-bit-Systems-LLC/Cred-Bench/releases/latest). The `Cred-Bench-vX.Y.Z-win-x64.zip` package is self-contained: unzip it and run `CredBench.exe`; no .NET runtime is needed.
 
 The CLI is not packaged yet; build it from source as shown below.
 
@@ -87,9 +85,9 @@ The CLI is not packaged yet; build it from source as shown below.
 
 ### Quick Start
 
-1. Connect a PC/SC reader and launch Cred-Bench
+1. Connect a PC/SC reader and launch Cred Bench
 2. Select the reader from the drop-down
-3. Present a card; Cred-Bench scans it and lists every technology it detects
+3. Present a card; Cred Bench scans it and lists every technology it detects
 4. Open a technology's tab to see its credential data, or the General tab for the ATR and reader details
 
 ## CLI Usage
