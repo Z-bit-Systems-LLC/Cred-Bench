@@ -45,6 +45,7 @@ steps:
       pathToPublish: '$(Build.ArtifactStagingDirectory)/Cred-Bench-$(Build.SourceBranchName)-win-x64.zip'
       artifactName: 'Release'
 
+  # The release carries only the notes; the Windows app ships through the Microsoft Store
   - task: GitHubRelease@1
     displayName: 'Create GitHub Release'
     inputs:
@@ -53,7 +54,6 @@ steps:
       action: 'create'
       target: '$(Build.SourceVersion)'
       tagSource: 'gitTag'
-      assets: '$(Build.ArtifactStagingDirectory)/Cred-Bench-*.zip'
       releaseNotesSource: 'filePath'
       releaseNotesFilePath: 'docs/release-notes/$(Build.SourceBranchName).md'
       addChangeLog: false

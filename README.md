@@ -44,8 +44,6 @@ The Windows app is available on the Microsoft Store:
 
 [![Microsoft Store](https://get.microsoft.com/images/en-us%20dark.svg)](https://apps.microsoft.com/detail/9nj16v3kf7m2?hl=en-US&gl=US)
 
-Or download the latest Windows release from [GitHub Releases](https://github.com/Z-bit-Systems-LLC/Cred-Bench/releases/latest). The `Cred-Bench-vX.Y.Z-win-x64.zip` package is self-contained: unzip it and run `CredBench.exe`; no .NET runtime is needed.
-
 The CLI is not packaged yet; build it from source as shown below.
 
 ## Getting Started
@@ -222,7 +220,7 @@ For documentation contributions:
 2. Write the release notes in `docs/release-notes/vX.Y.Z.md`
 3. Make sure the CI build on `main` passes, then push a `vX.Y.Z` tag
 
-The CI pipeline builds the Windows package and creates the GitHub release, using the notes file as its description.
+The CI pipeline creates the GitHub release, using the notes file as its description. The release carries no compiled app; the Windows app ships through the Microsoft Store.
 
 ## License
 
